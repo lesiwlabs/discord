@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"testing"
 
 	"github.com/disgoorg/disgo/discord"
@@ -47,12 +48,12 @@ func TestRolesError(t *testing.T) {
 		return nil, fmt.Errorf("boom")
 	}
 
-	err := toggleVoiceRole(b, false, &events.GenericGuildVoiceState{})
+	_, err := voiceRole(b, 0)
 
 	if want := `could not get roles: boom`; err == nil {
-		t.Errorf("toggleVoiceRole() = <nil>, want %q", want)
+		t.Errorf("voiceRole() = _, <nil>, want %q", want)
 	} else if got := err.Error(); got != want {
-		t.Errorf("toggleVoiceRole() = %q, want %q", got, want)
+		t.Errorf("voiceRole() = _, %q, want %q", got, want)
 	}
 }
 
@@ -60,12 +61,12 @@ func TestNoRoles(t *testing.T) {
 	b := new(fakeBot)
 	b.getRoles = func() (roles []discord.Role, err error) { return }
 
-	err := toggleVoiceRole(b, false, &events.GenericGuildVoiceState{})
+	_, err := voiceRole(b, 0)
 
 	if want := `could not find the role "voice"`; err == nil {
-		t.Errorf("toggleVoiceRole() = <nil>, want %q", want)
+		t.Errorf("voiceRole() = _, <nil>, want %q", want)
 	} else if got := err.Error(); got != want {
-		t.Errorf("toggleVoiceRole() = %q, want %q", got, want)
+		t.Errorf("voiceRole() = _, %q, want %q", got, want)
 	}
 }
 
@@ -78,22 +79,49 @@ func TestNoVoiceRole(t *testing.T) {
 		}, nil
 	}
 
-	err := toggleVoiceRole(b, false, &events.GenericGuildVoiceState{})
+	_, err := voiceRole(b, 0)
 
 	if want := `could not find the role "voice"`; err == nil {
-		t.Errorf("toggleVoiceRole() = <nil>, want %q", want)
+		t.Errorf("voiceRole() = _, <nil>, want %q", want)
 	} else if got := err.Error(); got != want {
-		t.Errorf("toggleVoiceRole() = %q, want %q", got, want)
+		t.Errorf("voiceRole() = _, %q, want %q", got, want)
 	}
+}
+
+func TestVoiceRoleFound(t *testing.T) {
+	b := new(fakeBot)
+	role := discord.Role{Name: "voice"}
+	b.getRoles = func() ([]discord.Role, error) {
+		return []discord.Role{
+			{Name: "notvoice"},
+			role,
+			{Name: ""},
+		}, nil
+	}
+
+	foundRole, err := voiceRole(b, 0)
+
+	if err != nil {
+		t.Errorf("voiceRole() = _, %q, want _, <nil>", err.Error())
+	} else if got, want := foundRole, role; got != want {
+		t.Errorf("voiceRole() = %#v, <nil>, want %#v, <nil>", got, want)
+	}
+}
+
+func mockVoiceRole(t *testing.T) discord.Role {
+	role := discord.Role{Name: "voice", ID: snowflake.ID(rand.Uint64())}
+	swap(t, &testHookVoiceRole,
+		func(rest.Rest, snowflake.ID) (discord.Role, error) {
+			return role, nil
+		},
+	)
+	return role
 }
 
 func TestRemoveMemberRoleFail(t *testing.T) {
 	b := new(fakeBot)
-	role := discord.Role{Name: "voice"}
-	b.getRoles = func() ([]discord.Role, error) {
-		return []discord.Role{role, {Name: "someotherrole"}}, nil
-	}
 	b.toggleRoleErr = fmt.Errorf("boom")
+	mockVoiceRole(t)
 
 	err := toggleVoiceRole(b, false, &events.GenericGuildVoiceState{})
 
@@ -106,22 +134,17 @@ func TestRemoveMemberRoleFail(t *testing.T) {
 
 func TestRemoveMemberRole(t *testing.T) {
 	b := new(fakeBot)
-	role := discord.Role{Name: "voice", ID: snowflake.ID(3)}
-	b.getRoles = func() ([]discord.Role, error) {
-		return []discord.Role{role, {Name: "someotherrole"}}, nil
-	}
+	role := mockVoiceRole(t)
 
 	err := toggleVoiceRole(b, false, &events.GenericGuildVoiceState{
-		VoiceState: discord.VoiceState{GuildID: snowflake.ID(1)},
-		Member:     discord.Member{User: discord.User{ID: snowflake.ID(2)}},
+		VoiceState: discord.VoiceState{GuildID: 1},
+		Member:     discord.Member{User: discord.User{ID: 2}},
 	})
 
 	if err != nil {
 		t.Errorf("toggleVoiceRole() = %q, want <nil>", err.Error())
 	}
-	wantCalls := []toggleRole{
-		{snowflake.ID(1), snowflake.ID(2), snowflake.ID(3)},
-	}
+	wantCalls := []toggleRole{{1, 2, role.ID}}
 	if got, want := b.removeMemberRole, wantCalls; !cmp.Equal(got, want) {
 		t.Errorf("RemoveMemberRole calls: -want +got\n%s", cmp.Diff(got, want))
 	}
@@ -132,10 +155,7 @@ func TestRemoveMemberRole(t *testing.T) {
 
 func TestAddMemberRole(t *testing.T) {
 	b := new(fakeBot)
-	role := discord.Role{Name: "voice", ID: snowflake.ID(3)}
-	b.getRoles = func() ([]discord.Role, error) {
-		return []discord.Role{role, {Name: "someotherrole"}}, nil
-	}
+	role := mockVoiceRole(t)
 
 	err := toggleVoiceRole(b, true, &events.GenericGuildVoiceState{
 		VoiceState: discord.VoiceState{GuildID: snowflake.ID(1)},
@@ -145,13 +165,18 @@ func TestAddMemberRole(t *testing.T) {
 	if err != nil {
 		t.Errorf("toggleVoiceRole() = %q, want <nil>", err.Error())
 	}
-	wantCalls := []toggleRole{
-		{snowflake.ID(1), snowflake.ID(2), snowflake.ID(3)},
-	}
+	wantCalls := []toggleRole{{1, 2, role.ID}}
 	if got, want := b.addMemberRole, wantCalls; !cmp.Equal(got, want) {
 		t.Errorf("AddMemberRole calls: -want +got\n%s", cmp.Diff(got, want))
 	}
 	if got, want := len(b.removeMemberRole), 0; got != want {
 		t.Errorf("got %d RemoveMemberRole calls, want %d", got, want)
 	}
+}
+
+func swap[T any](t *testing.T, orig *T, with T) {
+	t.Helper()
+	o := *orig
+	t.Cleanup(func() { *orig = o })
+	*orig = with
 }

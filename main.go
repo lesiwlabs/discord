@@ -13,8 +13,13 @@ import (
 	"github.com/disgoorg/disgo/events"
 	"github.com/disgoorg/disgo/gateway"
 	"github.com/disgoorg/disgo/rest"
+	"github.com/disgoorg/snowflake/v2"
 	_ "golang.org/x/crypto/x509roots/fallback"
 )
+
+var t testingDetector
+
+const voiceRoleName = "voice"
 
 func main() {
 	if err := run(); err != nil {
@@ -33,7 +38,6 @@ func run() error {
 			gateway.WithIntents(
 				gateway.IntentGuilds,
 				gateway.IntentGuildMessages,
-				gateway.IntentDirectMessages,
 				gateway.IntentGuildVoiceStates,
 				gateway.IntentGuildMessageReactions,
 			),
@@ -68,24 +72,32 @@ func run() error {
 	select {}
 }
 
+var testHookVoiceRole func(rest.Rest, snowflake.ID) (discord.Role, error)
+
+func voiceRole(bot rest.Rest, gid snowflake.ID) (discord.Role, error) {
+	if h := testHookVoiceRole; t.Testing() && h != nil {
+		return h(bot, gid)
+	}
+	roles, err := bot.GetRoles(gid)
+	if err != nil {
+		return discord.Role{}, fmt.Errorf("could not get roles: %w", err)
+	}
+	for _, r := range roles {
+		if r.Name == voiceRoleName {
+			return r, nil
+		}
+	}
+	return discord.Role{}, fmt.Errorf("could not find the role %q",
+		voiceRoleName)
+}
+
 func toggleVoiceRole(
 	bot rest.Rest, apply bool, e *events.GenericGuildVoiceState,
 ) error {
-	roles, err := bot.GetRoles(e.VoiceState.GuildID)
+	role, err := voiceRole(bot, e.VoiceState.GuildID)
 	if err != nil {
-		return fmt.Errorf("could not get roles: %w", err)
+		return err
 	}
-	var role discord.Role
-	rolename := "voice"
-	for _, r := range roles {
-		if r.Name == rolename {
-			role = r
-			goto found
-		}
-	}
-	return fmt.Errorf("could not find the role %q", rolename)
-found:
-
 	fn := bot.RemoveMemberRole
 	if apply {
 		fn = bot.AddMemberRole
