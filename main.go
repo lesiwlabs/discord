@@ -42,6 +42,9 @@ func run() error {
 				gateway.IntentGuildMessageReactions,
 			),
 		),
+		disgobot.WithEventListenerFunc(func(*events.Ready) {
+			slog.Info("received ready event from gateway")
+		}),
 		disgobot.WithEventListenerFunc(func(e *events.GuildVoiceJoin) {
 			err := toggleVoiceRole(
 				e.Client().Rest(),
