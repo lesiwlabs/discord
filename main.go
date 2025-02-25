@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"slices"
+	"time"
 
 	"github.com/disgoorg/disgo"
 	disgobot "github.com/disgoorg/disgo/bot"
+	"github.com/disgoorg/disgo/cache"
 	"github.com/disgoorg/disgo/discord"
 	"github.com/disgoorg/disgo/events"
 	"github.com/disgoorg/disgo/gateway"
@@ -37,15 +40,36 @@ func run() error {
 		disgobot.WithGatewayConfigOpts(
 			gateway.WithIntents(
 				gateway.IntentGuilds,
+				gateway.IntentGuildMembers,
 				gateway.IntentGuildMessages,
 				gateway.IntentGuildVoiceStates,
 				gateway.IntentGuildMessageReactions,
 			),
 		),
-		disgobot.WithEventListenerFunc(func(*events.Ready) {
+		disgobot.WithCacheConfigOpts(
+			cache.WithCaches(cache.FlagGuilds|
+				cache.FlagChannels|
+				cache.FlagMembers|
+				cache.FlagVoiceStates|
+				cache.FlagRoles,
+			),
+		),
+	)
+	bot.AddEventListeners(
+		disgobot.NewListenerFunc(func(*events.Ready) {
 			slog.Info("received ready event from gateway")
 		}),
-		disgobot.WithEventListenerFunc(func(e *events.GuildVoiceJoin) {
+		disgobot.NewListenerFunc(func(e *events.GuildReady) {
+			go func() {
+				ticker := time.NewTicker(time.Minute)
+				for ; ; <-ticker.C {
+					if err := syncVoiceRoles(bot, e.GuildID); err != nil {
+						slog.Error("failed to sync voice roles", "error", err)
+					}
+				}
+			}()
+		}),
+		disgobot.NewListenerFunc(func(e *events.GuildVoiceJoin) {
 			err := toggleVoiceRole(
 				e.Client().Rest(),
 				true,
@@ -55,7 +79,7 @@ func run() error {
 				slog.Error("failed to add member role", "error", err)
 			}
 		}),
-		disgobot.WithEventListenerFunc(func(e *events.GuildVoiceLeave) {
+		disgobot.NewListenerFunc(func(e *events.GuildVoiceLeave) {
 			err := toggleVoiceRole(
 				e.Client().Rest(),
 				false,
@@ -107,6 +131,59 @@ func toggleVoiceRole(
 	}
 	if err := fn(e.VoiceState.GuildID, e.Member.User.ID, role.ID); err != nil {
 		return fmt.Errorf("failed to toggle role (apply = %t): %w", apply, err)
+	}
+	return nil
+}
+
+func syncVoiceRoles(bot disgobot.Client, gid snowflake.ID) error {
+	role, err := voiceRole(bot.Rest(), gid)
+	if err != nil {
+		return fmt.Errorf("could not get voice role: %w", err)
+	}
+	roleMembers, err := bot.MemberChunkingManager().RequestMembersWithFilter(
+		gid,
+		func(m discord.Member) bool {
+			return slices.Contains(m.RoleIDs, role.ID)
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("could not get members with voice role: %w", err)
+	}
+	var voiceMembers []discord.Member
+	bot.Caches().ChannelsForEach(func(channel discord.GuildChannel) {
+		if channel.GuildID() != gid {
+			return
+		}
+		ac, ok := channel.(discord.GuildAudioChannel)
+		if !ok {
+			return
+		}
+		voiceMembers = append(voiceMembers,
+			bot.Caches().AudioChannelMembers(ac)...)
+	})
+	var hasRole, inCall = newSet[snowflake.ID](), newSet[snowflake.ID]()
+	usermap := make(map[snowflake.ID]discord.Member)
+	for _, m := range roleMembers {
+		hasRole.Add(m.User.ID)
+		usermap[m.User.ID] = m
+	}
+	for _, m := range voiceMembers {
+		inCall.Add(m.User.ID)
+		usermap[m.User.ID] = m
+	}
+	for uid := range hasRole.Diff(inCall) {
+		// Members that are not in the call, but have a role.
+		if err := bot.Rest().RemoveMemberRole(gid, uid, role.ID); err != nil {
+			return fmt.Errorf("could not remove role: %w", err)
+		}
+		slog.Info("removed voice role", "user", usermap[uid].User.Username)
+	}
+	for uid := range inCall.Diff(hasRole) {
+		// Members that are in the call, but have no role.
+		if err := bot.Rest().AddMemberRole(gid, uid, role.ID); err != nil {
+			return fmt.Errorf("could not add role: %w", err)
+		}
+		slog.Info("applied voice role", "user", usermap[uid].User.Username)
 	}
 	return nil
 }
