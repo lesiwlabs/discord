@@ -17,6 +17,14 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
+func init() {
+	testHookMemberList = func(
+		disgobot.Client, snowflake.ID, set[snowflake.ID],
+	) string {
+		return ""
+	}
+}
+
 //go:generate go run lesiw.io/moxie@latest clientRest
 type clientRest struct{ rest.Rest }
 

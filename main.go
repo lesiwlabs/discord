@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 
@@ -180,6 +181,7 @@ func toggleVoiceRole[E voiceEvent](e E) error {
 }
 
 func syncVoiceRoles(bot disgobot.Client, gid snowflake.ID) error {
+	slog.Info("syncVoiceRoles tick")
 	voiceToggle.Lock()
 	defer voiceToggle.Unlock()
 	role, err := findRoleByName(bot, gid, "voice")
@@ -190,7 +192,9 @@ func syncVoiceRoles(bot disgobot.Client, gid snowflake.ID) error {
 	if err != nil {
 		return err
 	}
+	slog.Info("got role members", "members", memberList(bot, gid, roleMembers))
 	callMembers := membersInCall(bot, gid)
+	slog.Info("got call members", "members", memberList(bot, gid, callMembers))
 	for uid := range roleMembers.Diff(callMembers) {
 		// Members that are not in the call, but have a role.
 		if err := toggleRole(bot, false, gid, uid, role.ID); err != nil {
@@ -204,6 +208,30 @@ func syncVoiceRoles(bot disgobot.Client, gid snowflake.ID) error {
 		}
 	}
 	return nil
+}
+
+var testHookMemberList func(
+	disgobot.Client, snowflake.ID, set[snowflake.ID],
+) string
+
+func memberList(
+	bot disgobot.Client, guildID snowflake.ID, m set[snowflake.ID],
+) string {
+	if h := testHookMemberList; t.Testing() && h != nil {
+		return h(bot, guildID, m)
+	}
+	var names []string
+	for id := range m {
+		if user, ok := bot.Caches().Member(guildID, id); ok {
+			names = append(names, user.User.Username)
+		} else {
+			names = append(names, "<unknown>")
+		}
+	}
+	if len(names) == 0 {
+		return "<none>"
+	}
+	return strings.Join(names, ", ")
 }
 
 var testHookMembersWithRole func(
