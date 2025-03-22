@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"slices"
 	"strings"
@@ -27,6 +29,9 @@ var t testingDetector
 type client struct{ disgobot.Client }
 
 func main() {
+	go func() {
+		slog.Error(http.ListenAndServe("localhost:8080", nil).Error())
+	}()
 	if err := run(); err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)
