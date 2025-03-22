@@ -78,14 +78,18 @@ func run() error {
 			}()
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceJoin) {
-			if err := toggleVoiceRole(e); err != nil {
-				slog.Error(err.Error())
-			}
+			go func() {
+				if err := toggleVoiceRole(e); err != nil {
+					slog.Error(err.Error())
+				}
+			}()
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceLeave) {
-			if err := toggleVoiceRole(e); err != nil {
-				slog.Error(err.Error())
-			}
+			go func() {
+				if err := toggleVoiceRole(e); err != nil {
+					slog.Error(err.Error())
+				}
+			}()
 		}))
 	if err != nil {
 		return fmt.Errorf("could not set up bot: %w", err)
