@@ -10,7 +10,6 @@ import (
 
 	disgobot "github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/disgo/discord"
-	"github.com/disgoorg/disgo/events"
 	"github.com/disgoorg/disgo/rest"
 	"github.com/disgoorg/snowflake/v2"
 	"github.com/google/go-cmp/cmp"
@@ -99,79 +98,6 @@ func TestFindRoleByName(t *testing.T) {
 					funcname(t, findRoleByName), c, tt.guildID, tt.roleName,
 					cmp.Diff(want, got),
 				)
-			}
-		})
-	}
-}
-
-type toggleVoiceRoleTest struct {
-	desc        string
-	join        bool
-	findRoleErr error
-	toggleErr   error
-	wantErr     error
-}
-
-var toggleVoiceRoleTests = []toggleVoiceRoleTest{{
-	desc: "voice join event",
-	join: true,
-}, {
-	desc: "voice leave event",
-	join: false,
-}, {
-	desc:        "find role error",
-	join:        true,
-	findRoleErr: errors.New("find role error"),
-	wantErr:     errors.New("find role error"),
-}, {
-	desc:      "toggle role error",
-	join:      false,
-	toggleErr: errors.New("toggle role error"),
-	wantErr:   errors.New("toggle role error"),
-}}
-
-func TestToggleVoiceRole(t *testing.T) {
-	for _, tt := range toggleVoiceRoleTests {
-		t.Run(tt.desc, func(t *testing.T) {
-			swap(t, &testHookFindRoleByName,
-				func(
-					disgobot.Client, snowflake.ID, string,
-				) (discord.Role, error) {
-					return discord.Role{}, tt.findRoleErr
-				},
-			)
-			swap(t, &testHookToggleRole,
-				func(
-					_ disgobot.Client, enable bool, _, _, _ snowflake.ID,
-				) error {
-					if enable != tt.join {
-						t.Errorf("%s called with state %t, want %t",
-							funcname(t, toggleRole), enable, tt.join)
-					}
-					return tt.toggleErr
-				},
-			)
-
-			var err error
-			genericVoiceState := events.GenericGuildVoiceState{
-				GenericEvent: &events.GenericEvent{},
-			}
-			if tt.join {
-				err = toggleVoiceRole(&events.GuildVoiceJoin{
-					GenericGuildVoiceState: &genericVoiceState,
-				})
-			} else {
-				err = toggleVoiceRole(&events.GuildVoiceLeave{
-					GenericGuildVoiceState: &genericVoiceState,
-				})
-			}
-
-			gotErr, wantErr := fmt.Sprintf("%v", err),
-				fmt.Sprintf("%v", tt.wantErr)
-			if gotErr != wantErr {
-				t.Errorf("%s(): %v, want %v",
-					funcname(t, toggleVoiceRole[*events.GuildVoiceJoin]),
-					gotErr, wantErr)
 			}
 		})
 	}

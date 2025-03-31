@@ -10,7 +10,6 @@ import (
 	"os"
 	"slices"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/disgoorg/disgo"
@@ -62,6 +61,13 @@ func run() error {
 			),
 		),
 	)
+	if err != nil {
+		return fmt.Errorf("could not set up bot: %w", err)
+	}
+
+	// Buffered to compensate for recursive event handling.
+	updateRole := make(chan struct{}, 5)
+
 	bot = &client{bot}
 	bot.AddEventListeners(
 		disgobot.NewListenerFunc(func(*events.Ready) {
@@ -69,8 +75,7 @@ func run() error {
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildReady) {
 			go func() {
-				ticker := time.NewTicker(time.Minute)
-				for range ticker.C {
+				for range updateRole {
 					if err := syncVoiceRoles(bot, e.GuildID); err != nil {
 						slog.Error("failed to sync voice roles", "error", err)
 					}
@@ -78,22 +83,17 @@ func run() error {
 			}()
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceJoin) {
-			go func() {
-				if err := toggleVoiceRole(e); err != nil {
-					slog.Error(err.Error())
-				}
-			}()
+			updateRole <- struct{}{}
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceLeave) {
-			go func() {
-				if err := toggleVoiceRole(e); err != nil {
-					slog.Error(err.Error())
-				}
-			}()
+			updateRole <- struct{}{}
 		}))
-	if err != nil {
-		return fmt.Errorf("could not set up bot: %w", err)
-	}
+	go func() {
+		ticker := time.NewTicker(time.Minute)
+		for range ticker.C {
+			updateRole <- struct{}{}
+		}
+	}()
 	if err := bot.OpenGateway(context.Background()); err != nil {
 		return fmt.Errorf("could not connect to gateway: %w", err)
 	}
@@ -160,39 +160,8 @@ func toggleRole(
 	return nil
 }
 
-var voiceToggle sync.Mutex
-
-type voiceEvent interface {
-	*events.GuildVoiceJoin | *events.GuildVoiceLeave
-}
-
-func toggleVoiceRole[E voiceEvent](e E) error {
-	voiceToggle.Lock()
-	defer voiceToggle.Unlock()
-	var enable bool
-	var event events.GenericGuildVoiceState
-	switch e2 := any(e).(type) {
-	case *events.GuildVoiceJoin:
-		enable = true
-		event = *e2.GenericGuildVoiceState
-	case *events.GuildVoiceLeave:
-		event = *e2.GenericGuildVoiceState
-	default:
-		panic("unreachable")
-	}
-	client := event.Client()
-	role, err := findRoleByName(client, event.VoiceState.GuildID, "voice")
-	if err != nil {
-		return err
-	}
-	return toggleRole(client, enable,
-		event.VoiceState.GuildID, event.Member.User.ID, role.ID)
-}
-
 func syncVoiceRoles(bot disgobot.Client, gid snowflake.ID) error {
-	slog.Info("syncVoiceRoles tick")
-	voiceToggle.Lock()
-	defer voiceToggle.Unlock()
+	slog.Info("syncVoiceRoles event")
 	role, err := findRoleByName(bot, gid, "voice")
 	if err != nil {
 		return fmt.Errorf("could not get voice role: %w", err)
