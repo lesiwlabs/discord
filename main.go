@@ -65,8 +65,7 @@ func run() error {
 		return fmt.Errorf("could not set up bot: %w", err)
 	}
 
-	// Buffered to compensate for recursive event handling.
-	updateRole := make(chan struct{}, 5)
+	updateRole := make(chan struct{})
 
 	bot = &client{bot}
 	bot.AddEventListeners(
@@ -83,10 +82,10 @@ func run() error {
 			}()
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceJoin) {
-			updateRole <- struct{}{}
+			go func() { updateRole <- struct{}{} }()
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceLeave) {
-			updateRole <- struct{}{}
+			go func() { updateRole <- struct{}{} }()
 		}))
 	go func() {
 		ticker := time.NewTicker(time.Minute)
