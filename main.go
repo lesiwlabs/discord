@@ -60,6 +60,9 @@ func run() error {
 				cache.FlagRoles,
 			),
 		),
+		disgobot.WithEventManagerConfigOpts(
+			disgobot.WithAsyncEventsEnabled(),
+		),
 	)
 	if err != nil {
 		return fmt.Errorf("could not set up bot: %w", err)
@@ -82,10 +85,10 @@ func run() error {
 			}()
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceJoin) {
-			go func() { updateRole <- struct{}{} }()
+			updateRole <- struct{}{}
 		}),
 		disgobot.NewListenerFunc(func(e *events.GuildVoiceLeave) {
-			go func() { updateRole <- struct{}{} }()
+			updateRole <- struct{}{}
 		}))
 	go func() {
 		ticker := time.NewTicker(time.Minute)
