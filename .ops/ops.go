@@ -23,7 +23,7 @@ var secrets = map[string]string{
 
 func main() {
 	if len(os.Args) < 2 {
-		os.Args = append(os.Args, "build")
+		os.Args = append(os.Args, "check")
 	}
 	github.Repo = "lesiwlabs/discord"
 	github.Secrets = secrets

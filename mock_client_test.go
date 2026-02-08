@@ -4,6 +4,12 @@ package main
 
 import (
 	"context"
+	slog "log/slog"
+	"runtime"
+	"sync"
+	"testing"
+	"unsafe"
+
 	bot "github.com/disgoorg/disgo/bot"
 	cache "github.com/disgoorg/disgo/cache"
 	gateway "github.com/disgoorg/disgo/gateway"
@@ -12,74 +18,69 @@ import (
 	sharding "github.com/disgoorg/disgo/sharding"
 	voice "github.com/disgoorg/disgo/voice"
 	snowflake "github.com/disgoorg/snowflake/v2"
-	slog "log/slog"
-	"runtime"
-	"sync"
-	"testing"
-	"unsafe"
 )
 
 var _client = new(sync.Map)
 
 type _clientData struct {
-	mutex sync.Mutex
-	once sync.Once
-	AddEventListenersMocks []func(listeners ...bot.EventListener)
-	AddEventListenersCalls []_client_AddEventListeners_Call
-	ApplicationIDMocks []func() snowflake.ID
-	ApplicationIDCalls []_client_ApplicationID_Call
-	CachesMocks []func() cache.Caches
-	CachesCalls []_client_Caches_Call
-	CloseMocks []func(ctx context.Context)
-	CloseCalls []_client_Close_Call
-	EventManagerMocks []func() bot.EventManager
-	EventManagerCalls []_client_EventManager_Call
-	GatewayMocks []func() gateway.Gateway
-	GatewayCalls []_client_Gateway_Call
-	HTTPServerMocks []func() httpserver.Server
-	HTTPServerCalls []_client_HTTPServer_Call
-	HasGatewayMocks []func() bool
-	HasGatewayCalls []_client_HasGateway_Call
-	HasHTTPServerMocks []func() bool
-	HasHTTPServerCalls []_client_HasHTTPServer_Call
-	HasShardManagerMocks []func() bool
-	HasShardManagerCalls []_client_HasShardManager_Call
-	IDMocks []func() snowflake.ID
-	IDCalls []_client_ID_Call
-	LoggerMocks []func() *slog.Logger
-	LoggerCalls []_client_Logger_Call
-	MemberChunkingManagerMocks []func() bot.MemberChunkingManager
-	MemberChunkingManagerCalls []_client_MemberChunkingManager_Call
-	OpenGatewayMocks []func(ctx context.Context) error
-	OpenGatewayCalls []_client_OpenGateway_Call
-	OpenHTTPServerMocks []func() error
-	OpenHTTPServerCalls []_client_OpenHTTPServer_Call
-	OpenShardManagerMocks []func(ctx context.Context) error
-	OpenShardManagerCalls []_client_OpenShardManager_Call
-	RemoveEventListenersMocks []func(listeners ...bot.EventListener)
-	RemoveEventListenersCalls []_client_RemoveEventListeners_Call
-	RequestMembersMocks []func(ctx context.Context, guildID snowflake.ID, presence bool, nonce string, userIDs ...snowflake.ID) error
-	RequestMembersCalls []_client_RequestMembers_Call
+	mutex                        sync.Mutex
+	once                         sync.Once
+	AddEventListenersMocks       []func(listeners ...bot.EventListener)
+	AddEventListenersCalls       []_client_AddEventListeners_Call
+	ApplicationIDMocks           []func() snowflake.ID
+	ApplicationIDCalls           []_client_ApplicationID_Call
+	CachesMocks                  []func() cache.Caches
+	CachesCalls                  []_client_Caches_Call
+	CloseMocks                   []func(ctx context.Context)
+	CloseCalls                   []_client_Close_Call
+	EventManagerMocks            []func() bot.EventManager
+	EventManagerCalls            []_client_EventManager_Call
+	GatewayMocks                 []func() gateway.Gateway
+	GatewayCalls                 []_client_Gateway_Call
+	HTTPServerMocks              []func() httpserver.Server
+	HTTPServerCalls              []_client_HTTPServer_Call
+	HasGatewayMocks              []func() bool
+	HasGatewayCalls              []_client_HasGateway_Call
+	HasHTTPServerMocks           []func() bool
+	HasHTTPServerCalls           []_client_HasHTTPServer_Call
+	HasShardManagerMocks         []func() bool
+	HasShardManagerCalls         []_client_HasShardManager_Call
+	IDMocks                      []func() snowflake.ID
+	IDCalls                      []_client_ID_Call
+	LoggerMocks                  []func() *slog.Logger
+	LoggerCalls                  []_client_Logger_Call
+	MemberChunkingManagerMocks   []func() bot.MemberChunkingManager
+	MemberChunkingManagerCalls   []_client_MemberChunkingManager_Call
+	OpenGatewayMocks             []func(ctx context.Context) error
+	OpenGatewayCalls             []_client_OpenGateway_Call
+	OpenHTTPServerMocks          []func() error
+	OpenHTTPServerCalls          []_client_OpenHTTPServer_Call
+	OpenShardManagerMocks        []func(ctx context.Context) error
+	OpenShardManagerCalls        []_client_OpenShardManager_Call
+	RemoveEventListenersMocks    []func(listeners ...bot.EventListener)
+	RemoveEventListenersCalls    []_client_RemoveEventListeners_Call
+	RequestMembersMocks          []func(ctx context.Context, guildID snowflake.ID, presence bool, nonce string, userIDs ...snowflake.ID) error
+	RequestMembersCalls          []_client_RequestMembers_Call
 	RequestMembersWithQueryMocks []func(ctx context.Context, guildID snowflake.ID, presence bool, nonce string, query string, limit int) error
 	RequestMembersWithQueryCalls []_client_RequestMembersWithQuery_Call
 	RequestSoundboardSoundsMocks []func(ctx context.Context, guildIDs ...snowflake.ID) error
 	RequestSoundboardSoundsCalls []_client_RequestSoundboardSounds_Call
-	RestMocks []func() rest.Rest
-	RestCalls []_client_Rest_Call
-	SetPresenceMocks []func(ctx context.Context, opts ...gateway.PresenceOpt) error
-	SetPresenceCalls []_client_SetPresence_Call
-	SetPresenceForShardMocks []func(ctx context.Context, shardId int, opts ...gateway.PresenceOpt) error
-	SetPresenceForShardCalls []_client_SetPresenceForShard_Call
-	ShardMocks []func(guildID snowflake.ID) (gateway.Gateway, error)
-	ShardCalls []_client_Shard_Call
-	ShardManagerMocks []func() sharding.ShardManager
-	ShardManagerCalls []_client_ShardManager_Call
-	TokenMocks []func() string
-	TokenCalls []_client_Token_Call
-	UpdateVoiceStateMocks []func(ctx context.Context, guildID snowflake.ID, channelID *snowflake.ID, selfMute bool, selfDeaf bool) error
-	UpdateVoiceStateCalls []_client_UpdateVoiceState_Call
-	VoiceManagerMocks []func() voice.Manager
-	VoiceManagerCalls []_client_VoiceManager_Call
+	RestMocks                    []func() rest.Rest
+	RestCalls                    []_client_Rest_Call
+	SetPresenceMocks             []func(ctx context.Context, opts ...gateway.PresenceOpt) error
+	SetPresenceCalls             []_client_SetPresence_Call
+	SetPresenceForShardMocks     []func(ctx context.Context, shardId int, opts ...gateway.PresenceOpt) error
+	SetPresenceForShardCalls     []_client_SetPresenceForShard_Call
+	ShardMocks                   []func(guildID snowflake.ID) (gateway.Gateway, error)
+	ShardCalls                   []_client_Shard_Call
+	ShardManagerMocks            []func() sharding.ShardManager
+	ShardManagerCalls            []_client_ShardManager_Call
+	TokenMocks                   []func() string
+	TokenCalls                   []_client_Token_Call
+	UpdateVoiceStateMocks        []func(ctx context.Context, guildID snowflake.ID, channelID *snowflake.ID, selfMute bool, selfDeaf bool) error
+	UpdateVoiceStateCalls        []_client_UpdateVoiceState_Call
+	VoiceManagerMocks            []func() voice.Manager
+	VoiceManagerCalls            []_client_VoiceManager_Call
 }
 
 func _clientPtrData(t *client) *_clientData {
@@ -89,7 +90,7 @@ func _clientPtrData(t *client) *_clientData {
 	}
 	val, loaded := _client.LoadOrStore(ptr, new(_clientData))
 	if !loaded && t != nil {
-		val.(*_clientData).once.Do(func() { runtime.SetFinalizer(t, func(_ *client) { _client.Delete(ptr) })})
+		val.(*_clientData).once.Do(func() { runtime.SetFinalizer(t, func(_ *client) { _client.Delete(ptr) }) })
 	}
 	return val.(*_clientData)
 }
@@ -97,24 +98,24 @@ func _clientPtrData(t *client) *_clientData {
 type _client_AddEventListeners_Call struct {
 	Listeners []bot.EventListener
 }
-type _client_ApplicationID_Call struct {}
-type _client_Caches_Call struct {}
+type _client_ApplicationID_Call struct{}
+type _client_Caches_Call struct{}
 type _client_Close_Call struct {
 	Ctx context.Context
 }
-type _client_EventManager_Call struct {}
-type _client_Gateway_Call struct {}
-type _client_HTTPServer_Call struct {}
-type _client_HasGateway_Call struct {}
-type _client_HasHTTPServer_Call struct {}
-type _client_HasShardManager_Call struct {}
-type _client_ID_Call struct {}
-type _client_Logger_Call struct {}
-type _client_MemberChunkingManager_Call struct {}
+type _client_EventManager_Call struct{}
+type _client_Gateway_Call struct{}
+type _client_HTTPServer_Call struct{}
+type _client_HasGateway_Call struct{}
+type _client_HasHTTPServer_Call struct{}
+type _client_HasShardManager_Call struct{}
+type _client_ID_Call struct{}
+type _client_Logger_Call struct{}
+type _client_MemberChunkingManager_Call struct{}
 type _client_OpenGateway_Call struct {
 	Ctx context.Context
 }
-type _client_OpenHTTPServer_Call struct {}
+type _client_OpenHTTPServer_Call struct{}
 type _client_OpenShardManager_Call struct {
 	Ctx context.Context
 }
@@ -122,47 +123,47 @@ type _client_RemoveEventListeners_Call struct {
 	Listeners []bot.EventListener
 }
 type _client_RequestMembers_Call struct {
-	Ctx context.Context
-	GuildID snowflake.ID
+	Ctx      context.Context
+	GuildID  snowflake.ID
 	Presence bool
-	Nonce string
-	UserIDs []snowflake.ID
+	Nonce    string
+	UserIDs  []snowflake.ID
 }
 type _client_RequestMembersWithQuery_Call struct {
-	Ctx context.Context
-	GuildID snowflake.ID
+	Ctx      context.Context
+	GuildID  snowflake.ID
 	Presence bool
-	Nonce string
-	Query string
-	Limit int
+	Nonce    string
+	Query    string
+	Limit    int
 }
 type _client_RequestSoundboardSounds_Call struct {
-	Ctx context.Context
+	Ctx      context.Context
 	GuildIDs []snowflake.ID
 }
-type _client_Rest_Call struct {}
+type _client_Rest_Call struct{}
 type _client_SetPresence_Call struct {
-	Ctx context.Context
+	Ctx  context.Context
 	Opts []gateway.PresenceOpt
 }
 type _client_SetPresenceForShard_Call struct {
-	Ctx context.Context
+	Ctx     context.Context
 	ShardId int
-	Opts []gateway.PresenceOpt
+	Opts    []gateway.PresenceOpt
 }
 type _client_Shard_Call struct {
 	GuildID snowflake.ID
 }
-type _client_ShardManager_Call struct {}
-type _client_Token_Call struct {}
+type _client_ShardManager_Call struct{}
+type _client_Token_Call struct{}
 type _client_UpdateVoiceState_Call struct {
-	Ctx context.Context
-	GuildID snowflake.ID
+	Ctx       context.Context
+	GuildID   snowflake.ID
 	ChannelID *snowflake.ID
-	SelfMute bool
-	SelfDeaf bool
+	SelfMute  bool
+	SelfDeaf  bool
 }
-type _client_VoiceManager_Call struct {}
+type _client_VoiceManager_Call struct{}
 
 func (_recv *client) AddEventListeners(listeners ...bot.EventListener) {
 	if _recv == nil {
@@ -174,7 +175,7 @@ func (_recv *client) AddEventListeners(listeners ...bot.EventListener) {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.AddEventListenersCalls = append(_all.AddEventListenersCalls, _client_AddEventListeners_Call{listeners})
-	var _fn func(...bot.EventListener) ()
+	var _fn func(...bot.EventListener)
 	if len(_dat.AddEventListenersMocks) > 0 {
 		_fn = _dat.AddEventListenersMocks[0]
 		if len(_dat.AddEventListenersMocks) > 1 {
@@ -193,7 +194,7 @@ func (_recv *client) AddEventListeners(listeners ...bot.EventListener) {
 	_fn(listeners...)
 }
 
-func (_recv *client) _AddEventListeners_Do(fn func(...bot.EventListener) ()) {
+func (_recv *client) _AddEventListeners_Do(fn func(...bot.EventListener)) {
 	if _recv == nil {
 		panic("client.AddEventListeners: nil pointer receiver")
 	}
@@ -201,9 +202,9 @@ func (_recv *client) _AddEventListeners_Do(fn func(...bot.EventListener) ()) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddEventListenersMocks = []func(...bot.EventListener) (){}
+		_dat.AddEventListenersMocks = []func(...bot.EventListener){}
 	} else if len(_dat.AddEventListenersMocks) < 2 {
-		_dat.AddEventListenersMocks = []func(...bot.EventListener) (){fn, fn}
+		_dat.AddEventListenersMocks = []func(...bot.EventListener){fn, fn}
 	} else {
 		_dat.AddEventListenersMocks = _dat.AddEventListenersMocks[:len(_dat.AddEventListenersMocks)-1]
 		_dat.AddEventListenersMocks = append(_dat.AddEventListenersMocks, fn)
@@ -211,14 +212,14 @@ func (_recv *client) _AddEventListeners_Do(fn func(...bot.EventListener) ()) {
 	}
 }
 
-func (client) _AddEventListeners_DoAll(t *testing.T, fn func(...bot.EventListener) ()) {
+func (client) _AddEventListeners_DoAll(t *testing.T, fn func(...bot.EventListener)) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddEventListenersMocks = []func(...bot.EventListener) (){}
+		_dat.AddEventListenersMocks = []func(...bot.EventListener){}
 	} else if len(_dat.AddEventListenersMocks) < 2 {
-		_dat.AddEventListenersMocks = []func(...bot.EventListener) (){fn, fn}
+		_dat.AddEventListenersMocks = []func(...bot.EventListener){fn, fn}
 	} else {
 		_dat.AddEventListenersMocks = _dat.AddEventListenersMocks[:len(_dat.AddEventListenersMocks)-1]
 		_dat.AddEventListenersMocks = append(_dat.AddEventListenersMocks, fn)
@@ -228,26 +229,26 @@ func (client) _AddEventListeners_DoAll(t *testing.T, fn func(...bot.EventListene
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.AddEventListenersMocks = []func(...bot.EventListener) (){}
+			_dat.AddEventListenersMocks = []func(...bot.EventListener){}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *client) _AddEventListeners_Stub() {
-	_recv._AddEventListeners_Do(func(...bot.EventListener) () { return })
+	_recv._AddEventListeners_Do(func(...bot.EventListener) { return })
 }
 
 func (client) _AddEventListeners_StubAll(t *testing.T) {
-	new(client)._AddEventListeners_DoAll(t, func(...bot.EventListener) () { return })
+	new(client)._AddEventListeners_DoAll(t, func(...bot.EventListener) { return })
 }
 
 func (_recv *client) _AddEventListeners_Return() {
-	_recv._AddEventListeners_Do(func(...bot.EventListener) () { return  })
+	_recv._AddEventListeners_Do(func(...bot.EventListener) { return })
 }
 
-func (client) _AddEventListeners_ReturnAll(t *testing.T, ) {
-	new(client)._AddEventListeners_DoAll(t, func(...bot.EventListener) () { return  })
+func (client) _AddEventListeners_ReturnAll(t *testing.T) {
+	new(client)._AddEventListeners_DoAll(t, func(...bot.EventListener) { return })
 }
 
 func (_recv *client) _AddEventListeners_Calls() []_client_AddEventListeners_Call {
@@ -279,7 +280,6 @@ func (client) _AddEventListeners_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) ApplicationID() snowflake.ID {
 	if _recv == nil {
 		panic("client.ApplicationID: nil pointer receiver")
@@ -290,7 +290,7 @@ func (_recv *client) ApplicationID() snowflake.ID {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.ApplicationIDCalls = append(_all.ApplicationIDCalls, _client_ApplicationID_Call{})
-	var _fn func() (snowflake.ID)
+	var _fn func() snowflake.ID
 	if len(_dat.ApplicationIDMocks) > 0 {
 		_fn = _dat.ApplicationIDMocks[0]
 		if len(_dat.ApplicationIDMocks) > 1 {
@@ -309,7 +309,7 @@ func (_recv *client) ApplicationID() snowflake.ID {
 	return _fn()
 }
 
-func (_recv *client) _ApplicationID_Do(fn func() (snowflake.ID)) {
+func (_recv *client) _ApplicationID_Do(fn func() snowflake.ID) {
 	if _recv == nil {
 		panic("client.ApplicationID: nil pointer receiver")
 	}
@@ -317,9 +317,9 @@ func (_recv *client) _ApplicationID_Do(fn func() (snowflake.ID)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.ApplicationIDMocks = []func() (snowflake.ID){}
+		_dat.ApplicationIDMocks = []func() snowflake.ID{}
 	} else if len(_dat.ApplicationIDMocks) < 2 {
-		_dat.ApplicationIDMocks = []func() (snowflake.ID){fn, fn}
+		_dat.ApplicationIDMocks = []func() snowflake.ID{fn, fn}
 	} else {
 		_dat.ApplicationIDMocks = _dat.ApplicationIDMocks[:len(_dat.ApplicationIDMocks)-1]
 		_dat.ApplicationIDMocks = append(_dat.ApplicationIDMocks, fn)
@@ -327,14 +327,14 @@ func (_recv *client) _ApplicationID_Do(fn func() (snowflake.ID)) {
 	}
 }
 
-func (client) _ApplicationID_DoAll(t *testing.T, fn func() (snowflake.ID)) {
+func (client) _ApplicationID_DoAll(t *testing.T, fn func() snowflake.ID) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.ApplicationIDMocks = []func() (snowflake.ID){}
+		_dat.ApplicationIDMocks = []func() snowflake.ID{}
 	} else if len(_dat.ApplicationIDMocks) < 2 {
-		_dat.ApplicationIDMocks = []func() (snowflake.ID){fn, fn}
+		_dat.ApplicationIDMocks = []func() snowflake.ID{fn, fn}
 	} else {
 		_dat.ApplicationIDMocks = _dat.ApplicationIDMocks[:len(_dat.ApplicationIDMocks)-1]
 		_dat.ApplicationIDMocks = append(_dat.ApplicationIDMocks, fn)
@@ -344,7 +344,7 @@ func (client) _ApplicationID_DoAll(t *testing.T, fn func() (snowflake.ID)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.ApplicationIDMocks = []func() (snowflake.ID){}
+			_dat.ApplicationIDMocks = []func() snowflake.ID{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -359,11 +359,11 @@ func (client) _ApplicationID_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _ApplicationID_Return(r0 snowflake.ID) {
-	_recv._ApplicationID_Do(func() (snowflake.ID) { return r0 })
+	_recv._ApplicationID_Do(func() snowflake.ID { return r0 })
 }
 
 func (client) _ApplicationID_ReturnAll(t *testing.T, r0 snowflake.ID) {
-	new(client)._ApplicationID_DoAll(t, func() (snowflake.ID) { return r0 })
+	new(client)._ApplicationID_DoAll(t, func() snowflake.ID { return r0 })
 }
 
 func (_recv *client) _ApplicationID_Calls() []_client_ApplicationID_Call {
@@ -395,7 +395,6 @@ func (client) _ApplicationID_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) Caches() cache.Caches {
 	if _recv == nil {
 		panic("client.Caches: nil pointer receiver")
@@ -406,7 +405,7 @@ func (_recv *client) Caches() cache.Caches {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.CachesCalls = append(_all.CachesCalls, _client_Caches_Call{})
-	var _fn func() (cache.Caches)
+	var _fn func() cache.Caches
 	if len(_dat.CachesMocks) > 0 {
 		_fn = _dat.CachesMocks[0]
 		if len(_dat.CachesMocks) > 1 {
@@ -425,7 +424,7 @@ func (_recv *client) Caches() cache.Caches {
 	return _fn()
 }
 
-func (_recv *client) _Caches_Do(fn func() (cache.Caches)) {
+func (_recv *client) _Caches_Do(fn func() cache.Caches) {
 	if _recv == nil {
 		panic("client.Caches: nil pointer receiver")
 	}
@@ -433,9 +432,9 @@ func (_recv *client) _Caches_Do(fn func() (cache.Caches)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CachesMocks = []func() (cache.Caches){}
+		_dat.CachesMocks = []func() cache.Caches{}
 	} else if len(_dat.CachesMocks) < 2 {
-		_dat.CachesMocks = []func() (cache.Caches){fn, fn}
+		_dat.CachesMocks = []func() cache.Caches{fn, fn}
 	} else {
 		_dat.CachesMocks = _dat.CachesMocks[:len(_dat.CachesMocks)-1]
 		_dat.CachesMocks = append(_dat.CachesMocks, fn)
@@ -443,14 +442,14 @@ func (_recv *client) _Caches_Do(fn func() (cache.Caches)) {
 	}
 }
 
-func (client) _Caches_DoAll(t *testing.T, fn func() (cache.Caches)) {
+func (client) _Caches_DoAll(t *testing.T, fn func() cache.Caches) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CachesMocks = []func() (cache.Caches){}
+		_dat.CachesMocks = []func() cache.Caches{}
 	} else if len(_dat.CachesMocks) < 2 {
-		_dat.CachesMocks = []func() (cache.Caches){fn, fn}
+		_dat.CachesMocks = []func() cache.Caches{fn, fn}
 	} else {
 		_dat.CachesMocks = _dat.CachesMocks[:len(_dat.CachesMocks)-1]
 		_dat.CachesMocks = append(_dat.CachesMocks, fn)
@@ -460,7 +459,7 @@ func (client) _Caches_DoAll(t *testing.T, fn func() (cache.Caches)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.CachesMocks = []func() (cache.Caches){}
+			_dat.CachesMocks = []func() cache.Caches{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -475,11 +474,11 @@ func (client) _Caches_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _Caches_Return(r0 cache.Caches) {
-	_recv._Caches_Do(func() (cache.Caches) { return r0 })
+	_recv._Caches_Do(func() cache.Caches { return r0 })
 }
 
 func (client) _Caches_ReturnAll(t *testing.T, r0 cache.Caches) {
-	new(client)._Caches_DoAll(t, func() (cache.Caches) { return r0 })
+	new(client)._Caches_DoAll(t, func() cache.Caches { return r0 })
 }
 
 func (_recv *client) _Caches_Calls() []_client_Caches_Call {
@@ -511,7 +510,6 @@ func (client) _Caches_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) Close(ctx context.Context) {
 	if _recv == nil {
 		panic("client.Close: nil pointer receiver")
@@ -522,7 +520,7 @@ func (_recv *client) Close(ctx context.Context) {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.CloseCalls = append(_all.CloseCalls, _client_Close_Call{ctx})
-	var _fn func(context.Context) ()
+	var _fn func(context.Context)
 	if len(_dat.CloseMocks) > 0 {
 		_fn = _dat.CloseMocks[0]
 		if len(_dat.CloseMocks) > 1 {
@@ -541,7 +539,7 @@ func (_recv *client) Close(ctx context.Context) {
 	_fn(ctx)
 }
 
-func (_recv *client) _Close_Do(fn func(context.Context) ()) {
+func (_recv *client) _Close_Do(fn func(context.Context)) {
 	if _recv == nil {
 		panic("client.Close: nil pointer receiver")
 	}
@@ -549,9 +547,9 @@ func (_recv *client) _Close_Do(fn func(context.Context) ()) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CloseMocks = []func(context.Context) (){}
+		_dat.CloseMocks = []func(context.Context){}
 	} else if len(_dat.CloseMocks) < 2 {
-		_dat.CloseMocks = []func(context.Context) (){fn, fn}
+		_dat.CloseMocks = []func(context.Context){fn, fn}
 	} else {
 		_dat.CloseMocks = _dat.CloseMocks[:len(_dat.CloseMocks)-1]
 		_dat.CloseMocks = append(_dat.CloseMocks, fn)
@@ -559,14 +557,14 @@ func (_recv *client) _Close_Do(fn func(context.Context) ()) {
 	}
 }
 
-func (client) _Close_DoAll(t *testing.T, fn func(context.Context) ()) {
+func (client) _Close_DoAll(t *testing.T, fn func(context.Context)) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CloseMocks = []func(context.Context) (){}
+		_dat.CloseMocks = []func(context.Context){}
 	} else if len(_dat.CloseMocks) < 2 {
-		_dat.CloseMocks = []func(context.Context) (){fn, fn}
+		_dat.CloseMocks = []func(context.Context){fn, fn}
 	} else {
 		_dat.CloseMocks = _dat.CloseMocks[:len(_dat.CloseMocks)-1]
 		_dat.CloseMocks = append(_dat.CloseMocks, fn)
@@ -576,26 +574,26 @@ func (client) _Close_DoAll(t *testing.T, fn func(context.Context) ()) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.CloseMocks = []func(context.Context) (){}
+			_dat.CloseMocks = []func(context.Context){}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *client) _Close_Stub() {
-	_recv._Close_Do(func(context.Context) () { return })
+	_recv._Close_Do(func(context.Context) { return })
 }
 
 func (client) _Close_StubAll(t *testing.T) {
-	new(client)._Close_DoAll(t, func(context.Context) () { return })
+	new(client)._Close_DoAll(t, func(context.Context) { return })
 }
 
 func (_recv *client) _Close_Return() {
-	_recv._Close_Do(func(context.Context) () { return  })
+	_recv._Close_Do(func(context.Context) { return })
 }
 
-func (client) _Close_ReturnAll(t *testing.T, ) {
-	new(client)._Close_DoAll(t, func(context.Context) () { return  })
+func (client) _Close_ReturnAll(t *testing.T) {
+	new(client)._Close_DoAll(t, func(context.Context) { return })
 }
 
 func (_recv *client) _Close_Calls() []_client_Close_Call {
@@ -627,7 +625,6 @@ func (client) _Close_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) EventManager() bot.EventManager {
 	if _recv == nil {
 		panic("client.EventManager: nil pointer receiver")
@@ -638,7 +635,7 @@ func (_recv *client) EventManager() bot.EventManager {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.EventManagerCalls = append(_all.EventManagerCalls, _client_EventManager_Call{})
-	var _fn func() (bot.EventManager)
+	var _fn func() bot.EventManager
 	if len(_dat.EventManagerMocks) > 0 {
 		_fn = _dat.EventManagerMocks[0]
 		if len(_dat.EventManagerMocks) > 1 {
@@ -657,7 +654,7 @@ func (_recv *client) EventManager() bot.EventManager {
 	return _fn()
 }
 
-func (_recv *client) _EventManager_Do(fn func() (bot.EventManager)) {
+func (_recv *client) _EventManager_Do(fn func() bot.EventManager) {
 	if _recv == nil {
 		panic("client.EventManager: nil pointer receiver")
 	}
@@ -665,9 +662,9 @@ func (_recv *client) _EventManager_Do(fn func() (bot.EventManager)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.EventManagerMocks = []func() (bot.EventManager){}
+		_dat.EventManagerMocks = []func() bot.EventManager{}
 	} else if len(_dat.EventManagerMocks) < 2 {
-		_dat.EventManagerMocks = []func() (bot.EventManager){fn, fn}
+		_dat.EventManagerMocks = []func() bot.EventManager{fn, fn}
 	} else {
 		_dat.EventManagerMocks = _dat.EventManagerMocks[:len(_dat.EventManagerMocks)-1]
 		_dat.EventManagerMocks = append(_dat.EventManagerMocks, fn)
@@ -675,14 +672,14 @@ func (_recv *client) _EventManager_Do(fn func() (bot.EventManager)) {
 	}
 }
 
-func (client) _EventManager_DoAll(t *testing.T, fn func() (bot.EventManager)) {
+func (client) _EventManager_DoAll(t *testing.T, fn func() bot.EventManager) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.EventManagerMocks = []func() (bot.EventManager){}
+		_dat.EventManagerMocks = []func() bot.EventManager{}
 	} else if len(_dat.EventManagerMocks) < 2 {
-		_dat.EventManagerMocks = []func() (bot.EventManager){fn, fn}
+		_dat.EventManagerMocks = []func() bot.EventManager{fn, fn}
 	} else {
 		_dat.EventManagerMocks = _dat.EventManagerMocks[:len(_dat.EventManagerMocks)-1]
 		_dat.EventManagerMocks = append(_dat.EventManagerMocks, fn)
@@ -692,7 +689,7 @@ func (client) _EventManager_DoAll(t *testing.T, fn func() (bot.EventManager)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.EventManagerMocks = []func() (bot.EventManager){}
+			_dat.EventManagerMocks = []func() bot.EventManager{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -707,11 +704,11 @@ func (client) _EventManager_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _EventManager_Return(r0 bot.EventManager) {
-	_recv._EventManager_Do(func() (bot.EventManager) { return r0 })
+	_recv._EventManager_Do(func() bot.EventManager { return r0 })
 }
 
 func (client) _EventManager_ReturnAll(t *testing.T, r0 bot.EventManager) {
-	new(client)._EventManager_DoAll(t, func() (bot.EventManager) { return r0 })
+	new(client)._EventManager_DoAll(t, func() bot.EventManager { return r0 })
 }
 
 func (_recv *client) _EventManager_Calls() []_client_EventManager_Call {
@@ -743,7 +740,6 @@ func (client) _EventManager_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) Gateway() gateway.Gateway {
 	if _recv == nil {
 		panic("client.Gateway: nil pointer receiver")
@@ -754,7 +750,7 @@ func (_recv *client) Gateway() gateway.Gateway {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.GatewayCalls = append(_all.GatewayCalls, _client_Gateway_Call{})
-	var _fn func() (gateway.Gateway)
+	var _fn func() gateway.Gateway
 	if len(_dat.GatewayMocks) > 0 {
 		_fn = _dat.GatewayMocks[0]
 		if len(_dat.GatewayMocks) > 1 {
@@ -773,7 +769,7 @@ func (_recv *client) Gateway() gateway.Gateway {
 	return _fn()
 }
 
-func (_recv *client) _Gateway_Do(fn func() (gateway.Gateway)) {
+func (_recv *client) _Gateway_Do(fn func() gateway.Gateway) {
 	if _recv == nil {
 		panic("client.Gateway: nil pointer receiver")
 	}
@@ -781,9 +777,9 @@ func (_recv *client) _Gateway_Do(fn func() (gateway.Gateway)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GatewayMocks = []func() (gateway.Gateway){}
+		_dat.GatewayMocks = []func() gateway.Gateway{}
 	} else if len(_dat.GatewayMocks) < 2 {
-		_dat.GatewayMocks = []func() (gateway.Gateway){fn, fn}
+		_dat.GatewayMocks = []func() gateway.Gateway{fn, fn}
 	} else {
 		_dat.GatewayMocks = _dat.GatewayMocks[:len(_dat.GatewayMocks)-1]
 		_dat.GatewayMocks = append(_dat.GatewayMocks, fn)
@@ -791,14 +787,14 @@ func (_recv *client) _Gateway_Do(fn func() (gateway.Gateway)) {
 	}
 }
 
-func (client) _Gateway_DoAll(t *testing.T, fn func() (gateway.Gateway)) {
+func (client) _Gateway_DoAll(t *testing.T, fn func() gateway.Gateway) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GatewayMocks = []func() (gateway.Gateway){}
+		_dat.GatewayMocks = []func() gateway.Gateway{}
 	} else if len(_dat.GatewayMocks) < 2 {
-		_dat.GatewayMocks = []func() (gateway.Gateway){fn, fn}
+		_dat.GatewayMocks = []func() gateway.Gateway{fn, fn}
 	} else {
 		_dat.GatewayMocks = _dat.GatewayMocks[:len(_dat.GatewayMocks)-1]
 		_dat.GatewayMocks = append(_dat.GatewayMocks, fn)
@@ -808,7 +804,7 @@ func (client) _Gateway_DoAll(t *testing.T, fn func() (gateway.Gateway)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GatewayMocks = []func() (gateway.Gateway){}
+			_dat.GatewayMocks = []func() gateway.Gateway{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -823,11 +819,11 @@ func (client) _Gateway_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _Gateway_Return(r0 gateway.Gateway) {
-	_recv._Gateway_Do(func() (gateway.Gateway) { return r0 })
+	_recv._Gateway_Do(func() gateway.Gateway { return r0 })
 }
 
 func (client) _Gateway_ReturnAll(t *testing.T, r0 gateway.Gateway) {
-	new(client)._Gateway_DoAll(t, func() (gateway.Gateway) { return r0 })
+	new(client)._Gateway_DoAll(t, func() gateway.Gateway { return r0 })
 }
 
 func (_recv *client) _Gateway_Calls() []_client_Gateway_Call {
@@ -859,7 +855,6 @@ func (client) _Gateway_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) HTTPServer() httpserver.Server {
 	if _recv == nil {
 		panic("client.HTTPServer: nil pointer receiver")
@@ -870,7 +865,7 @@ func (_recv *client) HTTPServer() httpserver.Server {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.HTTPServerCalls = append(_all.HTTPServerCalls, _client_HTTPServer_Call{})
-	var _fn func() (httpserver.Server)
+	var _fn func() httpserver.Server
 	if len(_dat.HTTPServerMocks) > 0 {
 		_fn = _dat.HTTPServerMocks[0]
 		if len(_dat.HTTPServerMocks) > 1 {
@@ -889,7 +884,7 @@ func (_recv *client) HTTPServer() httpserver.Server {
 	return _fn()
 }
 
-func (_recv *client) _HTTPServer_Do(fn func() (httpserver.Server)) {
+func (_recv *client) _HTTPServer_Do(fn func() httpserver.Server) {
 	if _recv == nil {
 		panic("client.HTTPServer: nil pointer receiver")
 	}
@@ -897,9 +892,9 @@ func (_recv *client) _HTTPServer_Do(fn func() (httpserver.Server)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HTTPServerMocks = []func() (httpserver.Server){}
+		_dat.HTTPServerMocks = []func() httpserver.Server{}
 	} else if len(_dat.HTTPServerMocks) < 2 {
-		_dat.HTTPServerMocks = []func() (httpserver.Server){fn, fn}
+		_dat.HTTPServerMocks = []func() httpserver.Server{fn, fn}
 	} else {
 		_dat.HTTPServerMocks = _dat.HTTPServerMocks[:len(_dat.HTTPServerMocks)-1]
 		_dat.HTTPServerMocks = append(_dat.HTTPServerMocks, fn)
@@ -907,14 +902,14 @@ func (_recv *client) _HTTPServer_Do(fn func() (httpserver.Server)) {
 	}
 }
 
-func (client) _HTTPServer_DoAll(t *testing.T, fn func() (httpserver.Server)) {
+func (client) _HTTPServer_DoAll(t *testing.T, fn func() httpserver.Server) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HTTPServerMocks = []func() (httpserver.Server){}
+		_dat.HTTPServerMocks = []func() httpserver.Server{}
 	} else if len(_dat.HTTPServerMocks) < 2 {
-		_dat.HTTPServerMocks = []func() (httpserver.Server){fn, fn}
+		_dat.HTTPServerMocks = []func() httpserver.Server{fn, fn}
 	} else {
 		_dat.HTTPServerMocks = _dat.HTTPServerMocks[:len(_dat.HTTPServerMocks)-1]
 		_dat.HTTPServerMocks = append(_dat.HTTPServerMocks, fn)
@@ -924,7 +919,7 @@ func (client) _HTTPServer_DoAll(t *testing.T, fn func() (httpserver.Server)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.HTTPServerMocks = []func() (httpserver.Server){}
+			_dat.HTTPServerMocks = []func() httpserver.Server{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -939,11 +934,11 @@ func (client) _HTTPServer_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _HTTPServer_Return(r0 httpserver.Server) {
-	_recv._HTTPServer_Do(func() (httpserver.Server) { return r0 })
+	_recv._HTTPServer_Do(func() httpserver.Server { return r0 })
 }
 
 func (client) _HTTPServer_ReturnAll(t *testing.T, r0 httpserver.Server) {
-	new(client)._HTTPServer_DoAll(t, func() (httpserver.Server) { return r0 })
+	new(client)._HTTPServer_DoAll(t, func() httpserver.Server { return r0 })
 }
 
 func (_recv *client) _HTTPServer_Calls() []_client_HTTPServer_Call {
@@ -975,7 +970,6 @@ func (client) _HTTPServer_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) HasGateway() bool {
 	if _recv == nil {
 		panic("client.HasGateway: nil pointer receiver")
@@ -986,7 +980,7 @@ func (_recv *client) HasGateway() bool {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.HasGatewayCalls = append(_all.HasGatewayCalls, _client_HasGateway_Call{})
-	var _fn func() (bool)
+	var _fn func() bool
 	if len(_dat.HasGatewayMocks) > 0 {
 		_fn = _dat.HasGatewayMocks[0]
 		if len(_dat.HasGatewayMocks) > 1 {
@@ -1005,7 +999,7 @@ func (_recv *client) HasGateway() bool {
 	return _fn()
 }
 
-func (_recv *client) _HasGateway_Do(fn func() (bool)) {
+func (_recv *client) _HasGateway_Do(fn func() bool) {
 	if _recv == nil {
 		panic("client.HasGateway: nil pointer receiver")
 	}
@@ -1013,9 +1007,9 @@ func (_recv *client) _HasGateway_Do(fn func() (bool)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HasGatewayMocks = []func() (bool){}
+		_dat.HasGatewayMocks = []func() bool{}
 	} else if len(_dat.HasGatewayMocks) < 2 {
-		_dat.HasGatewayMocks = []func() (bool){fn, fn}
+		_dat.HasGatewayMocks = []func() bool{fn, fn}
 	} else {
 		_dat.HasGatewayMocks = _dat.HasGatewayMocks[:len(_dat.HasGatewayMocks)-1]
 		_dat.HasGatewayMocks = append(_dat.HasGatewayMocks, fn)
@@ -1023,14 +1017,14 @@ func (_recv *client) _HasGateway_Do(fn func() (bool)) {
 	}
 }
 
-func (client) _HasGateway_DoAll(t *testing.T, fn func() (bool)) {
+func (client) _HasGateway_DoAll(t *testing.T, fn func() bool) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HasGatewayMocks = []func() (bool){}
+		_dat.HasGatewayMocks = []func() bool{}
 	} else if len(_dat.HasGatewayMocks) < 2 {
-		_dat.HasGatewayMocks = []func() (bool){fn, fn}
+		_dat.HasGatewayMocks = []func() bool{fn, fn}
 	} else {
 		_dat.HasGatewayMocks = _dat.HasGatewayMocks[:len(_dat.HasGatewayMocks)-1]
 		_dat.HasGatewayMocks = append(_dat.HasGatewayMocks, fn)
@@ -1040,7 +1034,7 @@ func (client) _HasGateway_DoAll(t *testing.T, fn func() (bool)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.HasGatewayMocks = []func() (bool){}
+			_dat.HasGatewayMocks = []func() bool{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1055,11 +1049,11 @@ func (client) _HasGateway_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _HasGateway_Return(r0 bool) {
-	_recv._HasGateway_Do(func() (bool) { return r0 })
+	_recv._HasGateway_Do(func() bool { return r0 })
 }
 
 func (client) _HasGateway_ReturnAll(t *testing.T, r0 bool) {
-	new(client)._HasGateway_DoAll(t, func() (bool) { return r0 })
+	new(client)._HasGateway_DoAll(t, func() bool { return r0 })
 }
 
 func (_recv *client) _HasGateway_Calls() []_client_HasGateway_Call {
@@ -1091,7 +1085,6 @@ func (client) _HasGateway_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) HasHTTPServer() bool {
 	if _recv == nil {
 		panic("client.HasHTTPServer: nil pointer receiver")
@@ -1102,7 +1095,7 @@ func (_recv *client) HasHTTPServer() bool {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.HasHTTPServerCalls = append(_all.HasHTTPServerCalls, _client_HasHTTPServer_Call{})
-	var _fn func() (bool)
+	var _fn func() bool
 	if len(_dat.HasHTTPServerMocks) > 0 {
 		_fn = _dat.HasHTTPServerMocks[0]
 		if len(_dat.HasHTTPServerMocks) > 1 {
@@ -1121,7 +1114,7 @@ func (_recv *client) HasHTTPServer() bool {
 	return _fn()
 }
 
-func (_recv *client) _HasHTTPServer_Do(fn func() (bool)) {
+func (_recv *client) _HasHTTPServer_Do(fn func() bool) {
 	if _recv == nil {
 		panic("client.HasHTTPServer: nil pointer receiver")
 	}
@@ -1129,9 +1122,9 @@ func (_recv *client) _HasHTTPServer_Do(fn func() (bool)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HasHTTPServerMocks = []func() (bool){}
+		_dat.HasHTTPServerMocks = []func() bool{}
 	} else if len(_dat.HasHTTPServerMocks) < 2 {
-		_dat.HasHTTPServerMocks = []func() (bool){fn, fn}
+		_dat.HasHTTPServerMocks = []func() bool{fn, fn}
 	} else {
 		_dat.HasHTTPServerMocks = _dat.HasHTTPServerMocks[:len(_dat.HasHTTPServerMocks)-1]
 		_dat.HasHTTPServerMocks = append(_dat.HasHTTPServerMocks, fn)
@@ -1139,14 +1132,14 @@ func (_recv *client) _HasHTTPServer_Do(fn func() (bool)) {
 	}
 }
 
-func (client) _HasHTTPServer_DoAll(t *testing.T, fn func() (bool)) {
+func (client) _HasHTTPServer_DoAll(t *testing.T, fn func() bool) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HasHTTPServerMocks = []func() (bool){}
+		_dat.HasHTTPServerMocks = []func() bool{}
 	} else if len(_dat.HasHTTPServerMocks) < 2 {
-		_dat.HasHTTPServerMocks = []func() (bool){fn, fn}
+		_dat.HasHTTPServerMocks = []func() bool{fn, fn}
 	} else {
 		_dat.HasHTTPServerMocks = _dat.HasHTTPServerMocks[:len(_dat.HasHTTPServerMocks)-1]
 		_dat.HasHTTPServerMocks = append(_dat.HasHTTPServerMocks, fn)
@@ -1156,7 +1149,7 @@ func (client) _HasHTTPServer_DoAll(t *testing.T, fn func() (bool)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.HasHTTPServerMocks = []func() (bool){}
+			_dat.HasHTTPServerMocks = []func() bool{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1171,11 +1164,11 @@ func (client) _HasHTTPServer_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _HasHTTPServer_Return(r0 bool) {
-	_recv._HasHTTPServer_Do(func() (bool) { return r0 })
+	_recv._HasHTTPServer_Do(func() bool { return r0 })
 }
 
 func (client) _HasHTTPServer_ReturnAll(t *testing.T, r0 bool) {
-	new(client)._HasHTTPServer_DoAll(t, func() (bool) { return r0 })
+	new(client)._HasHTTPServer_DoAll(t, func() bool { return r0 })
 }
 
 func (_recv *client) _HasHTTPServer_Calls() []_client_HasHTTPServer_Call {
@@ -1207,7 +1200,6 @@ func (client) _HasHTTPServer_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) HasShardManager() bool {
 	if _recv == nil {
 		panic("client.HasShardManager: nil pointer receiver")
@@ -1218,7 +1210,7 @@ func (_recv *client) HasShardManager() bool {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.HasShardManagerCalls = append(_all.HasShardManagerCalls, _client_HasShardManager_Call{})
-	var _fn func() (bool)
+	var _fn func() bool
 	if len(_dat.HasShardManagerMocks) > 0 {
 		_fn = _dat.HasShardManagerMocks[0]
 		if len(_dat.HasShardManagerMocks) > 1 {
@@ -1237,7 +1229,7 @@ func (_recv *client) HasShardManager() bool {
 	return _fn()
 }
 
-func (_recv *client) _HasShardManager_Do(fn func() (bool)) {
+func (_recv *client) _HasShardManager_Do(fn func() bool) {
 	if _recv == nil {
 		panic("client.HasShardManager: nil pointer receiver")
 	}
@@ -1245,9 +1237,9 @@ func (_recv *client) _HasShardManager_Do(fn func() (bool)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HasShardManagerMocks = []func() (bool){}
+		_dat.HasShardManagerMocks = []func() bool{}
 	} else if len(_dat.HasShardManagerMocks) < 2 {
-		_dat.HasShardManagerMocks = []func() (bool){fn, fn}
+		_dat.HasShardManagerMocks = []func() bool{fn, fn}
 	} else {
 		_dat.HasShardManagerMocks = _dat.HasShardManagerMocks[:len(_dat.HasShardManagerMocks)-1]
 		_dat.HasShardManagerMocks = append(_dat.HasShardManagerMocks, fn)
@@ -1255,14 +1247,14 @@ func (_recv *client) _HasShardManager_Do(fn func() (bool)) {
 	}
 }
 
-func (client) _HasShardManager_DoAll(t *testing.T, fn func() (bool)) {
+func (client) _HasShardManager_DoAll(t *testing.T, fn func() bool) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HasShardManagerMocks = []func() (bool){}
+		_dat.HasShardManagerMocks = []func() bool{}
 	} else if len(_dat.HasShardManagerMocks) < 2 {
-		_dat.HasShardManagerMocks = []func() (bool){fn, fn}
+		_dat.HasShardManagerMocks = []func() bool{fn, fn}
 	} else {
 		_dat.HasShardManagerMocks = _dat.HasShardManagerMocks[:len(_dat.HasShardManagerMocks)-1]
 		_dat.HasShardManagerMocks = append(_dat.HasShardManagerMocks, fn)
@@ -1272,7 +1264,7 @@ func (client) _HasShardManager_DoAll(t *testing.T, fn func() (bool)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.HasShardManagerMocks = []func() (bool){}
+			_dat.HasShardManagerMocks = []func() bool{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1287,11 +1279,11 @@ func (client) _HasShardManager_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _HasShardManager_Return(r0 bool) {
-	_recv._HasShardManager_Do(func() (bool) { return r0 })
+	_recv._HasShardManager_Do(func() bool { return r0 })
 }
 
 func (client) _HasShardManager_ReturnAll(t *testing.T, r0 bool) {
-	new(client)._HasShardManager_DoAll(t, func() (bool) { return r0 })
+	new(client)._HasShardManager_DoAll(t, func() bool { return r0 })
 }
 
 func (_recv *client) _HasShardManager_Calls() []_client_HasShardManager_Call {
@@ -1323,7 +1315,6 @@ func (client) _HasShardManager_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) ID() snowflake.ID {
 	if _recv == nil {
 		panic("client.ID: nil pointer receiver")
@@ -1334,7 +1325,7 @@ func (_recv *client) ID() snowflake.ID {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.IDCalls = append(_all.IDCalls, _client_ID_Call{})
-	var _fn func() (snowflake.ID)
+	var _fn func() snowflake.ID
 	if len(_dat.IDMocks) > 0 {
 		_fn = _dat.IDMocks[0]
 		if len(_dat.IDMocks) > 1 {
@@ -1353,7 +1344,7 @@ func (_recv *client) ID() snowflake.ID {
 	return _fn()
 }
 
-func (_recv *client) _ID_Do(fn func() (snowflake.ID)) {
+func (_recv *client) _ID_Do(fn func() snowflake.ID) {
 	if _recv == nil {
 		panic("client.ID: nil pointer receiver")
 	}
@@ -1361,9 +1352,9 @@ func (_recv *client) _ID_Do(fn func() (snowflake.ID)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.IDMocks = []func() (snowflake.ID){}
+		_dat.IDMocks = []func() snowflake.ID{}
 	} else if len(_dat.IDMocks) < 2 {
-		_dat.IDMocks = []func() (snowflake.ID){fn, fn}
+		_dat.IDMocks = []func() snowflake.ID{fn, fn}
 	} else {
 		_dat.IDMocks = _dat.IDMocks[:len(_dat.IDMocks)-1]
 		_dat.IDMocks = append(_dat.IDMocks, fn)
@@ -1371,14 +1362,14 @@ func (_recv *client) _ID_Do(fn func() (snowflake.ID)) {
 	}
 }
 
-func (client) _ID_DoAll(t *testing.T, fn func() (snowflake.ID)) {
+func (client) _ID_DoAll(t *testing.T, fn func() snowflake.ID) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.IDMocks = []func() (snowflake.ID){}
+		_dat.IDMocks = []func() snowflake.ID{}
 	} else if len(_dat.IDMocks) < 2 {
-		_dat.IDMocks = []func() (snowflake.ID){fn, fn}
+		_dat.IDMocks = []func() snowflake.ID{fn, fn}
 	} else {
 		_dat.IDMocks = _dat.IDMocks[:len(_dat.IDMocks)-1]
 		_dat.IDMocks = append(_dat.IDMocks, fn)
@@ -1388,7 +1379,7 @@ func (client) _ID_DoAll(t *testing.T, fn func() (snowflake.ID)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.IDMocks = []func() (snowflake.ID){}
+			_dat.IDMocks = []func() snowflake.ID{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1403,11 +1394,11 @@ func (client) _ID_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _ID_Return(r0 snowflake.ID) {
-	_recv._ID_Do(func() (snowflake.ID) { return r0 })
+	_recv._ID_Do(func() snowflake.ID { return r0 })
 }
 
 func (client) _ID_ReturnAll(t *testing.T, r0 snowflake.ID) {
-	new(client)._ID_DoAll(t, func() (snowflake.ID) { return r0 })
+	new(client)._ID_DoAll(t, func() snowflake.ID { return r0 })
 }
 
 func (_recv *client) _ID_Calls() []_client_ID_Call {
@@ -1439,7 +1430,6 @@ func (client) _ID_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) Logger() *slog.Logger {
 	if _recv == nil {
 		panic("client.Logger: nil pointer receiver")
@@ -1450,7 +1440,7 @@ func (_recv *client) Logger() *slog.Logger {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.LoggerCalls = append(_all.LoggerCalls, _client_Logger_Call{})
-	var _fn func() (*slog.Logger)
+	var _fn func() *slog.Logger
 	if len(_dat.LoggerMocks) > 0 {
 		_fn = _dat.LoggerMocks[0]
 		if len(_dat.LoggerMocks) > 1 {
@@ -1469,7 +1459,7 @@ func (_recv *client) Logger() *slog.Logger {
 	return _fn()
 }
 
-func (_recv *client) _Logger_Do(fn func() (*slog.Logger)) {
+func (_recv *client) _Logger_Do(fn func() *slog.Logger) {
 	if _recv == nil {
 		panic("client.Logger: nil pointer receiver")
 	}
@@ -1477,9 +1467,9 @@ func (_recv *client) _Logger_Do(fn func() (*slog.Logger)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.LoggerMocks = []func() (*slog.Logger){}
+		_dat.LoggerMocks = []func() *slog.Logger{}
 	} else if len(_dat.LoggerMocks) < 2 {
-		_dat.LoggerMocks = []func() (*slog.Logger){fn, fn}
+		_dat.LoggerMocks = []func() *slog.Logger{fn, fn}
 	} else {
 		_dat.LoggerMocks = _dat.LoggerMocks[:len(_dat.LoggerMocks)-1]
 		_dat.LoggerMocks = append(_dat.LoggerMocks, fn)
@@ -1487,14 +1477,14 @@ func (_recv *client) _Logger_Do(fn func() (*slog.Logger)) {
 	}
 }
 
-func (client) _Logger_DoAll(t *testing.T, fn func() (*slog.Logger)) {
+func (client) _Logger_DoAll(t *testing.T, fn func() *slog.Logger) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.LoggerMocks = []func() (*slog.Logger){}
+		_dat.LoggerMocks = []func() *slog.Logger{}
 	} else if len(_dat.LoggerMocks) < 2 {
-		_dat.LoggerMocks = []func() (*slog.Logger){fn, fn}
+		_dat.LoggerMocks = []func() *slog.Logger{fn, fn}
 	} else {
 		_dat.LoggerMocks = _dat.LoggerMocks[:len(_dat.LoggerMocks)-1]
 		_dat.LoggerMocks = append(_dat.LoggerMocks, fn)
@@ -1504,7 +1494,7 @@ func (client) _Logger_DoAll(t *testing.T, fn func() (*slog.Logger)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.LoggerMocks = []func() (*slog.Logger){}
+			_dat.LoggerMocks = []func() *slog.Logger{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1519,11 +1509,11 @@ func (client) _Logger_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _Logger_Return(r0 *slog.Logger) {
-	_recv._Logger_Do(func() (*slog.Logger) { return r0 })
+	_recv._Logger_Do(func() *slog.Logger { return r0 })
 }
 
 func (client) _Logger_ReturnAll(t *testing.T, r0 *slog.Logger) {
-	new(client)._Logger_DoAll(t, func() (*slog.Logger) { return r0 })
+	new(client)._Logger_DoAll(t, func() *slog.Logger { return r0 })
 }
 
 func (_recv *client) _Logger_Calls() []_client_Logger_Call {
@@ -1555,7 +1545,6 @@ func (client) _Logger_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) MemberChunkingManager() bot.MemberChunkingManager {
 	if _recv == nil {
 		panic("client.MemberChunkingManager: nil pointer receiver")
@@ -1566,7 +1555,7 @@ func (_recv *client) MemberChunkingManager() bot.MemberChunkingManager {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.MemberChunkingManagerCalls = append(_all.MemberChunkingManagerCalls, _client_MemberChunkingManager_Call{})
-	var _fn func() (bot.MemberChunkingManager)
+	var _fn func() bot.MemberChunkingManager
 	if len(_dat.MemberChunkingManagerMocks) > 0 {
 		_fn = _dat.MemberChunkingManagerMocks[0]
 		if len(_dat.MemberChunkingManagerMocks) > 1 {
@@ -1585,7 +1574,7 @@ func (_recv *client) MemberChunkingManager() bot.MemberChunkingManager {
 	return _fn()
 }
 
-func (_recv *client) _MemberChunkingManager_Do(fn func() (bot.MemberChunkingManager)) {
+func (_recv *client) _MemberChunkingManager_Do(fn func() bot.MemberChunkingManager) {
 	if _recv == nil {
 		panic("client.MemberChunkingManager: nil pointer receiver")
 	}
@@ -1593,9 +1582,9 @@ func (_recv *client) _MemberChunkingManager_Do(fn func() (bot.MemberChunkingMana
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.MemberChunkingManagerMocks = []func() (bot.MemberChunkingManager){}
+		_dat.MemberChunkingManagerMocks = []func() bot.MemberChunkingManager{}
 	} else if len(_dat.MemberChunkingManagerMocks) < 2 {
-		_dat.MemberChunkingManagerMocks = []func() (bot.MemberChunkingManager){fn, fn}
+		_dat.MemberChunkingManagerMocks = []func() bot.MemberChunkingManager{fn, fn}
 	} else {
 		_dat.MemberChunkingManagerMocks = _dat.MemberChunkingManagerMocks[:len(_dat.MemberChunkingManagerMocks)-1]
 		_dat.MemberChunkingManagerMocks = append(_dat.MemberChunkingManagerMocks, fn)
@@ -1603,14 +1592,14 @@ func (_recv *client) _MemberChunkingManager_Do(fn func() (bot.MemberChunkingMana
 	}
 }
 
-func (client) _MemberChunkingManager_DoAll(t *testing.T, fn func() (bot.MemberChunkingManager)) {
+func (client) _MemberChunkingManager_DoAll(t *testing.T, fn func() bot.MemberChunkingManager) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.MemberChunkingManagerMocks = []func() (bot.MemberChunkingManager){}
+		_dat.MemberChunkingManagerMocks = []func() bot.MemberChunkingManager{}
 	} else if len(_dat.MemberChunkingManagerMocks) < 2 {
-		_dat.MemberChunkingManagerMocks = []func() (bot.MemberChunkingManager){fn, fn}
+		_dat.MemberChunkingManagerMocks = []func() bot.MemberChunkingManager{fn, fn}
 	} else {
 		_dat.MemberChunkingManagerMocks = _dat.MemberChunkingManagerMocks[:len(_dat.MemberChunkingManagerMocks)-1]
 		_dat.MemberChunkingManagerMocks = append(_dat.MemberChunkingManagerMocks, fn)
@@ -1620,7 +1609,7 @@ func (client) _MemberChunkingManager_DoAll(t *testing.T, fn func() (bot.MemberCh
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.MemberChunkingManagerMocks = []func() (bot.MemberChunkingManager){}
+			_dat.MemberChunkingManagerMocks = []func() bot.MemberChunkingManager{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1635,11 +1624,11 @@ func (client) _MemberChunkingManager_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _MemberChunkingManager_Return(r0 bot.MemberChunkingManager) {
-	_recv._MemberChunkingManager_Do(func() (bot.MemberChunkingManager) { return r0 })
+	_recv._MemberChunkingManager_Do(func() bot.MemberChunkingManager { return r0 })
 }
 
 func (client) _MemberChunkingManager_ReturnAll(t *testing.T, r0 bot.MemberChunkingManager) {
-	new(client)._MemberChunkingManager_DoAll(t, func() (bot.MemberChunkingManager) { return r0 })
+	new(client)._MemberChunkingManager_DoAll(t, func() bot.MemberChunkingManager { return r0 })
 }
 
 func (_recv *client) _MemberChunkingManager_Calls() []_client_MemberChunkingManager_Call {
@@ -1671,7 +1660,6 @@ func (client) _MemberChunkingManager_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) OpenGateway(ctx context.Context) error {
 	if _recv == nil {
 		panic("client.OpenGateway: nil pointer receiver")
@@ -1682,7 +1670,7 @@ func (_recv *client) OpenGateway(ctx context.Context) error {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.OpenGatewayCalls = append(_all.OpenGatewayCalls, _client_OpenGateway_Call{ctx})
-	var _fn func(context.Context) (error)
+	var _fn func(context.Context) error
 	if len(_dat.OpenGatewayMocks) > 0 {
 		_fn = _dat.OpenGatewayMocks[0]
 		if len(_dat.OpenGatewayMocks) > 1 {
@@ -1701,7 +1689,7 @@ func (_recv *client) OpenGateway(ctx context.Context) error {
 	return _fn(ctx)
 }
 
-func (_recv *client) _OpenGateway_Do(fn func(context.Context) (error)) {
+func (_recv *client) _OpenGateway_Do(fn func(context.Context) error) {
 	if _recv == nil {
 		panic("client.OpenGateway: nil pointer receiver")
 	}
@@ -1709,9 +1697,9 @@ func (_recv *client) _OpenGateway_Do(fn func(context.Context) (error)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.OpenGatewayMocks = []func(context.Context) (error){}
+		_dat.OpenGatewayMocks = []func(context.Context) error{}
 	} else if len(_dat.OpenGatewayMocks) < 2 {
-		_dat.OpenGatewayMocks = []func(context.Context) (error){fn, fn}
+		_dat.OpenGatewayMocks = []func(context.Context) error{fn, fn}
 	} else {
 		_dat.OpenGatewayMocks = _dat.OpenGatewayMocks[:len(_dat.OpenGatewayMocks)-1]
 		_dat.OpenGatewayMocks = append(_dat.OpenGatewayMocks, fn)
@@ -1719,14 +1707,14 @@ func (_recv *client) _OpenGateway_Do(fn func(context.Context) (error)) {
 	}
 }
 
-func (client) _OpenGateway_DoAll(t *testing.T, fn func(context.Context) (error)) {
+func (client) _OpenGateway_DoAll(t *testing.T, fn func(context.Context) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.OpenGatewayMocks = []func(context.Context) (error){}
+		_dat.OpenGatewayMocks = []func(context.Context) error{}
 	} else if len(_dat.OpenGatewayMocks) < 2 {
-		_dat.OpenGatewayMocks = []func(context.Context) (error){fn, fn}
+		_dat.OpenGatewayMocks = []func(context.Context) error{fn, fn}
 	} else {
 		_dat.OpenGatewayMocks = _dat.OpenGatewayMocks[:len(_dat.OpenGatewayMocks)-1]
 		_dat.OpenGatewayMocks = append(_dat.OpenGatewayMocks, fn)
@@ -1736,7 +1724,7 @@ func (client) _OpenGateway_DoAll(t *testing.T, fn func(context.Context) (error))
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.OpenGatewayMocks = []func(context.Context) (error){}
+			_dat.OpenGatewayMocks = []func(context.Context) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1751,11 +1739,11 @@ func (client) _OpenGateway_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _OpenGateway_Return(r0 error) {
-	_recv._OpenGateway_Do(func(context.Context) (error) { return r0 })
+	_recv._OpenGateway_Do(func(context.Context) error { return r0 })
 }
 
 func (client) _OpenGateway_ReturnAll(t *testing.T, r0 error) {
-	new(client)._OpenGateway_DoAll(t, func(context.Context) (error) { return r0 })
+	new(client)._OpenGateway_DoAll(t, func(context.Context) error { return r0 })
 }
 
 func (_recv *client) _OpenGateway_Calls() []_client_OpenGateway_Call {
@@ -1787,7 +1775,6 @@ func (client) _OpenGateway_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) OpenHTTPServer() error {
 	if _recv == nil {
 		panic("client.OpenHTTPServer: nil pointer receiver")
@@ -1798,7 +1785,7 @@ func (_recv *client) OpenHTTPServer() error {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.OpenHTTPServerCalls = append(_all.OpenHTTPServerCalls, _client_OpenHTTPServer_Call{})
-	var _fn func() (error)
+	var _fn func() error
 	if len(_dat.OpenHTTPServerMocks) > 0 {
 		_fn = _dat.OpenHTTPServerMocks[0]
 		if len(_dat.OpenHTTPServerMocks) > 1 {
@@ -1817,7 +1804,7 @@ func (_recv *client) OpenHTTPServer() error {
 	return _fn()
 }
 
-func (_recv *client) _OpenHTTPServer_Do(fn func() (error)) {
+func (_recv *client) _OpenHTTPServer_Do(fn func() error) {
 	if _recv == nil {
 		panic("client.OpenHTTPServer: nil pointer receiver")
 	}
@@ -1825,9 +1812,9 @@ func (_recv *client) _OpenHTTPServer_Do(fn func() (error)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.OpenHTTPServerMocks = []func() (error){}
+		_dat.OpenHTTPServerMocks = []func() error{}
 	} else if len(_dat.OpenHTTPServerMocks) < 2 {
-		_dat.OpenHTTPServerMocks = []func() (error){fn, fn}
+		_dat.OpenHTTPServerMocks = []func() error{fn, fn}
 	} else {
 		_dat.OpenHTTPServerMocks = _dat.OpenHTTPServerMocks[:len(_dat.OpenHTTPServerMocks)-1]
 		_dat.OpenHTTPServerMocks = append(_dat.OpenHTTPServerMocks, fn)
@@ -1835,14 +1822,14 @@ func (_recv *client) _OpenHTTPServer_Do(fn func() (error)) {
 	}
 }
 
-func (client) _OpenHTTPServer_DoAll(t *testing.T, fn func() (error)) {
+func (client) _OpenHTTPServer_DoAll(t *testing.T, fn func() error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.OpenHTTPServerMocks = []func() (error){}
+		_dat.OpenHTTPServerMocks = []func() error{}
 	} else if len(_dat.OpenHTTPServerMocks) < 2 {
-		_dat.OpenHTTPServerMocks = []func() (error){fn, fn}
+		_dat.OpenHTTPServerMocks = []func() error{fn, fn}
 	} else {
 		_dat.OpenHTTPServerMocks = _dat.OpenHTTPServerMocks[:len(_dat.OpenHTTPServerMocks)-1]
 		_dat.OpenHTTPServerMocks = append(_dat.OpenHTTPServerMocks, fn)
@@ -1852,7 +1839,7 @@ func (client) _OpenHTTPServer_DoAll(t *testing.T, fn func() (error)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.OpenHTTPServerMocks = []func() (error){}
+			_dat.OpenHTTPServerMocks = []func() error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1867,11 +1854,11 @@ func (client) _OpenHTTPServer_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _OpenHTTPServer_Return(r0 error) {
-	_recv._OpenHTTPServer_Do(func() (error) { return r0 })
+	_recv._OpenHTTPServer_Do(func() error { return r0 })
 }
 
 func (client) _OpenHTTPServer_ReturnAll(t *testing.T, r0 error) {
-	new(client)._OpenHTTPServer_DoAll(t, func() (error) { return r0 })
+	new(client)._OpenHTTPServer_DoAll(t, func() error { return r0 })
 }
 
 func (_recv *client) _OpenHTTPServer_Calls() []_client_OpenHTTPServer_Call {
@@ -1903,7 +1890,6 @@ func (client) _OpenHTTPServer_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) OpenShardManager(ctx context.Context) error {
 	if _recv == nil {
 		panic("client.OpenShardManager: nil pointer receiver")
@@ -1914,7 +1900,7 @@ func (_recv *client) OpenShardManager(ctx context.Context) error {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.OpenShardManagerCalls = append(_all.OpenShardManagerCalls, _client_OpenShardManager_Call{ctx})
-	var _fn func(context.Context) (error)
+	var _fn func(context.Context) error
 	if len(_dat.OpenShardManagerMocks) > 0 {
 		_fn = _dat.OpenShardManagerMocks[0]
 		if len(_dat.OpenShardManagerMocks) > 1 {
@@ -1933,7 +1919,7 @@ func (_recv *client) OpenShardManager(ctx context.Context) error {
 	return _fn(ctx)
 }
 
-func (_recv *client) _OpenShardManager_Do(fn func(context.Context) (error)) {
+func (_recv *client) _OpenShardManager_Do(fn func(context.Context) error) {
 	if _recv == nil {
 		panic("client.OpenShardManager: nil pointer receiver")
 	}
@@ -1941,9 +1927,9 @@ func (_recv *client) _OpenShardManager_Do(fn func(context.Context) (error)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.OpenShardManagerMocks = []func(context.Context) (error){}
+		_dat.OpenShardManagerMocks = []func(context.Context) error{}
 	} else if len(_dat.OpenShardManagerMocks) < 2 {
-		_dat.OpenShardManagerMocks = []func(context.Context) (error){fn, fn}
+		_dat.OpenShardManagerMocks = []func(context.Context) error{fn, fn}
 	} else {
 		_dat.OpenShardManagerMocks = _dat.OpenShardManagerMocks[:len(_dat.OpenShardManagerMocks)-1]
 		_dat.OpenShardManagerMocks = append(_dat.OpenShardManagerMocks, fn)
@@ -1951,14 +1937,14 @@ func (_recv *client) _OpenShardManager_Do(fn func(context.Context) (error)) {
 	}
 }
 
-func (client) _OpenShardManager_DoAll(t *testing.T, fn func(context.Context) (error)) {
+func (client) _OpenShardManager_DoAll(t *testing.T, fn func(context.Context) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.OpenShardManagerMocks = []func(context.Context) (error){}
+		_dat.OpenShardManagerMocks = []func(context.Context) error{}
 	} else if len(_dat.OpenShardManagerMocks) < 2 {
-		_dat.OpenShardManagerMocks = []func(context.Context) (error){fn, fn}
+		_dat.OpenShardManagerMocks = []func(context.Context) error{fn, fn}
 	} else {
 		_dat.OpenShardManagerMocks = _dat.OpenShardManagerMocks[:len(_dat.OpenShardManagerMocks)-1]
 		_dat.OpenShardManagerMocks = append(_dat.OpenShardManagerMocks, fn)
@@ -1968,7 +1954,7 @@ func (client) _OpenShardManager_DoAll(t *testing.T, fn func(context.Context) (er
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.OpenShardManagerMocks = []func(context.Context) (error){}
+			_dat.OpenShardManagerMocks = []func(context.Context) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1983,11 +1969,11 @@ func (client) _OpenShardManager_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _OpenShardManager_Return(r0 error) {
-	_recv._OpenShardManager_Do(func(context.Context) (error) { return r0 })
+	_recv._OpenShardManager_Do(func(context.Context) error { return r0 })
 }
 
 func (client) _OpenShardManager_ReturnAll(t *testing.T, r0 error) {
-	new(client)._OpenShardManager_DoAll(t, func(context.Context) (error) { return r0 })
+	new(client)._OpenShardManager_DoAll(t, func(context.Context) error { return r0 })
 }
 
 func (_recv *client) _OpenShardManager_Calls() []_client_OpenShardManager_Call {
@@ -2019,7 +2005,6 @@ func (client) _OpenShardManager_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) RemoveEventListeners(listeners ...bot.EventListener) {
 	if _recv == nil {
 		panic("client.RemoveEventListeners: nil pointer receiver")
@@ -2030,7 +2015,7 @@ func (_recv *client) RemoveEventListeners(listeners ...bot.EventListener) {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveEventListenersCalls = append(_all.RemoveEventListenersCalls, _client_RemoveEventListeners_Call{listeners})
-	var _fn func(...bot.EventListener) ()
+	var _fn func(...bot.EventListener)
 	if len(_dat.RemoveEventListenersMocks) > 0 {
 		_fn = _dat.RemoveEventListenersMocks[0]
 		if len(_dat.RemoveEventListenersMocks) > 1 {
@@ -2049,7 +2034,7 @@ func (_recv *client) RemoveEventListeners(listeners ...bot.EventListener) {
 	_fn(listeners...)
 }
 
-func (_recv *client) _RemoveEventListeners_Do(fn func(...bot.EventListener) ()) {
+func (_recv *client) _RemoveEventListeners_Do(fn func(...bot.EventListener)) {
 	if _recv == nil {
 		panic("client.RemoveEventListeners: nil pointer receiver")
 	}
@@ -2057,9 +2042,9 @@ func (_recv *client) _RemoveEventListeners_Do(fn func(...bot.EventListener) ()) 
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveEventListenersMocks = []func(...bot.EventListener) (){}
+		_dat.RemoveEventListenersMocks = []func(...bot.EventListener){}
 	} else if len(_dat.RemoveEventListenersMocks) < 2 {
-		_dat.RemoveEventListenersMocks = []func(...bot.EventListener) (){fn, fn}
+		_dat.RemoveEventListenersMocks = []func(...bot.EventListener){fn, fn}
 	} else {
 		_dat.RemoveEventListenersMocks = _dat.RemoveEventListenersMocks[:len(_dat.RemoveEventListenersMocks)-1]
 		_dat.RemoveEventListenersMocks = append(_dat.RemoveEventListenersMocks, fn)
@@ -2067,14 +2052,14 @@ func (_recv *client) _RemoveEventListeners_Do(fn func(...bot.EventListener) ()) 
 	}
 }
 
-func (client) _RemoveEventListeners_DoAll(t *testing.T, fn func(...bot.EventListener) ()) {
+func (client) _RemoveEventListeners_DoAll(t *testing.T, fn func(...bot.EventListener)) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveEventListenersMocks = []func(...bot.EventListener) (){}
+		_dat.RemoveEventListenersMocks = []func(...bot.EventListener){}
 	} else if len(_dat.RemoveEventListenersMocks) < 2 {
-		_dat.RemoveEventListenersMocks = []func(...bot.EventListener) (){fn, fn}
+		_dat.RemoveEventListenersMocks = []func(...bot.EventListener){fn, fn}
 	} else {
 		_dat.RemoveEventListenersMocks = _dat.RemoveEventListenersMocks[:len(_dat.RemoveEventListenersMocks)-1]
 		_dat.RemoveEventListenersMocks = append(_dat.RemoveEventListenersMocks, fn)
@@ -2084,26 +2069,26 @@ func (client) _RemoveEventListeners_DoAll(t *testing.T, fn func(...bot.EventList
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveEventListenersMocks = []func(...bot.EventListener) (){}
+			_dat.RemoveEventListenersMocks = []func(...bot.EventListener){}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *client) _RemoveEventListeners_Stub() {
-	_recv._RemoveEventListeners_Do(func(...bot.EventListener) () { return })
+	_recv._RemoveEventListeners_Do(func(...bot.EventListener) { return })
 }
 
 func (client) _RemoveEventListeners_StubAll(t *testing.T) {
-	new(client)._RemoveEventListeners_DoAll(t, func(...bot.EventListener) () { return })
+	new(client)._RemoveEventListeners_DoAll(t, func(...bot.EventListener) { return })
 }
 
 func (_recv *client) _RemoveEventListeners_Return() {
-	_recv._RemoveEventListeners_Do(func(...bot.EventListener) () { return  })
+	_recv._RemoveEventListeners_Do(func(...bot.EventListener) { return })
 }
 
-func (client) _RemoveEventListeners_ReturnAll(t *testing.T, ) {
-	new(client)._RemoveEventListeners_DoAll(t, func(...bot.EventListener) () { return  })
+func (client) _RemoveEventListeners_ReturnAll(t *testing.T) {
+	new(client)._RemoveEventListeners_DoAll(t, func(...bot.EventListener) { return })
 }
 
 func (_recv *client) _RemoveEventListeners_Calls() []_client_RemoveEventListeners_Call {
@@ -2135,7 +2120,6 @@ func (client) _RemoveEventListeners_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) RequestMembers(ctx context.Context, guildID snowflake.ID, presence bool, nonce string, userIDs ...snowflake.ID) error {
 	if _recv == nil {
 		panic("client.RequestMembers: nil pointer receiver")
@@ -2146,7 +2130,7 @@ func (_recv *client) RequestMembers(ctx context.Context, guildID snowflake.ID, p
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.RequestMembersCalls = append(_all.RequestMembersCalls, _client_RequestMembers_Call{ctx, guildID, presence, nonce, userIDs})
-	var _fn func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error)
+	var _fn func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error
 	if len(_dat.RequestMembersMocks) > 0 {
 		_fn = _dat.RequestMembersMocks[0]
 		if len(_dat.RequestMembersMocks) > 1 {
@@ -2165,7 +2149,7 @@ func (_recv *client) RequestMembers(ctx context.Context, guildID snowflake.ID, p
 	return _fn(ctx, guildID, presence, nonce, userIDs...)
 }
 
-func (_recv *client) _RequestMembers_Do(fn func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error)) {
+func (_recv *client) _RequestMembers_Do(fn func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error) {
 	if _recv == nil {
 		panic("client.RequestMembers: nil pointer receiver")
 	}
@@ -2173,9 +2157,9 @@ func (_recv *client) _RequestMembers_Do(fn func(context.Context, snowflake.ID, b
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error){}
+		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error{}
 	} else if len(_dat.RequestMembersMocks) < 2 {
-		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error){fn, fn}
+		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error{fn, fn}
 	} else {
 		_dat.RequestMembersMocks = _dat.RequestMembersMocks[:len(_dat.RequestMembersMocks)-1]
 		_dat.RequestMembersMocks = append(_dat.RequestMembersMocks, fn)
@@ -2183,14 +2167,14 @@ func (_recv *client) _RequestMembers_Do(fn func(context.Context, snowflake.ID, b
 	}
 }
 
-func (client) _RequestMembers_DoAll(t *testing.T, fn func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error)) {
+func (client) _RequestMembers_DoAll(t *testing.T, fn func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error){}
+		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error{}
 	} else if len(_dat.RequestMembersMocks) < 2 {
-		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error){fn, fn}
+		_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error{fn, fn}
 	} else {
 		_dat.RequestMembersMocks = _dat.RequestMembersMocks[:len(_dat.RequestMembersMocks)-1]
 		_dat.RequestMembersMocks = append(_dat.RequestMembersMocks, fn)
@@ -2200,7 +2184,7 @@ func (client) _RequestMembers_DoAll(t *testing.T, fn func(context.Context, snowf
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error){}
+			_dat.RequestMembersMocks = []func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2215,11 +2199,11 @@ func (client) _RequestMembers_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _RequestMembers_Return(r0 error) {
-	_recv._RequestMembers_Do(func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error) { return r0 })
+	_recv._RequestMembers_Do(func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error { return r0 })
 }
 
 func (client) _RequestMembers_ReturnAll(t *testing.T, r0 error) {
-	new(client)._RequestMembers_DoAll(t, func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) (error) { return r0 })
+	new(client)._RequestMembers_DoAll(t, func(context.Context, snowflake.ID, bool, string, ...snowflake.ID) error { return r0 })
 }
 
 func (_recv *client) _RequestMembers_Calls() []_client_RequestMembers_Call {
@@ -2251,7 +2235,6 @@ func (client) _RequestMembers_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) RequestMembersWithQuery(ctx context.Context, guildID snowflake.ID, presence bool, nonce string, query string, limit int) error {
 	if _recv == nil {
 		panic("client.RequestMembersWithQuery: nil pointer receiver")
@@ -2262,7 +2245,7 @@ func (_recv *client) RequestMembersWithQuery(ctx context.Context, guildID snowfl
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.RequestMembersWithQueryCalls = append(_all.RequestMembersWithQueryCalls, _client_RequestMembersWithQuery_Call{ctx, guildID, presence, nonce, query, limit})
-	var _fn func(context.Context, snowflake.ID, bool, string, string, int) (error)
+	var _fn func(context.Context, snowflake.ID, bool, string, string, int) error
 	if len(_dat.RequestMembersWithQueryMocks) > 0 {
 		_fn = _dat.RequestMembersWithQueryMocks[0]
 		if len(_dat.RequestMembersWithQueryMocks) > 1 {
@@ -2281,7 +2264,7 @@ func (_recv *client) RequestMembersWithQuery(ctx context.Context, guildID snowfl
 	return _fn(ctx, guildID, presence, nonce, query, limit)
 }
 
-func (_recv *client) _RequestMembersWithQuery_Do(fn func(context.Context, snowflake.ID, bool, string, string, int) (error)) {
+func (_recv *client) _RequestMembersWithQuery_Do(fn func(context.Context, snowflake.ID, bool, string, string, int) error) {
 	if _recv == nil {
 		panic("client.RequestMembersWithQuery: nil pointer receiver")
 	}
@@ -2289,9 +2272,9 @@ func (_recv *client) _RequestMembersWithQuery_Do(fn func(context.Context, snowfl
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) (error){}
+		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) error{}
 	} else if len(_dat.RequestMembersWithQueryMocks) < 2 {
-		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) (error){fn, fn}
+		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) error{fn, fn}
 	} else {
 		_dat.RequestMembersWithQueryMocks = _dat.RequestMembersWithQueryMocks[:len(_dat.RequestMembersWithQueryMocks)-1]
 		_dat.RequestMembersWithQueryMocks = append(_dat.RequestMembersWithQueryMocks, fn)
@@ -2299,14 +2282,14 @@ func (_recv *client) _RequestMembersWithQuery_Do(fn func(context.Context, snowfl
 	}
 }
 
-func (client) _RequestMembersWithQuery_DoAll(t *testing.T, fn func(context.Context, snowflake.ID, bool, string, string, int) (error)) {
+func (client) _RequestMembersWithQuery_DoAll(t *testing.T, fn func(context.Context, snowflake.ID, bool, string, string, int) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) (error){}
+		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) error{}
 	} else if len(_dat.RequestMembersWithQueryMocks) < 2 {
-		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) (error){fn, fn}
+		_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) error{fn, fn}
 	} else {
 		_dat.RequestMembersWithQueryMocks = _dat.RequestMembersWithQueryMocks[:len(_dat.RequestMembersWithQueryMocks)-1]
 		_dat.RequestMembersWithQueryMocks = append(_dat.RequestMembersWithQueryMocks, fn)
@@ -2316,7 +2299,7 @@ func (client) _RequestMembersWithQuery_DoAll(t *testing.T, fn func(context.Conte
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) (error){}
+			_dat.RequestMembersWithQueryMocks = []func(context.Context, snowflake.ID, bool, string, string, int) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2331,11 +2314,11 @@ func (client) _RequestMembersWithQuery_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _RequestMembersWithQuery_Return(r0 error) {
-	_recv._RequestMembersWithQuery_Do(func(context.Context, snowflake.ID, bool, string, string, int) (error) { return r0 })
+	_recv._RequestMembersWithQuery_Do(func(context.Context, snowflake.ID, bool, string, string, int) error { return r0 })
 }
 
 func (client) _RequestMembersWithQuery_ReturnAll(t *testing.T, r0 error) {
-	new(client)._RequestMembersWithQuery_DoAll(t, func(context.Context, snowflake.ID, bool, string, string, int) (error) { return r0 })
+	new(client)._RequestMembersWithQuery_DoAll(t, func(context.Context, snowflake.ID, bool, string, string, int) error { return r0 })
 }
 
 func (_recv *client) _RequestMembersWithQuery_Calls() []_client_RequestMembersWithQuery_Call {
@@ -2367,7 +2350,6 @@ func (client) _RequestMembersWithQuery_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) RequestSoundboardSounds(ctx context.Context, guildIDs ...snowflake.ID) error {
 	if _recv == nil {
 		panic("client.RequestSoundboardSounds: nil pointer receiver")
@@ -2378,7 +2360,7 @@ func (_recv *client) RequestSoundboardSounds(ctx context.Context, guildIDs ...sn
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.RequestSoundboardSoundsCalls = append(_all.RequestSoundboardSoundsCalls, _client_RequestSoundboardSounds_Call{ctx, guildIDs})
-	var _fn func(context.Context, ...snowflake.ID) (error)
+	var _fn func(context.Context, ...snowflake.ID) error
 	if len(_dat.RequestSoundboardSoundsMocks) > 0 {
 		_fn = _dat.RequestSoundboardSoundsMocks[0]
 		if len(_dat.RequestSoundboardSoundsMocks) > 1 {
@@ -2397,7 +2379,7 @@ func (_recv *client) RequestSoundboardSounds(ctx context.Context, guildIDs ...sn
 	return _fn(ctx, guildIDs...)
 }
 
-func (_recv *client) _RequestSoundboardSounds_Do(fn func(context.Context, ...snowflake.ID) (error)) {
+func (_recv *client) _RequestSoundboardSounds_Do(fn func(context.Context, ...snowflake.ID) error) {
 	if _recv == nil {
 		panic("client.RequestSoundboardSounds: nil pointer receiver")
 	}
@@ -2405,9 +2387,9 @@ func (_recv *client) _RequestSoundboardSounds_Do(fn func(context.Context, ...sno
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) (error){}
+		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) error{}
 	} else if len(_dat.RequestSoundboardSoundsMocks) < 2 {
-		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) (error){fn, fn}
+		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) error{fn, fn}
 	} else {
 		_dat.RequestSoundboardSoundsMocks = _dat.RequestSoundboardSoundsMocks[:len(_dat.RequestSoundboardSoundsMocks)-1]
 		_dat.RequestSoundboardSoundsMocks = append(_dat.RequestSoundboardSoundsMocks, fn)
@@ -2415,14 +2397,14 @@ func (_recv *client) _RequestSoundboardSounds_Do(fn func(context.Context, ...sno
 	}
 }
 
-func (client) _RequestSoundboardSounds_DoAll(t *testing.T, fn func(context.Context, ...snowflake.ID) (error)) {
+func (client) _RequestSoundboardSounds_DoAll(t *testing.T, fn func(context.Context, ...snowflake.ID) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) (error){}
+		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) error{}
 	} else if len(_dat.RequestSoundboardSoundsMocks) < 2 {
-		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) (error){fn, fn}
+		_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) error{fn, fn}
 	} else {
 		_dat.RequestSoundboardSoundsMocks = _dat.RequestSoundboardSoundsMocks[:len(_dat.RequestSoundboardSoundsMocks)-1]
 		_dat.RequestSoundboardSoundsMocks = append(_dat.RequestSoundboardSoundsMocks, fn)
@@ -2432,7 +2414,7 @@ func (client) _RequestSoundboardSounds_DoAll(t *testing.T, fn func(context.Conte
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) (error){}
+			_dat.RequestSoundboardSoundsMocks = []func(context.Context, ...snowflake.ID) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2447,11 +2429,11 @@ func (client) _RequestSoundboardSounds_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _RequestSoundboardSounds_Return(r0 error) {
-	_recv._RequestSoundboardSounds_Do(func(context.Context, ...snowflake.ID) (error) { return r0 })
+	_recv._RequestSoundboardSounds_Do(func(context.Context, ...snowflake.ID) error { return r0 })
 }
 
 func (client) _RequestSoundboardSounds_ReturnAll(t *testing.T, r0 error) {
-	new(client)._RequestSoundboardSounds_DoAll(t, func(context.Context, ...snowflake.ID) (error) { return r0 })
+	new(client)._RequestSoundboardSounds_DoAll(t, func(context.Context, ...snowflake.ID) error { return r0 })
 }
 
 func (_recv *client) _RequestSoundboardSounds_Calls() []_client_RequestSoundboardSounds_Call {
@@ -2483,7 +2465,6 @@ func (client) _RequestSoundboardSounds_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) Rest() rest.Rest {
 	if _recv == nil {
 		panic("client.Rest: nil pointer receiver")
@@ -2494,7 +2475,7 @@ func (_recv *client) Rest() rest.Rest {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.RestCalls = append(_all.RestCalls, _client_Rest_Call{})
-	var _fn func() (rest.Rest)
+	var _fn func() rest.Rest
 	if len(_dat.RestMocks) > 0 {
 		_fn = _dat.RestMocks[0]
 		if len(_dat.RestMocks) > 1 {
@@ -2513,7 +2494,7 @@ func (_recv *client) Rest() rest.Rest {
 	return _fn()
 }
 
-func (_recv *client) _Rest_Do(fn func() (rest.Rest)) {
+func (_recv *client) _Rest_Do(fn func() rest.Rest) {
 	if _recv == nil {
 		panic("client.Rest: nil pointer receiver")
 	}
@@ -2521,9 +2502,9 @@ func (_recv *client) _Rest_Do(fn func() (rest.Rest)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RestMocks = []func() (rest.Rest){}
+		_dat.RestMocks = []func() rest.Rest{}
 	} else if len(_dat.RestMocks) < 2 {
-		_dat.RestMocks = []func() (rest.Rest){fn, fn}
+		_dat.RestMocks = []func() rest.Rest{fn, fn}
 	} else {
 		_dat.RestMocks = _dat.RestMocks[:len(_dat.RestMocks)-1]
 		_dat.RestMocks = append(_dat.RestMocks, fn)
@@ -2531,14 +2512,14 @@ func (_recv *client) _Rest_Do(fn func() (rest.Rest)) {
 	}
 }
 
-func (client) _Rest_DoAll(t *testing.T, fn func() (rest.Rest)) {
+func (client) _Rest_DoAll(t *testing.T, fn func() rest.Rest) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RestMocks = []func() (rest.Rest){}
+		_dat.RestMocks = []func() rest.Rest{}
 	} else if len(_dat.RestMocks) < 2 {
-		_dat.RestMocks = []func() (rest.Rest){fn, fn}
+		_dat.RestMocks = []func() rest.Rest{fn, fn}
 	} else {
 		_dat.RestMocks = _dat.RestMocks[:len(_dat.RestMocks)-1]
 		_dat.RestMocks = append(_dat.RestMocks, fn)
@@ -2548,7 +2529,7 @@ func (client) _Rest_DoAll(t *testing.T, fn func() (rest.Rest)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RestMocks = []func() (rest.Rest){}
+			_dat.RestMocks = []func() rest.Rest{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2563,11 +2544,11 @@ func (client) _Rest_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _Rest_Return(r0 rest.Rest) {
-	_recv._Rest_Do(func() (rest.Rest) { return r0 })
+	_recv._Rest_Do(func() rest.Rest { return r0 })
 }
 
 func (client) _Rest_ReturnAll(t *testing.T, r0 rest.Rest) {
-	new(client)._Rest_DoAll(t, func() (rest.Rest) { return r0 })
+	new(client)._Rest_DoAll(t, func() rest.Rest { return r0 })
 }
 
 func (_recv *client) _Rest_Calls() []_client_Rest_Call {
@@ -2599,7 +2580,6 @@ func (client) _Rest_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) SetPresence(ctx context.Context, opts ...gateway.PresenceOpt) error {
 	if _recv == nil {
 		panic("client.SetPresence: nil pointer receiver")
@@ -2610,7 +2590,7 @@ func (_recv *client) SetPresence(ctx context.Context, opts ...gateway.PresenceOp
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.SetPresenceCalls = append(_all.SetPresenceCalls, _client_SetPresence_Call{ctx, opts})
-	var _fn func(context.Context, ...gateway.PresenceOpt) (error)
+	var _fn func(context.Context, ...gateway.PresenceOpt) error
 	if len(_dat.SetPresenceMocks) > 0 {
 		_fn = _dat.SetPresenceMocks[0]
 		if len(_dat.SetPresenceMocks) > 1 {
@@ -2629,7 +2609,7 @@ func (_recv *client) SetPresence(ctx context.Context, opts ...gateway.PresenceOp
 	return _fn(ctx, opts...)
 }
 
-func (_recv *client) _SetPresence_Do(fn func(context.Context, ...gateway.PresenceOpt) (error)) {
+func (_recv *client) _SetPresence_Do(fn func(context.Context, ...gateway.PresenceOpt) error) {
 	if _recv == nil {
 		panic("client.SetPresence: nil pointer receiver")
 	}
@@ -2637,9 +2617,9 @@ func (_recv *client) _SetPresence_Do(fn func(context.Context, ...gateway.Presenc
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) (error){}
+		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) error{}
 	} else if len(_dat.SetPresenceMocks) < 2 {
-		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) (error){fn, fn}
+		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) error{fn, fn}
 	} else {
 		_dat.SetPresenceMocks = _dat.SetPresenceMocks[:len(_dat.SetPresenceMocks)-1]
 		_dat.SetPresenceMocks = append(_dat.SetPresenceMocks, fn)
@@ -2647,14 +2627,14 @@ func (_recv *client) _SetPresence_Do(fn func(context.Context, ...gateway.Presenc
 	}
 }
 
-func (client) _SetPresence_DoAll(t *testing.T, fn func(context.Context, ...gateway.PresenceOpt) (error)) {
+func (client) _SetPresence_DoAll(t *testing.T, fn func(context.Context, ...gateway.PresenceOpt) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) (error){}
+		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) error{}
 	} else if len(_dat.SetPresenceMocks) < 2 {
-		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) (error){fn, fn}
+		_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) error{fn, fn}
 	} else {
 		_dat.SetPresenceMocks = _dat.SetPresenceMocks[:len(_dat.SetPresenceMocks)-1]
 		_dat.SetPresenceMocks = append(_dat.SetPresenceMocks, fn)
@@ -2664,7 +2644,7 @@ func (client) _SetPresence_DoAll(t *testing.T, fn func(context.Context, ...gatew
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) (error){}
+			_dat.SetPresenceMocks = []func(context.Context, ...gateway.PresenceOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2679,11 +2659,11 @@ func (client) _SetPresence_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _SetPresence_Return(r0 error) {
-	_recv._SetPresence_Do(func(context.Context, ...gateway.PresenceOpt) (error) { return r0 })
+	_recv._SetPresence_Do(func(context.Context, ...gateway.PresenceOpt) error { return r0 })
 }
 
 func (client) _SetPresence_ReturnAll(t *testing.T, r0 error) {
-	new(client)._SetPresence_DoAll(t, func(context.Context, ...gateway.PresenceOpt) (error) { return r0 })
+	new(client)._SetPresence_DoAll(t, func(context.Context, ...gateway.PresenceOpt) error { return r0 })
 }
 
 func (_recv *client) _SetPresence_Calls() []_client_SetPresence_Call {
@@ -2715,7 +2695,6 @@ func (client) _SetPresence_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) SetPresenceForShard(ctx context.Context, shardId int, opts ...gateway.PresenceOpt) error {
 	if _recv == nil {
 		panic("client.SetPresenceForShard: nil pointer receiver")
@@ -2726,7 +2705,7 @@ func (_recv *client) SetPresenceForShard(ctx context.Context, shardId int, opts 
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.SetPresenceForShardCalls = append(_all.SetPresenceForShardCalls, _client_SetPresenceForShard_Call{ctx, shardId, opts})
-	var _fn func(context.Context, int, ...gateway.PresenceOpt) (error)
+	var _fn func(context.Context, int, ...gateway.PresenceOpt) error
 	if len(_dat.SetPresenceForShardMocks) > 0 {
 		_fn = _dat.SetPresenceForShardMocks[0]
 		if len(_dat.SetPresenceForShardMocks) > 1 {
@@ -2745,7 +2724,7 @@ func (_recv *client) SetPresenceForShard(ctx context.Context, shardId int, opts 
 	return _fn(ctx, shardId, opts...)
 }
 
-func (_recv *client) _SetPresenceForShard_Do(fn func(context.Context, int, ...gateway.PresenceOpt) (error)) {
+func (_recv *client) _SetPresenceForShard_Do(fn func(context.Context, int, ...gateway.PresenceOpt) error) {
 	if _recv == nil {
 		panic("client.SetPresenceForShard: nil pointer receiver")
 	}
@@ -2753,9 +2732,9 @@ func (_recv *client) _SetPresenceForShard_Do(fn func(context.Context, int, ...ga
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) (error){}
+		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) error{}
 	} else if len(_dat.SetPresenceForShardMocks) < 2 {
-		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) (error){fn, fn}
+		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) error{fn, fn}
 	} else {
 		_dat.SetPresenceForShardMocks = _dat.SetPresenceForShardMocks[:len(_dat.SetPresenceForShardMocks)-1]
 		_dat.SetPresenceForShardMocks = append(_dat.SetPresenceForShardMocks, fn)
@@ -2763,14 +2742,14 @@ func (_recv *client) _SetPresenceForShard_Do(fn func(context.Context, int, ...ga
 	}
 }
 
-func (client) _SetPresenceForShard_DoAll(t *testing.T, fn func(context.Context, int, ...gateway.PresenceOpt) (error)) {
+func (client) _SetPresenceForShard_DoAll(t *testing.T, fn func(context.Context, int, ...gateway.PresenceOpt) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) (error){}
+		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) error{}
 	} else if len(_dat.SetPresenceForShardMocks) < 2 {
-		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) (error){fn, fn}
+		_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) error{fn, fn}
 	} else {
 		_dat.SetPresenceForShardMocks = _dat.SetPresenceForShardMocks[:len(_dat.SetPresenceForShardMocks)-1]
 		_dat.SetPresenceForShardMocks = append(_dat.SetPresenceForShardMocks, fn)
@@ -2780,7 +2759,7 @@ func (client) _SetPresenceForShard_DoAll(t *testing.T, fn func(context.Context, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) (error){}
+			_dat.SetPresenceForShardMocks = []func(context.Context, int, ...gateway.PresenceOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2795,11 +2774,11 @@ func (client) _SetPresenceForShard_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _SetPresenceForShard_Return(r0 error) {
-	_recv._SetPresenceForShard_Do(func(context.Context, int, ...gateway.PresenceOpt) (error) { return r0 })
+	_recv._SetPresenceForShard_Do(func(context.Context, int, ...gateway.PresenceOpt) error { return r0 })
 }
 
 func (client) _SetPresenceForShard_ReturnAll(t *testing.T, r0 error) {
-	new(client)._SetPresenceForShard_DoAll(t, func(context.Context, int, ...gateway.PresenceOpt) (error) { return r0 })
+	new(client)._SetPresenceForShard_DoAll(t, func(context.Context, int, ...gateway.PresenceOpt) error { return r0 })
 }
 
 func (_recv *client) _SetPresenceForShard_Calls() []_client_SetPresenceForShard_Call {
@@ -2830,7 +2809,6 @@ func (client) _SetPresenceForShard_BubbleCalls(t *testing.T) {
 		_dat.SetPresenceForShardCalls = []_client_SetPresenceForShard_Call{}
 	})
 }
-
 
 func (_recv *client) Shard(guildID snowflake.ID) (gateway.Gateway, error) {
 	if _recv == nil {
@@ -2947,7 +2925,6 @@ func (client) _Shard_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) ShardManager() sharding.ShardManager {
 	if _recv == nil {
 		panic("client.ShardManager: nil pointer receiver")
@@ -2958,7 +2935,7 @@ func (_recv *client) ShardManager() sharding.ShardManager {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.ShardManagerCalls = append(_all.ShardManagerCalls, _client_ShardManager_Call{})
-	var _fn func() (sharding.ShardManager)
+	var _fn func() sharding.ShardManager
 	if len(_dat.ShardManagerMocks) > 0 {
 		_fn = _dat.ShardManagerMocks[0]
 		if len(_dat.ShardManagerMocks) > 1 {
@@ -2977,7 +2954,7 @@ func (_recv *client) ShardManager() sharding.ShardManager {
 	return _fn()
 }
 
-func (_recv *client) _ShardManager_Do(fn func() (sharding.ShardManager)) {
+func (_recv *client) _ShardManager_Do(fn func() sharding.ShardManager) {
 	if _recv == nil {
 		panic("client.ShardManager: nil pointer receiver")
 	}
@@ -2985,9 +2962,9 @@ func (_recv *client) _ShardManager_Do(fn func() (sharding.ShardManager)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.ShardManagerMocks = []func() (sharding.ShardManager){}
+		_dat.ShardManagerMocks = []func() sharding.ShardManager{}
 	} else if len(_dat.ShardManagerMocks) < 2 {
-		_dat.ShardManagerMocks = []func() (sharding.ShardManager){fn, fn}
+		_dat.ShardManagerMocks = []func() sharding.ShardManager{fn, fn}
 	} else {
 		_dat.ShardManagerMocks = _dat.ShardManagerMocks[:len(_dat.ShardManagerMocks)-1]
 		_dat.ShardManagerMocks = append(_dat.ShardManagerMocks, fn)
@@ -2995,14 +2972,14 @@ func (_recv *client) _ShardManager_Do(fn func() (sharding.ShardManager)) {
 	}
 }
 
-func (client) _ShardManager_DoAll(t *testing.T, fn func() (sharding.ShardManager)) {
+func (client) _ShardManager_DoAll(t *testing.T, fn func() sharding.ShardManager) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.ShardManagerMocks = []func() (sharding.ShardManager){}
+		_dat.ShardManagerMocks = []func() sharding.ShardManager{}
 	} else if len(_dat.ShardManagerMocks) < 2 {
-		_dat.ShardManagerMocks = []func() (sharding.ShardManager){fn, fn}
+		_dat.ShardManagerMocks = []func() sharding.ShardManager{fn, fn}
 	} else {
 		_dat.ShardManagerMocks = _dat.ShardManagerMocks[:len(_dat.ShardManagerMocks)-1]
 		_dat.ShardManagerMocks = append(_dat.ShardManagerMocks, fn)
@@ -3012,7 +2989,7 @@ func (client) _ShardManager_DoAll(t *testing.T, fn func() (sharding.ShardManager
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.ShardManagerMocks = []func() (sharding.ShardManager){}
+			_dat.ShardManagerMocks = []func() sharding.ShardManager{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -3027,11 +3004,11 @@ func (client) _ShardManager_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _ShardManager_Return(r0 sharding.ShardManager) {
-	_recv._ShardManager_Do(func() (sharding.ShardManager) { return r0 })
+	_recv._ShardManager_Do(func() sharding.ShardManager { return r0 })
 }
 
 func (client) _ShardManager_ReturnAll(t *testing.T, r0 sharding.ShardManager) {
-	new(client)._ShardManager_DoAll(t, func() (sharding.ShardManager) { return r0 })
+	new(client)._ShardManager_DoAll(t, func() sharding.ShardManager { return r0 })
 }
 
 func (_recv *client) _ShardManager_Calls() []_client_ShardManager_Call {
@@ -3063,7 +3040,6 @@ func (client) _ShardManager_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) Token() string {
 	if _recv == nil {
 		panic("client.Token: nil pointer receiver")
@@ -3074,7 +3050,7 @@ func (_recv *client) Token() string {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.TokenCalls = append(_all.TokenCalls, _client_Token_Call{})
-	var _fn func() (string)
+	var _fn func() string
 	if len(_dat.TokenMocks) > 0 {
 		_fn = _dat.TokenMocks[0]
 		if len(_dat.TokenMocks) > 1 {
@@ -3093,7 +3069,7 @@ func (_recv *client) Token() string {
 	return _fn()
 }
 
-func (_recv *client) _Token_Do(fn func() (string)) {
+func (_recv *client) _Token_Do(fn func() string) {
 	if _recv == nil {
 		panic("client.Token: nil pointer receiver")
 	}
@@ -3101,9 +3077,9 @@ func (_recv *client) _Token_Do(fn func() (string)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.TokenMocks = []func() (string){}
+		_dat.TokenMocks = []func() string{}
 	} else if len(_dat.TokenMocks) < 2 {
-		_dat.TokenMocks = []func() (string){fn, fn}
+		_dat.TokenMocks = []func() string{fn, fn}
 	} else {
 		_dat.TokenMocks = _dat.TokenMocks[:len(_dat.TokenMocks)-1]
 		_dat.TokenMocks = append(_dat.TokenMocks, fn)
@@ -3111,14 +3087,14 @@ func (_recv *client) _Token_Do(fn func() (string)) {
 	}
 }
 
-func (client) _Token_DoAll(t *testing.T, fn func() (string)) {
+func (client) _Token_DoAll(t *testing.T, fn func() string) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.TokenMocks = []func() (string){}
+		_dat.TokenMocks = []func() string{}
 	} else if len(_dat.TokenMocks) < 2 {
-		_dat.TokenMocks = []func() (string){fn, fn}
+		_dat.TokenMocks = []func() string{fn, fn}
 	} else {
 		_dat.TokenMocks = _dat.TokenMocks[:len(_dat.TokenMocks)-1]
 		_dat.TokenMocks = append(_dat.TokenMocks, fn)
@@ -3128,7 +3104,7 @@ func (client) _Token_DoAll(t *testing.T, fn func() (string)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.TokenMocks = []func() (string){}
+			_dat.TokenMocks = []func() string{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -3143,11 +3119,11 @@ func (client) _Token_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _Token_Return(r0 string) {
-	_recv._Token_Do(func() (string) { return r0 })
+	_recv._Token_Do(func() string { return r0 })
 }
 
 func (client) _Token_ReturnAll(t *testing.T, r0 string) {
-	new(client)._Token_DoAll(t, func() (string) { return r0 })
+	new(client)._Token_DoAll(t, func() string { return r0 })
 }
 
 func (_recv *client) _Token_Calls() []_client_Token_Call {
@@ -3179,7 +3155,6 @@ func (client) _Token_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) UpdateVoiceState(ctx context.Context, guildID snowflake.ID, channelID *snowflake.ID, selfMute bool, selfDeaf bool) error {
 	if _recv == nil {
 		panic("client.UpdateVoiceState: nil pointer receiver")
@@ -3190,7 +3165,7 @@ func (_recv *client) UpdateVoiceState(ctx context.Context, guildID snowflake.ID,
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.UpdateVoiceStateCalls = append(_all.UpdateVoiceStateCalls, _client_UpdateVoiceState_Call{ctx, guildID, channelID, selfMute, selfDeaf})
-	var _fn func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error)
+	var _fn func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error
 	if len(_dat.UpdateVoiceStateMocks) > 0 {
 		_fn = _dat.UpdateVoiceStateMocks[0]
 		if len(_dat.UpdateVoiceStateMocks) > 1 {
@@ -3209,7 +3184,7 @@ func (_recv *client) UpdateVoiceState(ctx context.Context, guildID snowflake.ID,
 	return _fn(ctx, guildID, channelID, selfMute, selfDeaf)
 }
 
-func (_recv *client) _UpdateVoiceState_Do(fn func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error)) {
+func (_recv *client) _UpdateVoiceState_Do(fn func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error) {
 	if _recv == nil {
 		panic("client.UpdateVoiceState: nil pointer receiver")
 	}
@@ -3217,9 +3192,9 @@ func (_recv *client) _UpdateVoiceState_Do(fn func(context.Context, snowflake.ID,
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error){}
+		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error{}
 	} else if len(_dat.UpdateVoiceStateMocks) < 2 {
-		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error){fn, fn}
+		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error{fn, fn}
 	} else {
 		_dat.UpdateVoiceStateMocks = _dat.UpdateVoiceStateMocks[:len(_dat.UpdateVoiceStateMocks)-1]
 		_dat.UpdateVoiceStateMocks = append(_dat.UpdateVoiceStateMocks, fn)
@@ -3227,14 +3202,14 @@ func (_recv *client) _UpdateVoiceState_Do(fn func(context.Context, snowflake.ID,
 	}
 }
 
-func (client) _UpdateVoiceState_DoAll(t *testing.T, fn func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error)) {
+func (client) _UpdateVoiceState_DoAll(t *testing.T, fn func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error){}
+		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error{}
 	} else if len(_dat.UpdateVoiceStateMocks) < 2 {
-		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error){fn, fn}
+		_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error{fn, fn}
 	} else {
 		_dat.UpdateVoiceStateMocks = _dat.UpdateVoiceStateMocks[:len(_dat.UpdateVoiceStateMocks)-1]
 		_dat.UpdateVoiceStateMocks = append(_dat.UpdateVoiceStateMocks, fn)
@@ -3244,7 +3219,7 @@ func (client) _UpdateVoiceState_DoAll(t *testing.T, fn func(context.Context, sno
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error){}
+			_dat.UpdateVoiceStateMocks = []func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -3259,11 +3234,11 @@ func (client) _UpdateVoiceState_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _UpdateVoiceState_Return(r0 error) {
-	_recv._UpdateVoiceState_Do(func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error) { return r0 })
+	_recv._UpdateVoiceState_Do(func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error { return r0 })
 }
 
 func (client) _UpdateVoiceState_ReturnAll(t *testing.T, r0 error) {
-	new(client)._UpdateVoiceState_DoAll(t, func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) (error) { return r0 })
+	new(client)._UpdateVoiceState_DoAll(t, func(context.Context, snowflake.ID, *snowflake.ID, bool, bool) error { return r0 })
 }
 
 func (_recv *client) _UpdateVoiceState_Calls() []_client_UpdateVoiceState_Call {
@@ -3295,7 +3270,6 @@ func (client) _UpdateVoiceState_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *client) VoiceManager() voice.Manager {
 	if _recv == nil {
 		panic("client.VoiceManager: nil pointer receiver")
@@ -3306,7 +3280,7 @@ func (_recv *client) VoiceManager() voice.Manager {
 	_all := _clientPtrData(nil)
 	_all.mutex.Lock()
 	_all.VoiceManagerCalls = append(_all.VoiceManagerCalls, _client_VoiceManager_Call{})
-	var _fn func() (voice.Manager)
+	var _fn func() voice.Manager
 	if len(_dat.VoiceManagerMocks) > 0 {
 		_fn = _dat.VoiceManagerMocks[0]
 		if len(_dat.VoiceManagerMocks) > 1 {
@@ -3325,7 +3299,7 @@ func (_recv *client) VoiceManager() voice.Manager {
 	return _fn()
 }
 
-func (_recv *client) _VoiceManager_Do(fn func() (voice.Manager)) {
+func (_recv *client) _VoiceManager_Do(fn func() voice.Manager) {
 	if _recv == nil {
 		panic("client.VoiceManager: nil pointer receiver")
 	}
@@ -3333,9 +3307,9 @@ func (_recv *client) _VoiceManager_Do(fn func() (voice.Manager)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.VoiceManagerMocks = []func() (voice.Manager){}
+		_dat.VoiceManagerMocks = []func() voice.Manager{}
 	} else if len(_dat.VoiceManagerMocks) < 2 {
-		_dat.VoiceManagerMocks = []func() (voice.Manager){fn, fn}
+		_dat.VoiceManagerMocks = []func() voice.Manager{fn, fn}
 	} else {
 		_dat.VoiceManagerMocks = _dat.VoiceManagerMocks[:len(_dat.VoiceManagerMocks)-1]
 		_dat.VoiceManagerMocks = append(_dat.VoiceManagerMocks, fn)
@@ -3343,14 +3317,14 @@ func (_recv *client) _VoiceManager_Do(fn func() (voice.Manager)) {
 	}
 }
 
-func (client) _VoiceManager_DoAll(t *testing.T, fn func() (voice.Manager)) {
+func (client) _VoiceManager_DoAll(t *testing.T, fn func() voice.Manager) {
 	_dat := _clientPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.VoiceManagerMocks = []func() (voice.Manager){}
+		_dat.VoiceManagerMocks = []func() voice.Manager{}
 	} else if len(_dat.VoiceManagerMocks) < 2 {
-		_dat.VoiceManagerMocks = []func() (voice.Manager){fn, fn}
+		_dat.VoiceManagerMocks = []func() voice.Manager{fn, fn}
 	} else {
 		_dat.VoiceManagerMocks = _dat.VoiceManagerMocks[:len(_dat.VoiceManagerMocks)-1]
 		_dat.VoiceManagerMocks = append(_dat.VoiceManagerMocks, fn)
@@ -3360,7 +3334,7 @@ func (client) _VoiceManager_DoAll(t *testing.T, fn func() (voice.Manager)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.VoiceManagerMocks = []func() (voice.Manager){}
+			_dat.VoiceManagerMocks = []func() voice.Manager{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -3375,11 +3349,11 @@ func (client) _VoiceManager_StubAll(t *testing.T) {
 }
 
 func (_recv *client) _VoiceManager_Return(r0 voice.Manager) {
-	_recv._VoiceManager_Do(func() (voice.Manager) { return r0 })
+	_recv._VoiceManager_Do(func() voice.Manager { return r0 })
 }
 
 func (client) _VoiceManager_ReturnAll(t *testing.T, r0 voice.Manager) {
-	new(client)._VoiceManager_DoAll(t, func() (voice.Manager) { return r0 })
+	new(client)._VoiceManager_DoAll(t, func() voice.Manager { return r0 })
 }
 
 func (_recv *client) _VoiceManager_Calls() []_client_VoiceManager_Call {
@@ -3410,4 +3384,3 @@ func (client) _VoiceManager_BubbleCalls(t *testing.T) {
 		_dat.VoiceManagerCalls = []_client_VoiceManager_Call{}
 	})
 }
-

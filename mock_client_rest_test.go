@@ -4,448 +4,449 @@ package main
 
 import (
 	"context"
-	discord "github.com/disgoorg/disgo/discord"
-	rest "github.com/disgoorg/disgo/rest"
-	snowflake "github.com/disgoorg/snowflake/v2"
 	http "net/http"
 	"runtime"
 	"sync"
 	"testing"
 	"time"
 	"unsafe"
+
+	discord "github.com/disgoorg/disgo/discord"
+	rest "github.com/disgoorg/disgo/rest"
+	snowflake "github.com/disgoorg/snowflake/v2"
 )
 
 var _clientRest = new(sync.Map)
 
 type _clientRestData struct {
-	mutex sync.Mutex
-	once sync.Once
-	AddBanMocks []func(guildID snowflake.ID, userID snowflake.ID, deleteMessageDuration time.Duration, opts ...rest.RequestOpt) error
-	AddBanCalls []_clientRest_AddBan_Call
-	AddMemberMocks []func(guildID snowflake.ID, userID snowflake.ID, memberAdd discord.MemberAdd, opts ...rest.RequestOpt) (*discord.Member, error)
-	AddMemberCalls []_clientRest_AddMember_Call
-	AddMemberRoleMocks []func(guildID snowflake.ID, userID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error
-	AddMemberRoleCalls []_clientRest_AddMemberRole_Call
-	AddReactionMocks []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error
-	AddReactionCalls []_clientRest_AddReaction_Call
-	AddThreadMemberMocks []func(threadID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
-	AddThreadMemberCalls []_clientRest_AddThreadMember_Call
-	BeginGuildPruneMocks []func(guildID snowflake.ID, guildPrune discord.GuildPrune, opts ...rest.RequestOpt) (*discord.GuildPruneResult, error)
-	BeginGuildPruneCalls []_clientRest_BeginGuildPrune_Call
-	BulkBanMocks []func(guildID snowflake.ID, ban discord.BulkBan, opts ...rest.RequestOpt) (*discord.BulkBanResult, error)
-	BulkBanCalls []_clientRest_BulkBan_Call
-	BulkDeleteMessagesMocks []func(channelID snowflake.ID, messageIDs []snowflake.ID, opts ...rest.RequestOpt) error
-	BulkDeleteMessagesCalls []_clientRest_BulkDeleteMessages_Call
-	CloseMocks []func(ctx context.Context)
-	CloseCalls []_clientRest_Close_Call
-	ConsumeEntitlementMocks []func(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) error
-	ConsumeEntitlementCalls []_clientRest_ConsumeEntitlement_Call
-	CreateApplicationEmojiMocks []func(applicationID snowflake.ID, emojiCreate discord.EmojiCreate, opts ...rest.RequestOpt) (*discord.Emoji, error)
-	CreateApplicationEmojiCalls []_clientRest_CreateApplicationEmoji_Call
-	CreateAutoModerationRuleMocks []func(guildID snowflake.ID, ruleCreate discord.AutoModerationRuleCreate, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error)
-	CreateAutoModerationRuleCalls []_clientRest_CreateAutoModerationRule_Call
-	CreateDMChannelMocks []func(userID snowflake.ID, opts ...rest.RequestOpt) (*discord.DMChannel, error)
-	CreateDMChannelCalls []_clientRest_CreateDMChannel_Call
-	CreateEmojiMocks []func(guildID snowflake.ID, emojiCreate discord.EmojiCreate, opts ...rest.RequestOpt) (*discord.Emoji, error)
-	CreateEmojiCalls []_clientRest_CreateEmoji_Call
-	CreateFollowupMessageMocks []func(applicationID snowflake.ID, interactionToken string, messageCreate discord.MessageCreate, opts ...rest.RequestOpt) (*discord.Message, error)
-	CreateFollowupMessageCalls []_clientRest_CreateFollowupMessage_Call
-	CreateGlobalCommandMocks []func(applicationID snowflake.ID, commandCreate discord.ApplicationCommandCreate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
-	CreateGlobalCommandCalls []_clientRest_CreateGlobalCommand_Call
-	CreateGuildMocks []func(guildCreate discord.GuildCreate, opts ...rest.RequestOpt) (*discord.RestGuild, error)
-	CreateGuildCalls []_clientRest_CreateGuild_Call
-	CreateGuildChannelMocks []func(guildID snowflake.ID, guildChannelCreate discord.GuildChannelCreate, opts ...rest.RequestOpt) (discord.GuildChannel, error)
-	CreateGuildChannelCalls []_clientRest_CreateGuildChannel_Call
-	CreateGuildCommandMocks []func(applicationID snowflake.ID, guildID snowflake.ID, command discord.ApplicationCommandCreate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
-	CreateGuildCommandCalls []_clientRest_CreateGuildCommand_Call
-	CreateGuildFromTemplateMocks []func(templateCode string, createGuildFromTemplate discord.GuildFromTemplateCreate, opts ...rest.RequestOpt) (*discord.Guild, error)
-	CreateGuildFromTemplateCalls []_clientRest_CreateGuildFromTemplate_Call
-	CreateGuildScheduledEventMocks []func(guildID snowflake.ID, guildScheduledEventCreate discord.GuildScheduledEventCreate, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error)
-	CreateGuildScheduledEventCalls []_clientRest_CreateGuildScheduledEvent_Call
-	CreateGuildSoundboardSoundMocks []func(guildID snowflake.ID, soundCreate discord.SoundboardSoundCreate, opts ...rest.RequestOpt) (*discord.SoundboardSound, error)
-	CreateGuildSoundboardSoundCalls []_clientRest_CreateGuildSoundboardSound_Call
-	CreateGuildTemplateMocks []func(guildID snowflake.ID, guildTemplateCreate discord.GuildTemplateCreate, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
-	CreateGuildTemplateCalls []_clientRest_CreateGuildTemplate_Call
-	CreateInteractionResponseMocks []func(interactionID snowflake.ID, interactionToken string, interactionResponse discord.InteractionResponse, opts ...rest.RequestOpt) error
-	CreateInteractionResponseCalls []_clientRest_CreateInteractionResponse_Call
-	CreateInteractionResponseWithCallbackMocks []func(interactionID snowflake.ID, interactionToken string, interactionResponse discord.InteractionResponse, opts ...rest.RequestOpt) (*discord.InteractionCallbackResponse, error)
-	CreateInteractionResponseWithCallbackCalls []_clientRest_CreateInteractionResponseWithCallback_Call
-	CreateInviteMocks []func(channelID snowflake.ID, inviteCreate discord.InviteCreate, opts ...rest.RequestOpt) (*discord.Invite, error)
-	CreateInviteCalls []_clientRest_CreateInvite_Call
-	CreateMessageMocks []func(channelID snowflake.ID, messageCreate discord.MessageCreate, opts ...rest.RequestOpt) (*discord.Message, error)
-	CreateMessageCalls []_clientRest_CreateMessage_Call
-	CreatePostInThreadChannelMocks []func(channelID snowflake.ID, postCreateInChannel discord.ThreadChannelPostCreate, opts ...rest.RequestOpt) (post *discord.ThreadChannelPost, err error)
-	CreatePostInThreadChannelCalls []_clientRest_CreatePostInThreadChannel_Call
-	CreateRoleMocks []func(guildID snowflake.ID, createRole discord.RoleCreate, opts ...rest.RequestOpt) (*discord.Role, error)
-	CreateRoleCalls []_clientRest_CreateRole_Call
-	CreateStageInstanceMocks []func(stageInstanceCreate discord.StageInstanceCreate, opts ...rest.RequestOpt) (*discord.StageInstance, error)
-	CreateStageInstanceCalls []_clientRest_CreateStageInstance_Call
-	CreateStickerMocks []func(guildID snowflake.ID, createSticker discord.StickerCreate, opts ...rest.RequestOpt) (*discord.Sticker, error)
-	CreateStickerCalls []_clientRest_CreateSticker_Call
-	CreateTestEntitlementMocks []func(applicationID snowflake.ID, entitlementCreate discord.TestEntitlementCreate, opts ...rest.RequestOpt) (*discord.Entitlement, error)
-	CreateTestEntitlementCalls []_clientRest_CreateTestEntitlement_Call
-	CreateThreadMocks []func(channelID snowflake.ID, threadCreate discord.ThreadCreate, opts ...rest.RequestOpt) (thread *discord.GuildThread, err error)
-	CreateThreadCalls []_clientRest_CreateThread_Call
-	CreateThreadFromMessageMocks []func(channelID snowflake.ID, messageID snowflake.ID, threadCreateFromMessage discord.ThreadCreateFromMessage, opts ...rest.RequestOpt) (thread *discord.GuildThread, err error)
-	CreateThreadFromMessageCalls []_clientRest_CreateThreadFromMessage_Call
-	CreateWebhookMocks []func(channelID snowflake.ID, webhookCreate discord.WebhookCreate, opts ...rest.RequestOpt) (*discord.IncomingWebhook, error)
-	CreateWebhookCalls []_clientRest_CreateWebhook_Call
-	CreateWebhookMessageMocks []func(webhookID snowflake.ID, webhookToken string, messageCreate discord.WebhookMessageCreate, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
-	CreateWebhookMessageCalls []_clientRest_CreateWebhookMessage_Call
-	CreateWebhookMessageGitHubMocks []func(webhookID snowflake.ID, webhookToken string, messageCreate discord.Payload, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
-	CreateWebhookMessageGitHubCalls []_clientRest_CreateWebhookMessageGitHub_Call
-	CreateWebhookMessageSlackMocks []func(webhookID snowflake.ID, webhookToken string, messageCreate discord.Payload, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
-	CreateWebhookMessageSlackCalls []_clientRest_CreateWebhookMessageSlack_Call
-	CrosspostMessageMocks []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
-	CrosspostMessageCalls []_clientRest_CrosspostMessage_Call
-	DeleteApplicationEmojiMocks []func(applicationID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteApplicationEmojiCalls []_clientRest_DeleteApplicationEmoji_Call
-	DeleteAutoModerationRuleMocks []func(guildID snowflake.ID, ruleID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteAutoModerationRuleCalls []_clientRest_DeleteAutoModerationRule_Call
-	DeleteBanMocks []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteBanCalls []_clientRest_DeleteBan_Call
-	DeleteChannelMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteChannelCalls []_clientRest_DeleteChannel_Call
-	DeleteEmojiMocks []func(guildID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteEmojiCalls []_clientRest_DeleteEmoji_Call
-	DeleteFollowupMessageMocks []func(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteFollowupMessageCalls []_clientRest_DeleteFollowupMessage_Call
-	DeleteGlobalCommandMocks []func(applicationID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteGlobalCommandCalls []_clientRest_DeleteGlobalCommand_Call
-	DeleteGuildMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteGuildCalls []_clientRest_DeleteGuild_Call
-	DeleteGuildCommandMocks []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteGuildCommandCalls []_clientRest_DeleteGuildCommand_Call
-	DeleteGuildScheduledEventMocks []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteGuildScheduledEventCalls []_clientRest_DeleteGuildScheduledEvent_Call
-	DeleteGuildSoundboardSoundMocks []func(guildID snowflake.ID, soundID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteGuildSoundboardSoundCalls []_clientRest_DeleteGuildSoundboardSound_Call
-	DeleteGuildTemplateMocks []func(guildID snowflake.ID, templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
-	DeleteGuildTemplateCalls []_clientRest_DeleteGuildTemplate_Call
-	DeleteIntegrationMocks []func(guildID snowflake.ID, integrationID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteIntegrationCalls []_clientRest_DeleteIntegration_Call
-	DeleteInteractionResponseMocks []func(applicationID snowflake.ID, interactionToken string, opts ...rest.RequestOpt) error
-	DeleteInteractionResponseCalls []_clientRest_DeleteInteractionResponse_Call
-	DeleteInviteMocks []func(code string, opts ...rest.RequestOpt) (*discord.Invite, error)
-	DeleteInviteCalls []_clientRest_DeleteInvite_Call
-	DeleteMessageMocks []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteMessageCalls []_clientRest_DeleteMessage_Call
-	DeletePermissionOverwriteMocks []func(channelID snowflake.ID, overwriteID snowflake.ID, opts ...rest.RequestOpt) error
-	DeletePermissionOverwriteCalls []_clientRest_DeletePermissionOverwrite_Call
-	DeleteRoleMocks []func(guildID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteRoleCalls []_clientRest_DeleteRole_Call
-	DeleteStageInstanceMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteStageInstanceCalls []_clientRest_DeleteStageInstance_Call
-	DeleteStickerMocks []func(guildID snowflake.ID, stickerID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteStickerCalls []_clientRest_DeleteSticker_Call
-	DeleteTestEntitlementMocks []func(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteTestEntitlementCalls []_clientRest_DeleteTestEntitlement_Call
-	DeleteWebhookMocks []func(webhookID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteWebhookCalls []_clientRest_DeleteWebhook_Call
-	DeleteWebhookMessageMocks []func(webhookID snowflake.ID, webhookToken string, messageID snowflake.ID, threadID snowflake.ID, opts ...rest.RequestOpt) error
-	DeleteWebhookMessageCalls []_clientRest_DeleteWebhookMessage_Call
-	DeleteWebhookWithTokenMocks []func(webhookID snowflake.ID, webhookToken string, opts ...rest.RequestOpt) error
-	DeleteWebhookWithTokenCalls []_clientRest_DeleteWebhookWithToken_Call
-	DoMocks []func(endpoint *rest.CompiledEndpoint, rqBody any, rsBody any, opts ...rest.RequestOpt) error
-	DoCalls []_clientRest_Do_Call
-	ExpirePollMocks []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
-	ExpirePollCalls []_clientRest_ExpirePoll_Call
-	FollowMocks []func(channelID snowflake.ID, targetChannelID snowflake.ID, opts ...rest.RequestOpt) (*discord.FollowedChannel, error)
-	FollowCalls []_clientRest_Follow_Call
-	GetAccessTokenMocks []func(clientID snowflake.ID, clientSecret string, code string, redirectURI string, opts ...rest.RequestOpt) (*discord.AccessTokenResponse, error)
-	GetAccessTokenCalls []_clientRest_GetAccessToken_Call
-	GetActiveGuildThreadsMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildActiveThreads, error)
-	GetActiveGuildThreadsCalls []_clientRest_GetActiveGuildThreads_Call
-	GetActivityInstanceMocks []func(applicationID snowflake.ID, instanceID string, opts ...rest.RequestOpt) (*discord.ActivityInstance, error)
-	GetActivityInstanceCalls []_clientRest_GetActivityInstance_Call
-	GetAllWebhooksMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Webhook, error)
-	GetAllWebhooksCalls []_clientRest_GetAllWebhooks_Call
-	GetApplicationEmojiMocks []func(applicationID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) (*discord.Emoji, error)
-	GetApplicationEmojiCalls []_clientRest_GetApplicationEmoji_Call
-	GetApplicationEmojisMocks []func(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Emoji, error)
-	GetApplicationEmojisCalls []_clientRest_GetApplicationEmojis_Call
-	GetApplicationRoleConnectionMetadataMocks []func(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error)
-	GetApplicationRoleConnectionMetadataCalls []_clientRest_GetApplicationRoleConnectionMetadata_Call
-	GetAuditLogMocks []func(guildID snowflake.ID, userID snowflake.ID, actionType discord.AuditLogEvent, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) (*discord.AuditLog, error)
-	GetAuditLogCalls []_clientRest_GetAuditLog_Call
-	GetAuditLogPageMocks []func(guildID snowflake.ID, userID snowflake.ID, actionType discord.AuditLogEvent, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.AuditLogPage
-	GetAuditLogPageCalls []_clientRest_GetAuditLogPage_Call
-	GetAutoModerationRuleMocks []func(guildID snowflake.ID, ruleID snowflake.ID, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error)
-	GetAutoModerationRuleCalls []_clientRest_GetAutoModerationRule_Call
-	GetAutoModerationRulesMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.AutoModerationRule, error)
-	GetAutoModerationRulesCalls []_clientRest_GetAutoModerationRules_Call
-	GetBanMocks []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.Ban, error)
-	GetBanCalls []_clientRest_GetBan_Call
-	GetBansMocks []func(guildID snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.Ban, error)
-	GetBansCalls []_clientRest_GetBans_Call
-	GetBansPageMocks []func(guildID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Ban]
-	GetBansPageCalls []_clientRest_GetBansPage_Call
-	GetBotApplicationInfoMocks []func(opts ...rest.RequestOpt) (*discord.Application, error)
-	GetBotApplicationInfoCalls []_clientRest_GetBotApplicationInfo_Call
-	GetChannelMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) (discord.Channel, error)
-	GetChannelCalls []_clientRest_GetChannel_Call
-	GetChannelInvitesMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ExtendedInvite, error)
-	GetChannelInvitesCalls []_clientRest_GetChannelInvites_Call
-	GetCurrentApplicationMocks []func(opts ...rest.RequestOpt) (*discord.Application, error)
-	GetCurrentApplicationCalls []_clientRest_GetCurrentApplication_Call
-	GetCurrentAuthorizationInfoMocks []func(bearerToken string, opts ...rest.RequestOpt) (*discord.AuthorizationInformation, error)
-	GetCurrentAuthorizationInfoCalls []_clientRest_GetCurrentAuthorizationInfo_Call
-	GetCurrentMemberMocks []func(bearerToken string, guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.Member, error)
-	GetCurrentMemberCalls []_clientRest_GetCurrentMember_Call
-	GetCurrentUserMocks []func(bearerToken string, opts ...rest.RequestOpt) (*discord.OAuth2User, error)
-	GetCurrentUserCalls []_clientRest_GetCurrentUser_Call
-	GetCurrentUserApplicationRoleConnectionMocks []func(bearerToken string, applicationID snowflake.ID, opts ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error)
-	GetCurrentUserApplicationRoleConnectionCalls []_clientRest_GetCurrentUserApplicationRoleConnection_Call
-	GetCurrentUserConnectionsMocks []func(bearerToken string, opts ...rest.RequestOpt) ([]discord.Connection, error)
-	GetCurrentUserConnectionsCalls []_clientRest_GetCurrentUserConnections_Call
-	GetCurrentUserGuildsMocks []func(bearerToken string, before snowflake.ID, after snowflake.ID, limit int, withCounts bool, opts ...rest.RequestOpt) ([]discord.OAuth2Guild, error)
-	GetCurrentUserGuildsCalls []_clientRest_GetCurrentUserGuilds_Call
-	GetCurrentUserGuildsPageMocks []func(bearerToken string, startID snowflake.ID, limit int, withCounts bool, opts ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]
-	GetCurrentUserGuildsPageCalls []_clientRest_GetCurrentUserGuildsPage_Call
-	GetCurrentUserVoiceStateMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.VoiceState, error)
-	GetCurrentUserVoiceStateCalls []_clientRest_GetCurrentUserVoiceState_Call
-	GetEmojiMocks []func(guildID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) (*discord.Emoji, error)
-	GetEmojiCalls []_clientRest_GetEmoji_Call
-	GetEmojisMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Emoji, error)
-	GetEmojisCalls []_clientRest_GetEmojis_Call
-	GetEntitlementMocks []func(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) (*discord.Entitlement, error)
-	GetEntitlementCalls []_clientRest_GetEntitlement_Call
-	GetEntitlementsMocks []func(applicationID snowflake.ID, params rest.GetEntitlementsParams, opts ...rest.RequestOpt) ([]discord.Entitlement, error)
-	GetEntitlementsCalls []_clientRest_GetEntitlements_Call
-	GetFollowupMessageMocks []func(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
-	GetFollowupMessageCalls []_clientRest_GetFollowupMessage_Call
-	GetGatewayMocks []func(opts ...rest.RequestOpt) (*discord.Gateway, error)
-	GetGatewayCalls []_clientRest_GetGateway_Call
-	GetGatewayBotMocks []func(opts ...rest.RequestOpt) (*discord.GatewayBot, error)
-	GetGatewayBotCalls []_clientRest_GetGatewayBot_Call
-	GetGlobalCommandMocks []func(applicationID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
-	GetGlobalCommandCalls []_clientRest_GetGlobalCommand_Call
-	GetGlobalCommandsMocks []func(applicationID snowflake.ID, withLocalizations bool, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
-	GetGlobalCommandsCalls []_clientRest_GetGlobalCommands_Call
-	GetGuildMocks []func(guildID snowflake.ID, withCounts bool, opts ...rest.RequestOpt) (*discord.RestGuild, error)
-	GetGuildCalls []_clientRest_GetGuild_Call
-	GetGuildChannelsMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.GuildChannel, error)
-	GetGuildChannelsCalls []_clientRest_GetGuildChannels_Call
-	GetGuildCommandMocks []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
-	GetGuildCommandCalls []_clientRest_GetGuildCommand_Call
-	GetGuildCommandPermissionsMocks []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error)
-	GetGuildCommandPermissionsCalls []_clientRest_GetGuildCommandPermissions_Call
-	GetGuildCommandsMocks []func(applicationID snowflake.ID, guildID snowflake.ID, withLocalizations bool, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
-	GetGuildCommandsCalls []_clientRest_GetGuildCommands_Call
-	GetGuildCommandsPermissionsMocks []func(applicationID snowflake.ID, guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ApplicationCommandPermissions, error)
-	GetGuildCommandsPermissionsCalls []_clientRest_GetGuildCommandsPermissions_Call
-	GetGuildInvitesMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ExtendedInvite, error)
-	GetGuildInvitesCalls []_clientRest_GetGuildInvites_Call
-	GetGuildOnboardingMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildOnboarding, error)
-	GetGuildOnboardingCalls []_clientRest_GetGuildOnboarding_Call
-	GetGuildPreviewMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildPreview, error)
-	GetGuildPreviewCalls []_clientRest_GetGuildPreview_Call
-	GetGuildPruneCountMocks []func(guildID snowflake.ID, days int, includeRoles []snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildPruneResult, error)
-	GetGuildPruneCountCalls []_clientRest_GetGuildPruneCount_Call
-	GetGuildScheduledEventMocks []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withUserCounts bool, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error)
-	GetGuildScheduledEventCalls []_clientRest_GetGuildScheduledEvent_Call
-	GetGuildScheduledEventUsersMocks []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withMember bool, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.GuildScheduledEventUser, error)
-	GetGuildScheduledEventUsersCalls []_clientRest_GetGuildScheduledEventUsers_Call
-	GetGuildScheduledEventUsersPageMocks []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withMember bool, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]
-	GetGuildScheduledEventUsersPageCalls []_clientRest_GetGuildScheduledEventUsersPage_Call
-	GetGuildScheduledEventsMocks []func(guildID snowflake.ID, withUserCounts bool, opts ...rest.RequestOpt) ([]discord.GuildScheduledEvent, error)
-	GetGuildScheduledEventsCalls []_clientRest_GetGuildScheduledEvents_Call
-	GetGuildSoundboardSoundMocks []func(guildID snowflake.ID, soundID snowflake.ID, opts ...rest.RequestOpt) (*discord.SoundboardSound, error)
-	GetGuildSoundboardSoundCalls []_clientRest_GetGuildSoundboardSound_Call
-	GetGuildSoundboardSoundsMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.SoundboardSound, error)
-	GetGuildSoundboardSoundsCalls []_clientRest_GetGuildSoundboardSounds_Call
-	GetGuildTemplateMocks []func(templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
-	GetGuildTemplateCalls []_clientRest_GetGuildTemplate_Call
-	GetGuildTemplatesMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.GuildTemplate, error)
-	GetGuildTemplatesCalls []_clientRest_GetGuildTemplates_Call
-	GetGuildVanityURLMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.PartialInvite, error)
-	GetGuildVanityURLCalls []_clientRest_GetGuildVanityURL_Call
-	GetGuildVoiceRegionsMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.VoiceRegion, error)
-	GetGuildVoiceRegionsCalls []_clientRest_GetGuildVoiceRegions_Call
-	GetGuildWelcomeScreenMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error)
-	GetGuildWelcomeScreenCalls []_clientRest_GetGuildWelcomeScreen_Call
-	GetIntegrationsMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Integration, error)
-	GetIntegrationsCalls []_clientRest_GetIntegrations_Call
-	GetInteractionResponseMocks []func(applicationID snowflake.ID, interactionToken string, opts ...rest.RequestOpt) (*discord.Message, error)
-	GetInteractionResponseCalls []_clientRest_GetInteractionResponse_Call
-	GetInviteMocks []func(code string, opts ...rest.RequestOpt) (*discord.Invite, error)
-	GetInviteCalls []_clientRest_GetInvite_Call
-	GetJoinedPrivateArchivedThreadsMocks []func(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (threads *discord.GetThreads, err error)
-	GetJoinedPrivateArchivedThreadsCalls []_clientRest_GetJoinedPrivateArchivedThreads_Call
-	GetMemberMocks []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.Member, error)
-	GetMemberCalls []_clientRest_GetMember_Call
-	GetMembersMocks []func(guildID snowflake.ID, limit int, after snowflake.ID, opts ...rest.RequestOpt) ([]discord.Member, error)
-	GetMembersCalls []_clientRest_GetMembers_Call
-	GetMessageMocks []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
-	GetMessageCalls []_clientRest_GetMessage_Call
-	GetMessagesMocks []func(channelID snowflake.ID, around snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.Message, error)
-	GetMessagesCalls []_clientRest_GetMessages_Call
-	GetMessagesPageMocks []func(channelID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Message]
-	GetMessagesPageCalls []_clientRest_GetMessagesPage_Call
-	GetNitroStickerPackMocks []func(packID snowflake.ID, opts ...rest.RequestOpt) (*discord.StickerPack, error)
-	GetNitroStickerPackCalls []_clientRest_GetNitroStickerPack_Call
-	GetNitroStickerPacksMocks []func(opts ...rest.RequestOpt) ([]discord.StickerPack, error)
-	GetNitroStickerPacksCalls []_clientRest_GetNitroStickerPacks_Call
-	GetPinnedMessagesMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Message, error)
-	GetPinnedMessagesCalls []_clientRest_GetPinnedMessages_Call
-	GetPollAnswerVotesMocks []func(channelID snowflake.ID, messageID snowflake.ID, answerID int, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.User, error)
-	GetPollAnswerVotesCalls []_clientRest_GetPollAnswerVotes_Call
-	GetPollAnswerVotesPageMocks []func(channelID snowflake.ID, messageID snowflake.ID, answerID int, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.PollAnswerVotesPage
-	GetPollAnswerVotesPageCalls []_clientRest_GetPollAnswerVotesPage_Call
-	GetPrivateArchivedThreadsMocks []func(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (threads *discord.GetThreads, err error)
-	GetPrivateArchivedThreadsCalls []_clientRest_GetPrivateArchivedThreads_Call
-	GetPublicArchivedThreadsMocks []func(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (threads *discord.GetThreads, err error)
-	GetPublicArchivedThreadsCalls []_clientRest_GetPublicArchivedThreads_Call
-	GetReactionsMocks []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, reactionType discord.MessageReactionType, after int, limit int, opts ...rest.RequestOpt) ([]discord.User, error)
-	GetReactionsCalls []_clientRest_GetReactions_Call
-	GetRoleMocks []func(guildID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) (*discord.Role, error)
-	GetRoleCalls []_clientRest_GetRole_Call
-	GetRolesMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Role, error)
-	GetRolesCalls []_clientRest_GetRoles_Call
-	GetSKUSubscriptionMocks []func(skuID snowflake.ID, subscriptionID snowflake.ID, opts ...rest.RequestOpt) (*discord.Subscription, error)
-	GetSKUSubscriptionCalls []_clientRest_GetSKUSubscription_Call
-	GetSKUSubscriptionsMocks []func(skuID snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, userID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Subscription, error)
-	GetSKUSubscriptionsCalls []_clientRest_GetSKUSubscriptions_Call
-	GetSKUSubscriptionsPageMocks []func(skuID snowflake.ID, userID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Subscription]
-	GetSKUSubscriptionsPageCalls []_clientRest_GetSKUSubscriptionsPage_Call
-	GetSKUsMocks []func(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.SKU, error)
-	GetSKUsCalls []_clientRest_GetSKUs_Call
-	GetSoundboardDefaultSoundsMocks []func(opts ...rest.RequestOpt) ([]discord.SoundboardSound, error)
-	GetSoundboardDefaultSoundsCalls []_clientRest_GetSoundboardDefaultSounds_Call
-	GetStageInstanceMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) (*discord.StageInstance, error)
-	GetStageInstanceCalls []_clientRest_GetStageInstance_Call
-	GetStickerMocks []func(stickerID snowflake.ID, opts ...rest.RequestOpt) (*discord.Sticker, error)
-	GetStickerCalls []_clientRest_GetSticker_Call
-	GetStickersMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Sticker, error)
-	GetStickersCalls []_clientRest_GetStickers_Call
-	GetThreadMemberMocks []func(threadID snowflake.ID, userID snowflake.ID, withMember bool, opts ...rest.RequestOpt) (threadMember *discord.ThreadMember, err error)
-	GetThreadMemberCalls []_clientRest_GetThreadMember_Call
-	GetThreadMembersMocks []func(threadID snowflake.ID, opts ...rest.RequestOpt) (threadMembers []discord.ThreadMember, err error)
-	GetThreadMembersCalls []_clientRest_GetThreadMembers_Call
-	GetThreadMembersPageMocks []func(threadID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.ThreadMemberPage
-	GetThreadMembersPageCalls []_clientRest_GetThreadMembersPage_Call
-	GetUserMocks []func(userID snowflake.ID, opts ...rest.RequestOpt) (*discord.User, error)
-	GetUserCalls []_clientRest_GetUser_Call
-	GetUserVoiceStateMocks []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.VoiceState, error)
-	GetUserVoiceStateCalls []_clientRest_GetUserVoiceState_Call
-	GetVoiceRegionsMocks []func(opts ...rest.RequestOpt) ([]discord.VoiceRegion, error)
-	GetVoiceRegionsCalls []_clientRest_GetVoiceRegions_Call
-	GetWebhookMocks []func(webhookID snowflake.ID, opts ...rest.RequestOpt) (discord.Webhook, error)
-	GetWebhookCalls []_clientRest_GetWebhook_Call
-	GetWebhookWithTokenMocks []func(webhookID snowflake.ID, webhookToken string, opts ...rest.RequestOpt) (discord.Webhook, error)
-	GetWebhookWithTokenCalls []_clientRest_GetWebhookWithToken_Call
-	GetWebhooksMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Webhook, error)
-	GetWebhooksCalls []_clientRest_GetWebhooks_Call
-	HTTPClientMocks []func() *http.Client
-	HTTPClientCalls []_clientRest_HTTPClient_Call
-	JoinThreadMocks []func(threadID snowflake.ID, opts ...rest.RequestOpt) error
-	JoinThreadCalls []_clientRest_JoinThread_Call
-	LeaveGuildMocks []func(guildID snowflake.ID, opts ...rest.RequestOpt) error
-	LeaveGuildCalls []_clientRest_LeaveGuild_Call
-	LeaveThreadMocks []func(threadID snowflake.ID, opts ...rest.RequestOpt) error
-	LeaveThreadCalls []_clientRest_LeaveThread_Call
-	PinMessageMocks []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
-	PinMessageCalls []_clientRest_PinMessage_Call
-	RateLimiterMocks []func() rest.RateLimiter
-	RateLimiterCalls []_clientRest_RateLimiter_Call
-	RefreshAccessTokenMocks []func(clientID snowflake.ID, clientSecret string, refreshToken string, opts ...rest.RequestOpt) (*discord.AccessTokenResponse, error)
-	RefreshAccessTokenCalls []_clientRest_RefreshAccessToken_Call
-	RemoveAllReactionsMocks []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
-	RemoveAllReactionsCalls []_clientRest_RemoveAllReactions_Call
-	RemoveAllReactionsForEmojiMocks []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error
-	RemoveAllReactionsForEmojiCalls []_clientRest_RemoveAllReactionsForEmoji_Call
-	RemoveMemberMocks []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
-	RemoveMemberCalls []_clientRest_RemoveMember_Call
-	RemoveMemberRoleMocks []func(guildID snowflake.ID, userID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error
-	RemoveMemberRoleCalls []_clientRest_RemoveMemberRole_Call
-	RemoveOwnReactionMocks []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error
-	RemoveOwnReactionCalls []_clientRest_RemoveOwnReaction_Call
-	RemoveThreadMemberMocks []func(threadID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
-	RemoveThreadMemberCalls []_clientRest_RemoveThreadMember_Call
-	RemoveUserReactionMocks []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, userID snowflake.ID, opts ...rest.RequestOpt) error
-	RemoveUserReactionCalls []_clientRest_RemoveUserReaction_Call
-	SearchMembersMocks []func(guildID snowflake.ID, query string, limit int, opts ...rest.RequestOpt) ([]discord.Member, error)
-	SearchMembersCalls []_clientRest_SearchMembers_Call
-	SendSoundboardSoundMocks []func(channelID snowflake.ID, sendSound discord.SendSoundboardSound, opts ...rest.RequestOpt) error
-	SendSoundboardSoundCalls []_clientRest_SendSoundboardSound_Call
-	SendTypingMocks []func(channelID snowflake.ID, opts ...rest.RequestOpt) error
-	SendTypingCalls []_clientRest_SendTyping_Call
-	SetGlobalCommandsMocks []func(applicationID snowflake.ID, commandCreates []discord.ApplicationCommandCreate, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
-	SetGlobalCommandsCalls []_clientRest_SetGlobalCommands_Call
-	SetGuildCommandPermissionsMocks []func(bearerToken string, applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, commandPermissions []discord.ApplicationCommandPermission, opts ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error)
-	SetGuildCommandPermissionsCalls []_clientRest_SetGuildCommandPermissions_Call
-	SetGuildCommandsMocks []func(applicationID snowflake.ID, guildID snowflake.ID, commands []discord.ApplicationCommandCreate, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
-	SetGuildCommandsCalls []_clientRest_SetGuildCommands_Call
-	SyncGuildTemplateMocks []func(guildID snowflake.ID, templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
-	SyncGuildTemplateCalls []_clientRest_SyncGuildTemplate_Call
-	UnpinMessageMocks []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
-	UnpinMessageCalls []_clientRest_UnpinMessage_Call
-	UpdateApplicationEmojiMocks []func(applicationID snowflake.ID, emojiID snowflake.ID, emojiUpdate discord.EmojiUpdate, opts ...rest.RequestOpt) (*discord.Emoji, error)
-	UpdateApplicationEmojiCalls []_clientRest_UpdateApplicationEmoji_Call
-	UpdateApplicationRoleConnectionMetadataMocks []func(applicationID snowflake.ID, newRecords []discord.ApplicationRoleConnectionMetadata, opts ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error)
-	UpdateApplicationRoleConnectionMetadataCalls []_clientRest_UpdateApplicationRoleConnectionMetadata_Call
-	UpdateAutoModerationRuleMocks []func(guildID snowflake.ID, ruleID snowflake.ID, ruleUpdate discord.AutoModerationRuleUpdate, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error)
-	UpdateAutoModerationRuleCalls []_clientRest_UpdateAutoModerationRule_Call
-	UpdateChannelMocks []func(channelID snowflake.ID, channelUpdate discord.ChannelUpdate, opts ...rest.RequestOpt) (discord.Channel, error)
-	UpdateChannelCalls []_clientRest_UpdateChannel_Call
-	UpdateChannelPositionsMocks []func(guildID snowflake.ID, guildChannelPositionUpdates []discord.GuildChannelPositionUpdate, opts ...rest.RequestOpt) error
-	UpdateChannelPositionsCalls []_clientRest_UpdateChannelPositions_Call
-	UpdateCurrentApplicationMocks []func(applicationUpdate discord.ApplicationUpdate, opts ...rest.RequestOpt) (*discord.Application, error)
-	UpdateCurrentApplicationCalls []_clientRest_UpdateCurrentApplication_Call
-	UpdateCurrentMemberMocks []func(guildID snowflake.ID, nick string, opts ...rest.RequestOpt) (*string, error)
-	UpdateCurrentMemberCalls []_clientRest_UpdateCurrentMember_Call
-	UpdateCurrentUserMocks []func(userUpdate discord.UserUpdate, opts ...rest.RequestOpt) (*discord.OAuth2User, error)
-	UpdateCurrentUserCalls []_clientRest_UpdateCurrentUser_Call
+	mutex                                           sync.Mutex
+	once                                            sync.Once
+	AddBanMocks                                     []func(guildID snowflake.ID, userID snowflake.ID, deleteMessageDuration time.Duration, opts ...rest.RequestOpt) error
+	AddBanCalls                                     []_clientRest_AddBan_Call
+	AddMemberMocks                                  []func(guildID snowflake.ID, userID snowflake.ID, memberAdd discord.MemberAdd, opts ...rest.RequestOpt) (*discord.Member, error)
+	AddMemberCalls                                  []_clientRest_AddMember_Call
+	AddMemberRoleMocks                              []func(guildID snowflake.ID, userID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error
+	AddMemberRoleCalls                              []_clientRest_AddMemberRole_Call
+	AddReactionMocks                                []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error
+	AddReactionCalls                                []_clientRest_AddReaction_Call
+	AddThreadMemberMocks                            []func(threadID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
+	AddThreadMemberCalls                            []_clientRest_AddThreadMember_Call
+	BeginGuildPruneMocks                            []func(guildID snowflake.ID, guildPrune discord.GuildPrune, opts ...rest.RequestOpt) (*discord.GuildPruneResult, error)
+	BeginGuildPruneCalls                            []_clientRest_BeginGuildPrune_Call
+	BulkBanMocks                                    []func(guildID snowflake.ID, ban discord.BulkBan, opts ...rest.RequestOpt) (*discord.BulkBanResult, error)
+	BulkBanCalls                                    []_clientRest_BulkBan_Call
+	BulkDeleteMessagesMocks                         []func(channelID snowflake.ID, messageIDs []snowflake.ID, opts ...rest.RequestOpt) error
+	BulkDeleteMessagesCalls                         []_clientRest_BulkDeleteMessages_Call
+	CloseMocks                                      []func(ctx context.Context)
+	CloseCalls                                      []_clientRest_Close_Call
+	ConsumeEntitlementMocks                         []func(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) error
+	ConsumeEntitlementCalls                         []_clientRest_ConsumeEntitlement_Call
+	CreateApplicationEmojiMocks                     []func(applicationID snowflake.ID, emojiCreate discord.EmojiCreate, opts ...rest.RequestOpt) (*discord.Emoji, error)
+	CreateApplicationEmojiCalls                     []_clientRest_CreateApplicationEmoji_Call
+	CreateAutoModerationRuleMocks                   []func(guildID snowflake.ID, ruleCreate discord.AutoModerationRuleCreate, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error)
+	CreateAutoModerationRuleCalls                   []_clientRest_CreateAutoModerationRule_Call
+	CreateDMChannelMocks                            []func(userID snowflake.ID, opts ...rest.RequestOpt) (*discord.DMChannel, error)
+	CreateDMChannelCalls                            []_clientRest_CreateDMChannel_Call
+	CreateEmojiMocks                                []func(guildID snowflake.ID, emojiCreate discord.EmojiCreate, opts ...rest.RequestOpt) (*discord.Emoji, error)
+	CreateEmojiCalls                                []_clientRest_CreateEmoji_Call
+	CreateFollowupMessageMocks                      []func(applicationID snowflake.ID, interactionToken string, messageCreate discord.MessageCreate, opts ...rest.RequestOpt) (*discord.Message, error)
+	CreateFollowupMessageCalls                      []_clientRest_CreateFollowupMessage_Call
+	CreateGlobalCommandMocks                        []func(applicationID snowflake.ID, commandCreate discord.ApplicationCommandCreate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
+	CreateGlobalCommandCalls                        []_clientRest_CreateGlobalCommand_Call
+	CreateGuildMocks                                []func(guildCreate discord.GuildCreate, opts ...rest.RequestOpt) (*discord.RestGuild, error)
+	CreateGuildCalls                                []_clientRest_CreateGuild_Call
+	CreateGuildChannelMocks                         []func(guildID snowflake.ID, guildChannelCreate discord.GuildChannelCreate, opts ...rest.RequestOpt) (discord.GuildChannel, error)
+	CreateGuildChannelCalls                         []_clientRest_CreateGuildChannel_Call
+	CreateGuildCommandMocks                         []func(applicationID snowflake.ID, guildID snowflake.ID, command discord.ApplicationCommandCreate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
+	CreateGuildCommandCalls                         []_clientRest_CreateGuildCommand_Call
+	CreateGuildFromTemplateMocks                    []func(templateCode string, createGuildFromTemplate discord.GuildFromTemplateCreate, opts ...rest.RequestOpt) (*discord.Guild, error)
+	CreateGuildFromTemplateCalls                    []_clientRest_CreateGuildFromTemplate_Call
+	CreateGuildScheduledEventMocks                  []func(guildID snowflake.ID, guildScheduledEventCreate discord.GuildScheduledEventCreate, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error)
+	CreateGuildScheduledEventCalls                  []_clientRest_CreateGuildScheduledEvent_Call
+	CreateGuildSoundboardSoundMocks                 []func(guildID snowflake.ID, soundCreate discord.SoundboardSoundCreate, opts ...rest.RequestOpt) (*discord.SoundboardSound, error)
+	CreateGuildSoundboardSoundCalls                 []_clientRest_CreateGuildSoundboardSound_Call
+	CreateGuildTemplateMocks                        []func(guildID snowflake.ID, guildTemplateCreate discord.GuildTemplateCreate, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
+	CreateGuildTemplateCalls                        []_clientRest_CreateGuildTemplate_Call
+	CreateInteractionResponseMocks                  []func(interactionID snowflake.ID, interactionToken string, interactionResponse discord.InteractionResponse, opts ...rest.RequestOpt) error
+	CreateInteractionResponseCalls                  []_clientRest_CreateInteractionResponse_Call
+	CreateInteractionResponseWithCallbackMocks      []func(interactionID snowflake.ID, interactionToken string, interactionResponse discord.InteractionResponse, opts ...rest.RequestOpt) (*discord.InteractionCallbackResponse, error)
+	CreateInteractionResponseWithCallbackCalls      []_clientRest_CreateInteractionResponseWithCallback_Call
+	CreateInviteMocks                               []func(channelID snowflake.ID, inviteCreate discord.InviteCreate, opts ...rest.RequestOpt) (*discord.Invite, error)
+	CreateInviteCalls                               []_clientRest_CreateInvite_Call
+	CreateMessageMocks                              []func(channelID snowflake.ID, messageCreate discord.MessageCreate, opts ...rest.RequestOpt) (*discord.Message, error)
+	CreateMessageCalls                              []_clientRest_CreateMessage_Call
+	CreatePostInThreadChannelMocks                  []func(channelID snowflake.ID, postCreateInChannel discord.ThreadChannelPostCreate, opts ...rest.RequestOpt) (post *discord.ThreadChannelPost, err error)
+	CreatePostInThreadChannelCalls                  []_clientRest_CreatePostInThreadChannel_Call
+	CreateRoleMocks                                 []func(guildID snowflake.ID, createRole discord.RoleCreate, opts ...rest.RequestOpt) (*discord.Role, error)
+	CreateRoleCalls                                 []_clientRest_CreateRole_Call
+	CreateStageInstanceMocks                        []func(stageInstanceCreate discord.StageInstanceCreate, opts ...rest.RequestOpt) (*discord.StageInstance, error)
+	CreateStageInstanceCalls                        []_clientRest_CreateStageInstance_Call
+	CreateStickerMocks                              []func(guildID snowflake.ID, createSticker discord.StickerCreate, opts ...rest.RequestOpt) (*discord.Sticker, error)
+	CreateStickerCalls                              []_clientRest_CreateSticker_Call
+	CreateTestEntitlementMocks                      []func(applicationID snowflake.ID, entitlementCreate discord.TestEntitlementCreate, opts ...rest.RequestOpt) (*discord.Entitlement, error)
+	CreateTestEntitlementCalls                      []_clientRest_CreateTestEntitlement_Call
+	CreateThreadMocks                               []func(channelID snowflake.ID, threadCreate discord.ThreadCreate, opts ...rest.RequestOpt) (thread *discord.GuildThread, err error)
+	CreateThreadCalls                               []_clientRest_CreateThread_Call
+	CreateThreadFromMessageMocks                    []func(channelID snowflake.ID, messageID snowflake.ID, threadCreateFromMessage discord.ThreadCreateFromMessage, opts ...rest.RequestOpt) (thread *discord.GuildThread, err error)
+	CreateThreadFromMessageCalls                    []_clientRest_CreateThreadFromMessage_Call
+	CreateWebhookMocks                              []func(channelID snowflake.ID, webhookCreate discord.WebhookCreate, opts ...rest.RequestOpt) (*discord.IncomingWebhook, error)
+	CreateWebhookCalls                              []_clientRest_CreateWebhook_Call
+	CreateWebhookMessageMocks                       []func(webhookID snowflake.ID, webhookToken string, messageCreate discord.WebhookMessageCreate, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
+	CreateWebhookMessageCalls                       []_clientRest_CreateWebhookMessage_Call
+	CreateWebhookMessageGitHubMocks                 []func(webhookID snowflake.ID, webhookToken string, messageCreate discord.Payload, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
+	CreateWebhookMessageGitHubCalls                 []_clientRest_CreateWebhookMessageGitHub_Call
+	CreateWebhookMessageSlackMocks                  []func(webhookID snowflake.ID, webhookToken string, messageCreate discord.Payload, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
+	CreateWebhookMessageSlackCalls                  []_clientRest_CreateWebhookMessageSlack_Call
+	CrosspostMessageMocks                           []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
+	CrosspostMessageCalls                           []_clientRest_CrosspostMessage_Call
+	DeleteApplicationEmojiMocks                     []func(applicationID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteApplicationEmojiCalls                     []_clientRest_DeleteApplicationEmoji_Call
+	DeleteAutoModerationRuleMocks                   []func(guildID snowflake.ID, ruleID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteAutoModerationRuleCalls                   []_clientRest_DeleteAutoModerationRule_Call
+	DeleteBanMocks                                  []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteBanCalls                                  []_clientRest_DeleteBan_Call
+	DeleteChannelMocks                              []func(channelID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteChannelCalls                              []_clientRest_DeleteChannel_Call
+	DeleteEmojiMocks                                []func(guildID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteEmojiCalls                                []_clientRest_DeleteEmoji_Call
+	DeleteFollowupMessageMocks                      []func(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteFollowupMessageCalls                      []_clientRest_DeleteFollowupMessage_Call
+	DeleteGlobalCommandMocks                        []func(applicationID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteGlobalCommandCalls                        []_clientRest_DeleteGlobalCommand_Call
+	DeleteGuildMocks                                []func(guildID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteGuildCalls                                []_clientRest_DeleteGuild_Call
+	DeleteGuildCommandMocks                         []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteGuildCommandCalls                         []_clientRest_DeleteGuildCommand_Call
+	DeleteGuildScheduledEventMocks                  []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteGuildScheduledEventCalls                  []_clientRest_DeleteGuildScheduledEvent_Call
+	DeleteGuildSoundboardSoundMocks                 []func(guildID snowflake.ID, soundID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteGuildSoundboardSoundCalls                 []_clientRest_DeleteGuildSoundboardSound_Call
+	DeleteGuildTemplateMocks                        []func(guildID snowflake.ID, templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
+	DeleteGuildTemplateCalls                        []_clientRest_DeleteGuildTemplate_Call
+	DeleteIntegrationMocks                          []func(guildID snowflake.ID, integrationID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteIntegrationCalls                          []_clientRest_DeleteIntegration_Call
+	DeleteInteractionResponseMocks                  []func(applicationID snowflake.ID, interactionToken string, opts ...rest.RequestOpt) error
+	DeleteInteractionResponseCalls                  []_clientRest_DeleteInteractionResponse_Call
+	DeleteInviteMocks                               []func(code string, opts ...rest.RequestOpt) (*discord.Invite, error)
+	DeleteInviteCalls                               []_clientRest_DeleteInvite_Call
+	DeleteMessageMocks                              []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteMessageCalls                              []_clientRest_DeleteMessage_Call
+	DeletePermissionOverwriteMocks                  []func(channelID snowflake.ID, overwriteID snowflake.ID, opts ...rest.RequestOpt) error
+	DeletePermissionOverwriteCalls                  []_clientRest_DeletePermissionOverwrite_Call
+	DeleteRoleMocks                                 []func(guildID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteRoleCalls                                 []_clientRest_DeleteRole_Call
+	DeleteStageInstanceMocks                        []func(channelID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteStageInstanceCalls                        []_clientRest_DeleteStageInstance_Call
+	DeleteStickerMocks                              []func(guildID snowflake.ID, stickerID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteStickerCalls                              []_clientRest_DeleteSticker_Call
+	DeleteTestEntitlementMocks                      []func(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteTestEntitlementCalls                      []_clientRest_DeleteTestEntitlement_Call
+	DeleteWebhookMocks                              []func(webhookID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteWebhookCalls                              []_clientRest_DeleteWebhook_Call
+	DeleteWebhookMessageMocks                       []func(webhookID snowflake.ID, webhookToken string, messageID snowflake.ID, threadID snowflake.ID, opts ...rest.RequestOpt) error
+	DeleteWebhookMessageCalls                       []_clientRest_DeleteWebhookMessage_Call
+	DeleteWebhookWithTokenMocks                     []func(webhookID snowflake.ID, webhookToken string, opts ...rest.RequestOpt) error
+	DeleteWebhookWithTokenCalls                     []_clientRest_DeleteWebhookWithToken_Call
+	DoMocks                                         []func(endpoint *rest.CompiledEndpoint, rqBody any, rsBody any, opts ...rest.RequestOpt) error
+	DoCalls                                         []_clientRest_Do_Call
+	ExpirePollMocks                                 []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
+	ExpirePollCalls                                 []_clientRest_ExpirePoll_Call
+	FollowMocks                                     []func(channelID snowflake.ID, targetChannelID snowflake.ID, opts ...rest.RequestOpt) (*discord.FollowedChannel, error)
+	FollowCalls                                     []_clientRest_Follow_Call
+	GetAccessTokenMocks                             []func(clientID snowflake.ID, clientSecret string, code string, redirectURI string, opts ...rest.RequestOpt) (*discord.AccessTokenResponse, error)
+	GetAccessTokenCalls                             []_clientRest_GetAccessToken_Call
+	GetActiveGuildThreadsMocks                      []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildActiveThreads, error)
+	GetActiveGuildThreadsCalls                      []_clientRest_GetActiveGuildThreads_Call
+	GetActivityInstanceMocks                        []func(applicationID snowflake.ID, instanceID string, opts ...rest.RequestOpt) (*discord.ActivityInstance, error)
+	GetActivityInstanceCalls                        []_clientRest_GetActivityInstance_Call
+	GetAllWebhooksMocks                             []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Webhook, error)
+	GetAllWebhooksCalls                             []_clientRest_GetAllWebhooks_Call
+	GetApplicationEmojiMocks                        []func(applicationID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) (*discord.Emoji, error)
+	GetApplicationEmojiCalls                        []_clientRest_GetApplicationEmoji_Call
+	GetApplicationEmojisMocks                       []func(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Emoji, error)
+	GetApplicationEmojisCalls                       []_clientRest_GetApplicationEmojis_Call
+	GetApplicationRoleConnectionMetadataMocks       []func(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error)
+	GetApplicationRoleConnectionMetadataCalls       []_clientRest_GetApplicationRoleConnectionMetadata_Call
+	GetAuditLogMocks                                []func(guildID snowflake.ID, userID snowflake.ID, actionType discord.AuditLogEvent, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) (*discord.AuditLog, error)
+	GetAuditLogCalls                                []_clientRest_GetAuditLog_Call
+	GetAuditLogPageMocks                            []func(guildID snowflake.ID, userID snowflake.ID, actionType discord.AuditLogEvent, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.AuditLogPage
+	GetAuditLogPageCalls                            []_clientRest_GetAuditLogPage_Call
+	GetAutoModerationRuleMocks                      []func(guildID snowflake.ID, ruleID snowflake.ID, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error)
+	GetAutoModerationRuleCalls                      []_clientRest_GetAutoModerationRule_Call
+	GetAutoModerationRulesMocks                     []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.AutoModerationRule, error)
+	GetAutoModerationRulesCalls                     []_clientRest_GetAutoModerationRules_Call
+	GetBanMocks                                     []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.Ban, error)
+	GetBanCalls                                     []_clientRest_GetBan_Call
+	GetBansMocks                                    []func(guildID snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.Ban, error)
+	GetBansCalls                                    []_clientRest_GetBans_Call
+	GetBansPageMocks                                []func(guildID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Ban]
+	GetBansPageCalls                                []_clientRest_GetBansPage_Call
+	GetBotApplicationInfoMocks                      []func(opts ...rest.RequestOpt) (*discord.Application, error)
+	GetBotApplicationInfoCalls                      []_clientRest_GetBotApplicationInfo_Call
+	GetChannelMocks                                 []func(channelID snowflake.ID, opts ...rest.RequestOpt) (discord.Channel, error)
+	GetChannelCalls                                 []_clientRest_GetChannel_Call
+	GetChannelInvitesMocks                          []func(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ExtendedInvite, error)
+	GetChannelInvitesCalls                          []_clientRest_GetChannelInvites_Call
+	GetCurrentApplicationMocks                      []func(opts ...rest.RequestOpt) (*discord.Application, error)
+	GetCurrentApplicationCalls                      []_clientRest_GetCurrentApplication_Call
+	GetCurrentAuthorizationInfoMocks                []func(bearerToken string, opts ...rest.RequestOpt) (*discord.AuthorizationInformation, error)
+	GetCurrentAuthorizationInfoCalls                []_clientRest_GetCurrentAuthorizationInfo_Call
+	GetCurrentMemberMocks                           []func(bearerToken string, guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.Member, error)
+	GetCurrentMemberCalls                           []_clientRest_GetCurrentMember_Call
+	GetCurrentUserMocks                             []func(bearerToken string, opts ...rest.RequestOpt) (*discord.OAuth2User, error)
+	GetCurrentUserCalls                             []_clientRest_GetCurrentUser_Call
+	GetCurrentUserApplicationRoleConnectionMocks    []func(bearerToken string, applicationID snowflake.ID, opts ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error)
+	GetCurrentUserApplicationRoleConnectionCalls    []_clientRest_GetCurrentUserApplicationRoleConnection_Call
+	GetCurrentUserConnectionsMocks                  []func(bearerToken string, opts ...rest.RequestOpt) ([]discord.Connection, error)
+	GetCurrentUserConnectionsCalls                  []_clientRest_GetCurrentUserConnections_Call
+	GetCurrentUserGuildsMocks                       []func(bearerToken string, before snowflake.ID, after snowflake.ID, limit int, withCounts bool, opts ...rest.RequestOpt) ([]discord.OAuth2Guild, error)
+	GetCurrentUserGuildsCalls                       []_clientRest_GetCurrentUserGuilds_Call
+	GetCurrentUserGuildsPageMocks                   []func(bearerToken string, startID snowflake.ID, limit int, withCounts bool, opts ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]
+	GetCurrentUserGuildsPageCalls                   []_clientRest_GetCurrentUserGuildsPage_Call
+	GetCurrentUserVoiceStateMocks                   []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.VoiceState, error)
+	GetCurrentUserVoiceStateCalls                   []_clientRest_GetCurrentUserVoiceState_Call
+	GetEmojiMocks                                   []func(guildID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) (*discord.Emoji, error)
+	GetEmojiCalls                                   []_clientRest_GetEmoji_Call
+	GetEmojisMocks                                  []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Emoji, error)
+	GetEmojisCalls                                  []_clientRest_GetEmojis_Call
+	GetEntitlementMocks                             []func(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) (*discord.Entitlement, error)
+	GetEntitlementCalls                             []_clientRest_GetEntitlement_Call
+	GetEntitlementsMocks                            []func(applicationID snowflake.ID, params rest.GetEntitlementsParams, opts ...rest.RequestOpt) ([]discord.Entitlement, error)
+	GetEntitlementsCalls                            []_clientRest_GetEntitlements_Call
+	GetFollowupMessageMocks                         []func(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
+	GetFollowupMessageCalls                         []_clientRest_GetFollowupMessage_Call
+	GetGatewayMocks                                 []func(opts ...rest.RequestOpt) (*discord.Gateway, error)
+	GetGatewayCalls                                 []_clientRest_GetGateway_Call
+	GetGatewayBotMocks                              []func(opts ...rest.RequestOpt) (*discord.GatewayBot, error)
+	GetGatewayBotCalls                              []_clientRest_GetGatewayBot_Call
+	GetGlobalCommandMocks                           []func(applicationID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
+	GetGlobalCommandCalls                           []_clientRest_GetGlobalCommand_Call
+	GetGlobalCommandsMocks                          []func(applicationID snowflake.ID, withLocalizations bool, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
+	GetGlobalCommandsCalls                          []_clientRest_GetGlobalCommands_Call
+	GetGuildMocks                                   []func(guildID snowflake.ID, withCounts bool, opts ...rest.RequestOpt) (*discord.RestGuild, error)
+	GetGuildCalls                                   []_clientRest_GetGuild_Call
+	GetGuildChannelsMocks                           []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.GuildChannel, error)
+	GetGuildChannelsCalls                           []_clientRest_GetGuildChannels_Call
+	GetGuildCommandMocks                            []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
+	GetGuildCommandCalls                            []_clientRest_GetGuildCommand_Call
+	GetGuildCommandPermissionsMocks                 []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error)
+	GetGuildCommandPermissionsCalls                 []_clientRest_GetGuildCommandPermissions_Call
+	GetGuildCommandsMocks                           []func(applicationID snowflake.ID, guildID snowflake.ID, withLocalizations bool, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
+	GetGuildCommandsCalls                           []_clientRest_GetGuildCommands_Call
+	GetGuildCommandsPermissionsMocks                []func(applicationID snowflake.ID, guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ApplicationCommandPermissions, error)
+	GetGuildCommandsPermissionsCalls                []_clientRest_GetGuildCommandsPermissions_Call
+	GetGuildInvitesMocks                            []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ExtendedInvite, error)
+	GetGuildInvitesCalls                            []_clientRest_GetGuildInvites_Call
+	GetGuildOnboardingMocks                         []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildOnboarding, error)
+	GetGuildOnboardingCalls                         []_clientRest_GetGuildOnboarding_Call
+	GetGuildPreviewMocks                            []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildPreview, error)
+	GetGuildPreviewCalls                            []_clientRest_GetGuildPreview_Call
+	GetGuildPruneCountMocks                         []func(guildID snowflake.ID, days int, includeRoles []snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildPruneResult, error)
+	GetGuildPruneCountCalls                         []_clientRest_GetGuildPruneCount_Call
+	GetGuildScheduledEventMocks                     []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withUserCounts bool, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error)
+	GetGuildScheduledEventCalls                     []_clientRest_GetGuildScheduledEvent_Call
+	GetGuildScheduledEventUsersMocks                []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withMember bool, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.GuildScheduledEventUser, error)
+	GetGuildScheduledEventUsersCalls                []_clientRest_GetGuildScheduledEventUsers_Call
+	GetGuildScheduledEventUsersPageMocks            []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withMember bool, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]
+	GetGuildScheduledEventUsersPageCalls            []_clientRest_GetGuildScheduledEventUsersPage_Call
+	GetGuildScheduledEventsMocks                    []func(guildID snowflake.ID, withUserCounts bool, opts ...rest.RequestOpt) ([]discord.GuildScheduledEvent, error)
+	GetGuildScheduledEventsCalls                    []_clientRest_GetGuildScheduledEvents_Call
+	GetGuildSoundboardSoundMocks                    []func(guildID snowflake.ID, soundID snowflake.ID, opts ...rest.RequestOpt) (*discord.SoundboardSound, error)
+	GetGuildSoundboardSoundCalls                    []_clientRest_GetGuildSoundboardSound_Call
+	GetGuildSoundboardSoundsMocks                   []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.SoundboardSound, error)
+	GetGuildSoundboardSoundsCalls                   []_clientRest_GetGuildSoundboardSounds_Call
+	GetGuildTemplateMocks                           []func(templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
+	GetGuildTemplateCalls                           []_clientRest_GetGuildTemplate_Call
+	GetGuildTemplatesMocks                          []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.GuildTemplate, error)
+	GetGuildTemplatesCalls                          []_clientRest_GetGuildTemplates_Call
+	GetGuildVanityURLMocks                          []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.PartialInvite, error)
+	GetGuildVanityURLCalls                          []_clientRest_GetGuildVanityURL_Call
+	GetGuildVoiceRegionsMocks                       []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.VoiceRegion, error)
+	GetGuildVoiceRegionsCalls                       []_clientRest_GetGuildVoiceRegions_Call
+	GetGuildWelcomeScreenMocks                      []func(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error)
+	GetGuildWelcomeScreenCalls                      []_clientRest_GetGuildWelcomeScreen_Call
+	GetIntegrationsMocks                            []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Integration, error)
+	GetIntegrationsCalls                            []_clientRest_GetIntegrations_Call
+	GetInteractionResponseMocks                     []func(applicationID snowflake.ID, interactionToken string, opts ...rest.RequestOpt) (*discord.Message, error)
+	GetInteractionResponseCalls                     []_clientRest_GetInteractionResponse_Call
+	GetInviteMocks                                  []func(code string, opts ...rest.RequestOpt) (*discord.Invite, error)
+	GetInviteCalls                                  []_clientRest_GetInvite_Call
+	GetJoinedPrivateArchivedThreadsMocks            []func(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (threads *discord.GetThreads, err error)
+	GetJoinedPrivateArchivedThreadsCalls            []_clientRest_GetJoinedPrivateArchivedThreads_Call
+	GetMemberMocks                                  []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.Member, error)
+	GetMemberCalls                                  []_clientRest_GetMember_Call
+	GetMembersMocks                                 []func(guildID snowflake.ID, limit int, after snowflake.ID, opts ...rest.RequestOpt) ([]discord.Member, error)
+	GetMembersCalls                                 []_clientRest_GetMembers_Call
+	GetMessageMocks                                 []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error)
+	GetMessageCalls                                 []_clientRest_GetMessage_Call
+	GetMessagesMocks                                []func(channelID snowflake.ID, around snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.Message, error)
+	GetMessagesCalls                                []_clientRest_GetMessages_Call
+	GetMessagesPageMocks                            []func(channelID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Message]
+	GetMessagesPageCalls                            []_clientRest_GetMessagesPage_Call
+	GetNitroStickerPackMocks                        []func(packID snowflake.ID, opts ...rest.RequestOpt) (*discord.StickerPack, error)
+	GetNitroStickerPackCalls                        []_clientRest_GetNitroStickerPack_Call
+	GetNitroStickerPacksMocks                       []func(opts ...rest.RequestOpt) ([]discord.StickerPack, error)
+	GetNitroStickerPacksCalls                       []_clientRest_GetNitroStickerPacks_Call
+	GetPinnedMessagesMocks                          []func(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Message, error)
+	GetPinnedMessagesCalls                          []_clientRest_GetPinnedMessages_Call
+	GetPollAnswerVotesMocks                         []func(channelID snowflake.ID, messageID snowflake.ID, answerID int, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.User, error)
+	GetPollAnswerVotesCalls                         []_clientRest_GetPollAnswerVotes_Call
+	GetPollAnswerVotesPageMocks                     []func(channelID snowflake.ID, messageID snowflake.ID, answerID int, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.PollAnswerVotesPage
+	GetPollAnswerVotesPageCalls                     []_clientRest_GetPollAnswerVotesPage_Call
+	GetPrivateArchivedThreadsMocks                  []func(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (threads *discord.GetThreads, err error)
+	GetPrivateArchivedThreadsCalls                  []_clientRest_GetPrivateArchivedThreads_Call
+	GetPublicArchivedThreadsMocks                   []func(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (threads *discord.GetThreads, err error)
+	GetPublicArchivedThreadsCalls                   []_clientRest_GetPublicArchivedThreads_Call
+	GetReactionsMocks                               []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, reactionType discord.MessageReactionType, after int, limit int, opts ...rest.RequestOpt) ([]discord.User, error)
+	GetReactionsCalls                               []_clientRest_GetReactions_Call
+	GetRoleMocks                                    []func(guildID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) (*discord.Role, error)
+	GetRoleCalls                                    []_clientRest_GetRole_Call
+	GetRolesMocks                                   []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Role, error)
+	GetRolesCalls                                   []_clientRest_GetRoles_Call
+	GetSKUSubscriptionMocks                         []func(skuID snowflake.ID, subscriptionID snowflake.ID, opts ...rest.RequestOpt) (*discord.Subscription, error)
+	GetSKUSubscriptionCalls                         []_clientRest_GetSKUSubscription_Call
+	GetSKUSubscriptionsMocks                        []func(skuID snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, userID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Subscription, error)
+	GetSKUSubscriptionsCalls                        []_clientRest_GetSKUSubscriptions_Call
+	GetSKUSubscriptionsPageMocks                    []func(skuID snowflake.ID, userID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Subscription]
+	GetSKUSubscriptionsPageCalls                    []_clientRest_GetSKUSubscriptionsPage_Call
+	GetSKUsMocks                                    []func(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.SKU, error)
+	GetSKUsCalls                                    []_clientRest_GetSKUs_Call
+	GetSoundboardDefaultSoundsMocks                 []func(opts ...rest.RequestOpt) ([]discord.SoundboardSound, error)
+	GetSoundboardDefaultSoundsCalls                 []_clientRest_GetSoundboardDefaultSounds_Call
+	GetStageInstanceMocks                           []func(channelID snowflake.ID, opts ...rest.RequestOpt) (*discord.StageInstance, error)
+	GetStageInstanceCalls                           []_clientRest_GetStageInstance_Call
+	GetStickerMocks                                 []func(stickerID snowflake.ID, opts ...rest.RequestOpt) (*discord.Sticker, error)
+	GetStickerCalls                                 []_clientRest_GetSticker_Call
+	GetStickersMocks                                []func(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Sticker, error)
+	GetStickersCalls                                []_clientRest_GetStickers_Call
+	GetThreadMemberMocks                            []func(threadID snowflake.ID, userID snowflake.ID, withMember bool, opts ...rest.RequestOpt) (threadMember *discord.ThreadMember, err error)
+	GetThreadMemberCalls                            []_clientRest_GetThreadMember_Call
+	GetThreadMembersMocks                           []func(threadID snowflake.ID, opts ...rest.RequestOpt) (threadMembers []discord.ThreadMember, err error)
+	GetThreadMembersCalls                           []_clientRest_GetThreadMembers_Call
+	GetThreadMembersPageMocks                       []func(threadID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.ThreadMemberPage
+	GetThreadMembersPageCalls                       []_clientRest_GetThreadMembersPage_Call
+	GetUserMocks                                    []func(userID snowflake.ID, opts ...rest.RequestOpt) (*discord.User, error)
+	GetUserCalls                                    []_clientRest_GetUser_Call
+	GetUserVoiceStateMocks                          []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.VoiceState, error)
+	GetUserVoiceStateCalls                          []_clientRest_GetUserVoiceState_Call
+	GetVoiceRegionsMocks                            []func(opts ...rest.RequestOpt) ([]discord.VoiceRegion, error)
+	GetVoiceRegionsCalls                            []_clientRest_GetVoiceRegions_Call
+	GetWebhookMocks                                 []func(webhookID snowflake.ID, opts ...rest.RequestOpt) (discord.Webhook, error)
+	GetWebhookCalls                                 []_clientRest_GetWebhook_Call
+	GetWebhookWithTokenMocks                        []func(webhookID snowflake.ID, webhookToken string, opts ...rest.RequestOpt) (discord.Webhook, error)
+	GetWebhookWithTokenCalls                        []_clientRest_GetWebhookWithToken_Call
+	GetWebhooksMocks                                []func(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Webhook, error)
+	GetWebhooksCalls                                []_clientRest_GetWebhooks_Call
+	HTTPClientMocks                                 []func() *http.Client
+	HTTPClientCalls                                 []_clientRest_HTTPClient_Call
+	JoinThreadMocks                                 []func(threadID snowflake.ID, opts ...rest.RequestOpt) error
+	JoinThreadCalls                                 []_clientRest_JoinThread_Call
+	LeaveGuildMocks                                 []func(guildID snowflake.ID, opts ...rest.RequestOpt) error
+	LeaveGuildCalls                                 []_clientRest_LeaveGuild_Call
+	LeaveThreadMocks                                []func(threadID snowflake.ID, opts ...rest.RequestOpt) error
+	LeaveThreadCalls                                []_clientRest_LeaveThread_Call
+	PinMessageMocks                                 []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
+	PinMessageCalls                                 []_clientRest_PinMessage_Call
+	RateLimiterMocks                                []func() rest.RateLimiter
+	RateLimiterCalls                                []_clientRest_RateLimiter_Call
+	RefreshAccessTokenMocks                         []func(clientID snowflake.ID, clientSecret string, refreshToken string, opts ...rest.RequestOpt) (*discord.AccessTokenResponse, error)
+	RefreshAccessTokenCalls                         []_clientRest_RefreshAccessToken_Call
+	RemoveAllReactionsMocks                         []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
+	RemoveAllReactionsCalls                         []_clientRest_RemoveAllReactions_Call
+	RemoveAllReactionsForEmojiMocks                 []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error
+	RemoveAllReactionsForEmojiCalls                 []_clientRest_RemoveAllReactionsForEmoji_Call
+	RemoveMemberMocks                               []func(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
+	RemoveMemberCalls                               []_clientRest_RemoveMember_Call
+	RemoveMemberRoleMocks                           []func(guildID snowflake.ID, userID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error
+	RemoveMemberRoleCalls                           []_clientRest_RemoveMemberRole_Call
+	RemoveOwnReactionMocks                          []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error
+	RemoveOwnReactionCalls                          []_clientRest_RemoveOwnReaction_Call
+	RemoveThreadMemberMocks                         []func(threadID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error
+	RemoveThreadMemberCalls                         []_clientRest_RemoveThreadMember_Call
+	RemoveUserReactionMocks                         []func(channelID snowflake.ID, messageID snowflake.ID, emoji string, userID snowflake.ID, opts ...rest.RequestOpt) error
+	RemoveUserReactionCalls                         []_clientRest_RemoveUserReaction_Call
+	SearchMembersMocks                              []func(guildID snowflake.ID, query string, limit int, opts ...rest.RequestOpt) ([]discord.Member, error)
+	SearchMembersCalls                              []_clientRest_SearchMembers_Call
+	SendSoundboardSoundMocks                        []func(channelID snowflake.ID, sendSound discord.SendSoundboardSound, opts ...rest.RequestOpt) error
+	SendSoundboardSoundCalls                        []_clientRest_SendSoundboardSound_Call
+	SendTypingMocks                                 []func(channelID snowflake.ID, opts ...rest.RequestOpt) error
+	SendTypingCalls                                 []_clientRest_SendTyping_Call
+	SetGlobalCommandsMocks                          []func(applicationID snowflake.ID, commandCreates []discord.ApplicationCommandCreate, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
+	SetGlobalCommandsCalls                          []_clientRest_SetGlobalCommands_Call
+	SetGuildCommandPermissionsMocks                 []func(bearerToken string, applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, commandPermissions []discord.ApplicationCommandPermission, opts ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error)
+	SetGuildCommandPermissionsCalls                 []_clientRest_SetGuildCommandPermissions_Call
+	SetGuildCommandsMocks                           []func(applicationID snowflake.ID, guildID snowflake.ID, commands []discord.ApplicationCommandCreate, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error)
+	SetGuildCommandsCalls                           []_clientRest_SetGuildCommands_Call
+	SyncGuildTemplateMocks                          []func(guildID snowflake.ID, templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
+	SyncGuildTemplateCalls                          []_clientRest_SyncGuildTemplate_Call
+	UnpinMessageMocks                               []func(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error
+	UnpinMessageCalls                               []_clientRest_UnpinMessage_Call
+	UpdateApplicationEmojiMocks                     []func(applicationID snowflake.ID, emojiID snowflake.ID, emojiUpdate discord.EmojiUpdate, opts ...rest.RequestOpt) (*discord.Emoji, error)
+	UpdateApplicationEmojiCalls                     []_clientRest_UpdateApplicationEmoji_Call
+	UpdateApplicationRoleConnectionMetadataMocks    []func(applicationID snowflake.ID, newRecords []discord.ApplicationRoleConnectionMetadata, opts ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error)
+	UpdateApplicationRoleConnectionMetadataCalls    []_clientRest_UpdateApplicationRoleConnectionMetadata_Call
+	UpdateAutoModerationRuleMocks                   []func(guildID snowflake.ID, ruleID snowflake.ID, ruleUpdate discord.AutoModerationRuleUpdate, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error)
+	UpdateAutoModerationRuleCalls                   []_clientRest_UpdateAutoModerationRule_Call
+	UpdateChannelMocks                              []func(channelID snowflake.ID, channelUpdate discord.ChannelUpdate, opts ...rest.RequestOpt) (discord.Channel, error)
+	UpdateChannelCalls                              []_clientRest_UpdateChannel_Call
+	UpdateChannelPositionsMocks                     []func(guildID snowflake.ID, guildChannelPositionUpdates []discord.GuildChannelPositionUpdate, opts ...rest.RequestOpt) error
+	UpdateChannelPositionsCalls                     []_clientRest_UpdateChannelPositions_Call
+	UpdateCurrentApplicationMocks                   []func(applicationUpdate discord.ApplicationUpdate, opts ...rest.RequestOpt) (*discord.Application, error)
+	UpdateCurrentApplicationCalls                   []_clientRest_UpdateCurrentApplication_Call
+	UpdateCurrentMemberMocks                        []func(guildID snowflake.ID, nick string, opts ...rest.RequestOpt) (*string, error)
+	UpdateCurrentMemberCalls                        []_clientRest_UpdateCurrentMember_Call
+	UpdateCurrentUserMocks                          []func(userUpdate discord.UserUpdate, opts ...rest.RequestOpt) (*discord.OAuth2User, error)
+	UpdateCurrentUserCalls                          []_clientRest_UpdateCurrentUser_Call
 	UpdateCurrentUserApplicationRoleConnectionMocks []func(bearerToken string, applicationID snowflake.ID, connectionUpdate discord.ApplicationRoleConnectionUpdate, opts ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error)
 	UpdateCurrentUserApplicationRoleConnectionCalls []_clientRest_UpdateCurrentUserApplicationRoleConnection_Call
-	UpdateCurrentUserVoiceStateMocks []func(guildID snowflake.ID, currentUserVoiceStateUpdate discord.CurrentUserVoiceStateUpdate, opts ...rest.RequestOpt) error
-	UpdateCurrentUserVoiceStateCalls []_clientRest_UpdateCurrentUserVoiceState_Call
-	UpdateEmojiMocks []func(guildID snowflake.ID, emojiID snowflake.ID, emojiUpdate discord.EmojiUpdate, opts ...rest.RequestOpt) (*discord.Emoji, error)
-	UpdateEmojiCalls []_clientRest_UpdateEmoji_Call
-	UpdateFollowupMessageMocks []func(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error)
-	UpdateFollowupMessageCalls []_clientRest_UpdateFollowupMessage_Call
-	UpdateGlobalCommandMocks []func(applicationID snowflake.ID, commandID snowflake.ID, commandUpdate discord.ApplicationCommandUpdate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
-	UpdateGlobalCommandCalls []_clientRest_UpdateGlobalCommand_Call
-	UpdateGuildMocks []func(guildID snowflake.ID, guildUpdate discord.GuildUpdate, opts ...rest.RequestOpt) (*discord.RestGuild, error)
-	UpdateGuildCalls []_clientRest_UpdateGuild_Call
-	UpdateGuildCommandMocks []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, command discord.ApplicationCommandUpdate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
-	UpdateGuildCommandCalls []_clientRest_UpdateGuildCommand_Call
-	UpdateGuildIncidentActionsMocks []func(guildID snowflake.ID, actionsUpdate discord.GuildIncidentActionsUpdate, opts ...rest.RequestOpt) (*discord.GuildIncidentsData, error)
-	UpdateGuildIncidentActionsCalls []_clientRest_UpdateGuildIncidentActions_Call
-	UpdateGuildOnboardingMocks []func(guildID snowflake.ID, onboardingUpdate discord.GuildOnboardingUpdate, opts ...rest.RequestOpt) (*discord.GuildOnboarding, error)
-	UpdateGuildOnboardingCalls []_clientRest_UpdateGuildOnboarding_Call
-	UpdateGuildScheduledEventMocks []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, guildScheduledEventUpdate discord.GuildScheduledEventUpdate, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error)
-	UpdateGuildScheduledEventCalls []_clientRest_UpdateGuildScheduledEvent_Call
-	UpdateGuildSoundboardSoundMocks []func(guildID snowflake.ID, soundID snowflake.ID, soundUpdate discord.SoundboardSoundUpdate, opts ...rest.RequestOpt) (*discord.SoundboardSound, error)
-	UpdateGuildSoundboardSoundCalls []_clientRest_UpdateGuildSoundboardSound_Call
-	UpdateGuildTemplateMocks []func(guildID snowflake.ID, templateCode string, guildTemplateUpdate discord.GuildTemplateUpdate, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
-	UpdateGuildTemplateCalls []_clientRest_UpdateGuildTemplate_Call
-	UpdateGuildWelcomeScreenMocks []func(guildID snowflake.ID, screenUpdate discord.GuildWelcomeScreenUpdate, opts ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error)
-	UpdateGuildWelcomeScreenCalls []_clientRest_UpdateGuildWelcomeScreen_Call
-	UpdateInteractionResponseMocks []func(applicationID snowflake.ID, interactionToken string, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error)
-	UpdateInteractionResponseCalls []_clientRest_UpdateInteractionResponse_Call
-	UpdateMemberMocks []func(guildID snowflake.ID, userID snowflake.ID, memberUpdate discord.MemberUpdate, opts ...rest.RequestOpt) (*discord.Member, error)
-	UpdateMemberCalls []_clientRest_UpdateMember_Call
-	UpdateMessageMocks []func(channelID snowflake.ID, messageID snowflake.ID, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error)
-	UpdateMessageCalls []_clientRest_UpdateMessage_Call
-	UpdatePermissionOverwriteMocks []func(channelID snowflake.ID, overwriteID snowflake.ID, permissionOverwrite discord.PermissionOverwriteUpdate, opts ...rest.RequestOpt) error
-	UpdatePermissionOverwriteCalls []_clientRest_UpdatePermissionOverwrite_Call
-	UpdateRoleMocks []func(guildID snowflake.ID, roleID snowflake.ID, roleUpdate discord.RoleUpdate, opts ...rest.RequestOpt) (*discord.Role, error)
-	UpdateRoleCalls []_clientRest_UpdateRole_Call
-	UpdateRolePositionsMocks []func(guildID snowflake.ID, rolePositionUpdates []discord.RolePositionUpdate, opts ...rest.RequestOpt) ([]discord.Role, error)
-	UpdateRolePositionsCalls []_clientRest_UpdateRolePositions_Call
-	UpdateStageInstanceMocks []func(channelID snowflake.ID, stageInstanceUpdate discord.StageInstanceUpdate, opts ...rest.RequestOpt) (*discord.StageInstance, error)
-	UpdateStageInstanceCalls []_clientRest_UpdateStageInstance_Call
-	UpdateStickerMocks []func(guildID snowflake.ID, stickerID snowflake.ID, stickerUpdate discord.StickerUpdate, opts ...rest.RequestOpt) (*discord.Sticker, error)
-	UpdateStickerCalls []_clientRest_UpdateSticker_Call
-	UpdateUserVoiceStateMocks []func(guildID snowflake.ID, userID snowflake.ID, userVoiceStateUpdate discord.UserVoiceStateUpdate, opts ...rest.RequestOpt) error
-	UpdateUserVoiceStateCalls []_clientRest_UpdateUserVoiceState_Call
-	UpdateWebhookMocks []func(webhookID snowflake.ID, webhookUpdate discord.WebhookUpdate, opts ...rest.RequestOpt) (discord.Webhook, error)
-	UpdateWebhookCalls []_clientRest_UpdateWebhook_Call
-	UpdateWebhookMessageMocks []func(webhookID snowflake.ID, webhookToken string, messageID snowflake.ID, messageUpdate discord.WebhookMessageUpdate, params rest.UpdateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
-	UpdateWebhookMessageCalls []_clientRest_UpdateWebhookMessage_Call
-	UpdateWebhookWithTokenMocks []func(webhookID snowflake.ID, webhookToken string, webhookUpdate discord.WebhookUpdateWithToken, opts ...rest.RequestOpt) (discord.Webhook, error)
-	UpdateWebhookWithTokenCalls []_clientRest_UpdateWebhookWithToken_Call
+	UpdateCurrentUserVoiceStateMocks                []func(guildID snowflake.ID, currentUserVoiceStateUpdate discord.CurrentUserVoiceStateUpdate, opts ...rest.RequestOpt) error
+	UpdateCurrentUserVoiceStateCalls                []_clientRest_UpdateCurrentUserVoiceState_Call
+	UpdateEmojiMocks                                []func(guildID snowflake.ID, emojiID snowflake.ID, emojiUpdate discord.EmojiUpdate, opts ...rest.RequestOpt) (*discord.Emoji, error)
+	UpdateEmojiCalls                                []_clientRest_UpdateEmoji_Call
+	UpdateFollowupMessageMocks                      []func(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error)
+	UpdateFollowupMessageCalls                      []_clientRest_UpdateFollowupMessage_Call
+	UpdateGlobalCommandMocks                        []func(applicationID snowflake.ID, commandID snowflake.ID, commandUpdate discord.ApplicationCommandUpdate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
+	UpdateGlobalCommandCalls                        []_clientRest_UpdateGlobalCommand_Call
+	UpdateGuildMocks                                []func(guildID snowflake.ID, guildUpdate discord.GuildUpdate, opts ...rest.RequestOpt) (*discord.RestGuild, error)
+	UpdateGuildCalls                                []_clientRest_UpdateGuild_Call
+	UpdateGuildCommandMocks                         []func(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, command discord.ApplicationCommandUpdate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error)
+	UpdateGuildCommandCalls                         []_clientRest_UpdateGuildCommand_Call
+	UpdateGuildIncidentActionsMocks                 []func(guildID snowflake.ID, actionsUpdate discord.GuildIncidentActionsUpdate, opts ...rest.RequestOpt) (*discord.GuildIncidentsData, error)
+	UpdateGuildIncidentActionsCalls                 []_clientRest_UpdateGuildIncidentActions_Call
+	UpdateGuildOnboardingMocks                      []func(guildID snowflake.ID, onboardingUpdate discord.GuildOnboardingUpdate, opts ...rest.RequestOpt) (*discord.GuildOnboarding, error)
+	UpdateGuildOnboardingCalls                      []_clientRest_UpdateGuildOnboarding_Call
+	UpdateGuildScheduledEventMocks                  []func(guildID snowflake.ID, guildScheduledEventID snowflake.ID, guildScheduledEventUpdate discord.GuildScheduledEventUpdate, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error)
+	UpdateGuildScheduledEventCalls                  []_clientRest_UpdateGuildScheduledEvent_Call
+	UpdateGuildSoundboardSoundMocks                 []func(guildID snowflake.ID, soundID snowflake.ID, soundUpdate discord.SoundboardSoundUpdate, opts ...rest.RequestOpt) (*discord.SoundboardSound, error)
+	UpdateGuildSoundboardSoundCalls                 []_clientRest_UpdateGuildSoundboardSound_Call
+	UpdateGuildTemplateMocks                        []func(guildID snowflake.ID, templateCode string, guildTemplateUpdate discord.GuildTemplateUpdate, opts ...rest.RequestOpt) (*discord.GuildTemplate, error)
+	UpdateGuildTemplateCalls                        []_clientRest_UpdateGuildTemplate_Call
+	UpdateGuildWelcomeScreenMocks                   []func(guildID snowflake.ID, screenUpdate discord.GuildWelcomeScreenUpdate, opts ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error)
+	UpdateGuildWelcomeScreenCalls                   []_clientRest_UpdateGuildWelcomeScreen_Call
+	UpdateInteractionResponseMocks                  []func(applicationID snowflake.ID, interactionToken string, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error)
+	UpdateInteractionResponseCalls                  []_clientRest_UpdateInteractionResponse_Call
+	UpdateMemberMocks                               []func(guildID snowflake.ID, userID snowflake.ID, memberUpdate discord.MemberUpdate, opts ...rest.RequestOpt) (*discord.Member, error)
+	UpdateMemberCalls                               []_clientRest_UpdateMember_Call
+	UpdateMessageMocks                              []func(channelID snowflake.ID, messageID snowflake.ID, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error)
+	UpdateMessageCalls                              []_clientRest_UpdateMessage_Call
+	UpdatePermissionOverwriteMocks                  []func(channelID snowflake.ID, overwriteID snowflake.ID, permissionOverwrite discord.PermissionOverwriteUpdate, opts ...rest.RequestOpt) error
+	UpdatePermissionOverwriteCalls                  []_clientRest_UpdatePermissionOverwrite_Call
+	UpdateRoleMocks                                 []func(guildID snowflake.ID, roleID snowflake.ID, roleUpdate discord.RoleUpdate, opts ...rest.RequestOpt) (*discord.Role, error)
+	UpdateRoleCalls                                 []_clientRest_UpdateRole_Call
+	UpdateRolePositionsMocks                        []func(guildID snowflake.ID, rolePositionUpdates []discord.RolePositionUpdate, opts ...rest.RequestOpt) ([]discord.Role, error)
+	UpdateRolePositionsCalls                        []_clientRest_UpdateRolePositions_Call
+	UpdateStageInstanceMocks                        []func(channelID snowflake.ID, stageInstanceUpdate discord.StageInstanceUpdate, opts ...rest.RequestOpt) (*discord.StageInstance, error)
+	UpdateStageInstanceCalls                        []_clientRest_UpdateStageInstance_Call
+	UpdateStickerMocks                              []func(guildID snowflake.ID, stickerID snowflake.ID, stickerUpdate discord.StickerUpdate, opts ...rest.RequestOpt) (*discord.Sticker, error)
+	UpdateStickerCalls                              []_clientRest_UpdateSticker_Call
+	UpdateUserVoiceStateMocks                       []func(guildID snowflake.ID, userID snowflake.ID, userVoiceStateUpdate discord.UserVoiceStateUpdate, opts ...rest.RequestOpt) error
+	UpdateUserVoiceStateCalls                       []_clientRest_UpdateUserVoiceState_Call
+	UpdateWebhookMocks                              []func(webhookID snowflake.ID, webhookUpdate discord.WebhookUpdate, opts ...rest.RequestOpt) (discord.Webhook, error)
+	UpdateWebhookCalls                              []_clientRest_UpdateWebhook_Call
+	UpdateWebhookMessageMocks                       []func(webhookID snowflake.ID, webhookToken string, messageID snowflake.ID, messageUpdate discord.WebhookMessageUpdate, params rest.UpdateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error)
+	UpdateWebhookMessageCalls                       []_clientRest_UpdateWebhookMessage_Call
+	UpdateWebhookWithTokenMocks                     []func(webhookID snowflake.ID, webhookToken string, webhookUpdate discord.WebhookUpdateWithToken, opts ...rest.RequestOpt) (discord.Webhook, error)
+	UpdateWebhookWithTokenCalls                     []_clientRest_UpdateWebhookWithToken_Call
 }
 
 func _clientRestPtrData(t *clientRest) *_clientRestData {
@@ -455,54 +456,54 @@ func _clientRestPtrData(t *clientRest) *_clientRestData {
 	}
 	val, loaded := _clientRest.LoadOrStore(ptr, new(_clientRestData))
 	if !loaded && t != nil {
-		val.(*_clientRestData).once.Do(func() { runtime.SetFinalizer(t, func(_ *clientRest) { _clientRest.Delete(ptr) })})
+		val.(*_clientRestData).once.Do(func() { runtime.SetFinalizer(t, func(_ *clientRest) { _clientRest.Delete(ptr) }) })
 	}
 	return val.(*_clientRestData)
 }
 
 type _clientRest_AddBan_Call struct {
-	GuildID snowflake.ID
-	UserID snowflake.ID
+	GuildID               snowflake.ID
+	UserID                snowflake.ID
 	DeleteMessageDuration time.Duration
-	Opts []rest.RequestOpt
+	Opts                  []rest.RequestOpt
 }
 type _clientRest_AddMember_Call struct {
-	GuildID snowflake.ID
-	UserID snowflake.ID
+	GuildID   snowflake.ID
+	UserID    snowflake.ID
 	MemberAdd discord.MemberAdd
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_AddMemberRole_Call struct {
 	GuildID snowflake.ID
-	UserID snowflake.ID
-	RoleID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID  snowflake.ID
+	RoleID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_AddReaction_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Emoji string
-	Opts []rest.RequestOpt
+	Emoji     string
+	Opts      []rest.RequestOpt
 }
 type _clientRest_AddThreadMember_Call struct {
 	ThreadID snowflake.ID
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID   snowflake.ID
+	Opts     []rest.RequestOpt
 }
 type _clientRest_BeginGuildPrune_Call struct {
-	GuildID snowflake.ID
+	GuildID    snowflake.ID
 	GuildPrune discord.GuildPrune
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_BulkBan_Call struct {
 	GuildID snowflake.ID
-	Ban discord.BulkBan
-	Opts []rest.RequestOpt
+	Ban     discord.BulkBan
+	Opts    []rest.RequestOpt
 }
 type _clientRest_BulkDeleteMessages_Call struct {
-	ChannelID snowflake.ID
+	ChannelID  snowflake.ID
 	MessageIDs []snowflake.ID
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_Close_Call struct {
 	Ctx context.Context
@@ -510,230 +511,230 @@ type _clientRest_Close_Call struct {
 type _clientRest_ConsumeEntitlement_Call struct {
 	ApplicationID snowflake.ID
 	EntitlementID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateApplicationEmoji_Call struct {
 	ApplicationID snowflake.ID
-	EmojiCreate discord.EmojiCreate
-	Opts []rest.RequestOpt
+	EmojiCreate   discord.EmojiCreate
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateAutoModerationRule_Call struct {
-	GuildID snowflake.ID
+	GuildID    snowflake.ID
 	RuleCreate discord.AutoModerationRuleCreate
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_CreateDMChannel_Call struct {
 	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts   []rest.RequestOpt
 }
 type _clientRest_CreateEmoji_Call struct {
-	GuildID snowflake.ID
+	GuildID     snowflake.ID
 	EmojiCreate discord.EmojiCreate
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_CreateFollowupMessage_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID    snowflake.ID
 	InteractionToken string
-	MessageCreate discord.MessageCreate
-	Opts []rest.RequestOpt
+	MessageCreate    discord.MessageCreate
+	Opts             []rest.RequestOpt
 }
 type _clientRest_CreateGlobalCommand_Call struct {
 	ApplicationID snowflake.ID
 	CommandCreate discord.ApplicationCommandCreate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateGuild_Call struct {
 	GuildCreate discord.GuildCreate
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_CreateGuildChannel_Call struct {
-	GuildID snowflake.ID
+	GuildID            snowflake.ID
 	GuildChannelCreate discord.GuildChannelCreate
-	Opts []rest.RequestOpt
+	Opts               []rest.RequestOpt
 }
 type _clientRest_CreateGuildCommand_Call struct {
 	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	Command discord.ApplicationCommandCreate
-	Opts []rest.RequestOpt
+	GuildID       snowflake.ID
+	Command       discord.ApplicationCommandCreate
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateGuildFromTemplate_Call struct {
-	TemplateCode string
+	TemplateCode            string
 	CreateGuildFromTemplate discord.GuildFromTemplateCreate
-	Opts []rest.RequestOpt
+	Opts                    []rest.RequestOpt
 }
 type _clientRest_CreateGuildScheduledEvent_Call struct {
-	GuildID snowflake.ID
+	GuildID                   snowflake.ID
 	GuildScheduledEventCreate discord.GuildScheduledEventCreate
-	Opts []rest.RequestOpt
+	Opts                      []rest.RequestOpt
 }
 type _clientRest_CreateGuildSoundboardSound_Call struct {
-	GuildID snowflake.ID
+	GuildID     snowflake.ID
 	SoundCreate discord.SoundboardSoundCreate
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_CreateGuildTemplate_Call struct {
-	GuildID snowflake.ID
+	GuildID             snowflake.ID
 	GuildTemplateCreate discord.GuildTemplateCreate
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_CreateInteractionResponse_Call struct {
-	InteractionID snowflake.ID
-	InteractionToken string
+	InteractionID       snowflake.ID
+	InteractionToken    string
 	InteractionResponse discord.InteractionResponse
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_CreateInteractionResponseWithCallback_Call struct {
-	InteractionID snowflake.ID
-	InteractionToken string
+	InteractionID       snowflake.ID
+	InteractionToken    string
 	InteractionResponse discord.InteractionResponse
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_CreateInvite_Call struct {
-	ChannelID snowflake.ID
+	ChannelID    snowflake.ID
 	InviteCreate discord.InviteCreate
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_CreateMessage_Call struct {
-	ChannelID snowflake.ID
+	ChannelID     snowflake.ID
 	MessageCreate discord.MessageCreate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreatePostInThreadChannel_Call struct {
-	ChannelID snowflake.ID
+	ChannelID           snowflake.ID
 	PostCreateInChannel discord.ThreadChannelPostCreate
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_CreateRole_Call struct {
-	GuildID snowflake.ID
+	GuildID    snowflake.ID
 	CreateRole discord.RoleCreate
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_CreateStageInstance_Call struct {
 	StageInstanceCreate discord.StageInstanceCreate
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_CreateSticker_Call struct {
-	GuildID snowflake.ID
+	GuildID       snowflake.ID
 	CreateSticker discord.StickerCreate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateTestEntitlement_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID     snowflake.ID
 	EntitlementCreate discord.TestEntitlementCreate
-	Opts []rest.RequestOpt
+	Opts              []rest.RequestOpt
 }
 type _clientRest_CreateThread_Call struct {
-	ChannelID snowflake.ID
+	ChannelID    snowflake.ID
 	ThreadCreate discord.ThreadCreate
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_CreateThreadFromMessage_Call struct {
-	ChannelID snowflake.ID
-	MessageID snowflake.ID
+	ChannelID               snowflake.ID
+	MessageID               snowflake.ID
 	ThreadCreateFromMessage discord.ThreadCreateFromMessage
-	Opts []rest.RequestOpt
+	Opts                    []rest.RequestOpt
 }
 type _clientRest_CreateWebhook_Call struct {
-	ChannelID snowflake.ID
+	ChannelID     snowflake.ID
 	WebhookCreate discord.WebhookCreate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateWebhookMessage_Call struct {
-	WebhookID snowflake.ID
-	WebhookToken string
+	WebhookID     snowflake.ID
+	WebhookToken  string
 	MessageCreate discord.WebhookMessageCreate
-	Params rest.CreateWebhookMessageParams
-	Opts []rest.RequestOpt
+	Params        rest.CreateWebhookMessageParams
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateWebhookMessageGitHub_Call struct {
-	WebhookID snowflake.ID
-	WebhookToken string
+	WebhookID     snowflake.ID
+	WebhookToken  string
 	MessageCreate discord.Payload
-	Params rest.CreateWebhookMessageParams
-	Opts []rest.RequestOpt
+	Params        rest.CreateWebhookMessageParams
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CreateWebhookMessageSlack_Call struct {
-	WebhookID snowflake.ID
-	WebhookToken string
+	WebhookID     snowflake.ID
+	WebhookToken  string
 	MessageCreate discord.Payload
-	Params rest.CreateWebhookMessageParams
-	Opts []rest.RequestOpt
+	Params        rest.CreateWebhookMessageParams
+	Opts          []rest.RequestOpt
 }
 type _clientRest_CrosspostMessage_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_DeleteApplicationEmoji_Call struct {
 	ApplicationID snowflake.ID
-	EmojiID snowflake.ID
-	Opts []rest.RequestOpt
+	EmojiID       snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_DeleteAutoModerationRule_Call struct {
 	GuildID snowflake.ID
-	RuleID snowflake.ID
-	Opts []rest.RequestOpt
+	RuleID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_DeleteBan_Call struct {
 	GuildID snowflake.ID
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_DeleteChannel_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_DeleteEmoji_Call struct {
 	GuildID snowflake.ID
 	EmojiID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_DeleteFollowupMessage_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID    snowflake.ID
 	InteractionToken string
-	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	MessageID        snowflake.ID
+	Opts             []rest.RequestOpt
 }
 type _clientRest_DeleteGlobalCommand_Call struct {
 	ApplicationID snowflake.ID
-	CommandID snowflake.ID
-	Opts []rest.RequestOpt
+	CommandID     snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_DeleteGuild_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_DeleteGuildCommand_Call struct {
 	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	CommandID snowflake.ID
-	Opts []rest.RequestOpt
+	GuildID       snowflake.ID
+	CommandID     snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_DeleteGuildScheduledEvent_Call struct {
-	GuildID snowflake.ID
+	GuildID               snowflake.ID
 	GuildScheduledEventID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts                  []rest.RequestOpt
 }
 type _clientRest_DeleteGuildSoundboardSound_Call struct {
 	GuildID snowflake.ID
 	SoundID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_DeleteGuildTemplate_Call struct {
-	GuildID snowflake.ID
+	GuildID      snowflake.ID
 	TemplateCode string
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_DeleteIntegration_Call struct {
-	GuildID snowflake.ID
+	GuildID       snowflake.ID
 	IntegrationID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_DeleteInteractionResponse_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID    snowflake.ID
 	InteractionToken string
-	Opts []rest.RequestOpt
+	Opts             []rest.RequestOpt
 }
 type _clientRest_DeleteInvite_Call struct {
 	Code string
@@ -742,220 +743,220 @@ type _clientRest_DeleteInvite_Call struct {
 type _clientRest_DeleteMessage_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_DeletePermissionOverwrite_Call struct {
-	ChannelID snowflake.ID
+	ChannelID   snowflake.ID
 	OverwriteID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_DeleteRole_Call struct {
 	GuildID snowflake.ID
-	RoleID snowflake.ID
-	Opts []rest.RequestOpt
+	RoleID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_DeleteStageInstance_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_DeleteSticker_Call struct {
-	GuildID snowflake.ID
+	GuildID   snowflake.ID
 	StickerID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_DeleteTestEntitlement_Call struct {
 	ApplicationID snowflake.ID
 	EntitlementID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_DeleteWebhook_Call struct {
 	WebhookID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_DeleteWebhookMessage_Call struct {
-	WebhookID snowflake.ID
+	WebhookID    snowflake.ID
 	WebhookToken string
-	MessageID snowflake.ID
-	ThreadID snowflake.ID
-	Opts []rest.RequestOpt
+	MessageID    snowflake.ID
+	ThreadID     snowflake.ID
+	Opts         []rest.RequestOpt
 }
 type _clientRest_DeleteWebhookWithToken_Call struct {
-	WebhookID snowflake.ID
+	WebhookID    snowflake.ID
 	WebhookToken string
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_Do_Call struct {
 	Endpoint *rest.CompiledEndpoint
-	RqBody any
-	RsBody any
-	Opts []rest.RequestOpt
+	RqBody   any
+	RsBody   any
+	Opts     []rest.RequestOpt
 }
 type _clientRest_ExpirePoll_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_Follow_Call struct {
-	ChannelID snowflake.ID
+	ChannelID       snowflake.ID
 	TargetChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts            []rest.RequestOpt
 }
 type _clientRest_GetAccessToken_Call struct {
-	ClientID snowflake.ID
+	ClientID     snowflake.ID
 	ClientSecret string
-	Code string
-	RedirectURI string
-	Opts []rest.RequestOpt
+	Code         string
+	RedirectURI  string
+	Opts         []rest.RequestOpt
 }
 type _clientRest_GetActiveGuildThreads_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetActivityInstance_Call struct {
 	ApplicationID snowflake.ID
-	InstanceID string
-	Opts []rest.RequestOpt
+	InstanceID    string
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetAllWebhooks_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetApplicationEmoji_Call struct {
 	ApplicationID snowflake.ID
-	EmojiID snowflake.ID
-	Opts []rest.RequestOpt
+	EmojiID       snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetApplicationEmojis_Call struct {
 	ApplicationID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetApplicationRoleConnectionMetadata_Call struct {
 	ApplicationID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetAuditLog_Call struct {
-	GuildID snowflake.ID
-	UserID snowflake.ID
+	GuildID    snowflake.ID
+	UserID     snowflake.ID
 	ActionType discord.AuditLogEvent
-	Before snowflake.ID
-	After snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	Before     snowflake.ID
+	After      snowflake.ID
+	Limit      int
+	Opts       []rest.RequestOpt
 }
 type _clientRest_GetAuditLogPage_Call struct {
-	GuildID snowflake.ID
-	UserID snowflake.ID
+	GuildID    snowflake.ID
+	UserID     snowflake.ID
 	ActionType discord.AuditLogEvent
-	StartID snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	StartID    snowflake.ID
+	Limit      int
+	Opts       []rest.RequestOpt
 }
 type _clientRest_GetAutoModerationRule_Call struct {
 	GuildID snowflake.ID
-	RuleID snowflake.ID
-	Opts []rest.RequestOpt
+	RuleID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetAutoModerationRules_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetBan_Call struct {
 	GuildID snowflake.ID
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetBans_Call struct {
 	GuildID snowflake.ID
-	Before snowflake.ID
-	After snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	Before  snowflake.ID
+	After   snowflake.ID
+	Limit   int
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetBansPage_Call struct {
 	GuildID snowflake.ID
 	StartID snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	Limit   int
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetBotApplicationInfo_Call struct {
 	Opts []rest.RequestOpt
 }
 type _clientRest_GetChannel_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetChannelInvites_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetCurrentApplication_Call struct {
 	Opts []rest.RequestOpt
 }
 type _clientRest_GetCurrentAuthorizationInfo_Call struct {
 	BearerToken string
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_GetCurrentMember_Call struct {
 	BearerToken string
-	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	GuildID     snowflake.ID
+	Opts        []rest.RequestOpt
 }
 type _clientRest_GetCurrentUser_Call struct {
 	BearerToken string
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_GetCurrentUserApplicationRoleConnection_Call struct {
-	BearerToken string
+	BearerToken   string
 	ApplicationID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetCurrentUserConnections_Call struct {
 	BearerToken string
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_GetCurrentUserGuilds_Call struct {
 	BearerToken string
-	Before snowflake.ID
-	After snowflake.ID
-	Limit int
-	WithCounts bool
-	Opts []rest.RequestOpt
+	Before      snowflake.ID
+	After       snowflake.ID
+	Limit       int
+	WithCounts  bool
+	Opts        []rest.RequestOpt
 }
 type _clientRest_GetCurrentUserGuildsPage_Call struct {
 	BearerToken string
-	StartID snowflake.ID
-	Limit int
-	WithCounts bool
-	Opts []rest.RequestOpt
+	StartID     snowflake.ID
+	Limit       int
+	WithCounts  bool
+	Opts        []rest.RequestOpt
 }
 type _clientRest_GetCurrentUserVoiceState_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetEmoji_Call struct {
 	GuildID snowflake.ID
 	EmojiID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetEmojis_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetEntitlement_Call struct {
 	ApplicationID snowflake.ID
 	EntitlementID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetEntitlements_Call struct {
 	ApplicationID snowflake.ID
-	Params rest.GetEntitlementsParams
-	Opts []rest.RequestOpt
+	Params        rest.GetEntitlementsParams
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetFollowupMessage_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID    snowflake.ID
 	InteractionToken string
-	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	MessageID        snowflake.ID
+	Opts             []rest.RequestOpt
 }
 type _clientRest_GetGateway_Call struct {
 	Opts []rest.RequestOpt
@@ -965,129 +966,129 @@ type _clientRest_GetGatewayBot_Call struct {
 }
 type _clientRest_GetGlobalCommand_Call struct {
 	ApplicationID snowflake.ID
-	CommandID snowflake.ID
-	Opts []rest.RequestOpt
+	CommandID     snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetGlobalCommands_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID     snowflake.ID
 	WithLocalizations bool
-	Opts []rest.RequestOpt
+	Opts              []rest.RequestOpt
 }
 type _clientRest_GetGuild_Call struct {
-	GuildID snowflake.ID
+	GuildID    snowflake.ID
 	WithCounts bool
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_GetGuildChannels_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildCommand_Call struct {
 	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	CommandID snowflake.ID
-	Opts []rest.RequestOpt
+	GuildID       snowflake.ID
+	CommandID     snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetGuildCommandPermissions_Call struct {
 	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	CommandID snowflake.ID
-	Opts []rest.RequestOpt
+	GuildID       snowflake.ID
+	CommandID     snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetGuildCommands_Call struct {
-	ApplicationID snowflake.ID
-	GuildID snowflake.ID
+	ApplicationID     snowflake.ID
+	GuildID           snowflake.ID
 	WithLocalizations bool
-	Opts []rest.RequestOpt
+	Opts              []rest.RequestOpt
 }
 type _clientRest_GetGuildCommandsPermissions_Call struct {
 	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	GuildID       snowflake.ID
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetGuildInvites_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildOnboarding_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildPreview_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildPruneCount_Call struct {
-	GuildID snowflake.ID
-	Days int
+	GuildID      snowflake.ID
+	Days         int
 	IncludeRoles []snowflake.ID
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_GetGuildScheduledEvent_Call struct {
-	GuildID snowflake.ID
+	GuildID               snowflake.ID
 	GuildScheduledEventID snowflake.ID
-	WithUserCounts bool
-	Opts []rest.RequestOpt
+	WithUserCounts        bool
+	Opts                  []rest.RequestOpt
 }
 type _clientRest_GetGuildScheduledEventUsers_Call struct {
-	GuildID snowflake.ID
+	GuildID               snowflake.ID
 	GuildScheduledEventID snowflake.ID
-	WithMember bool
-	Before snowflake.ID
-	After snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	WithMember            bool
+	Before                snowflake.ID
+	After                 snowflake.ID
+	Limit                 int
+	Opts                  []rest.RequestOpt
 }
 type _clientRest_GetGuildScheduledEventUsersPage_Call struct {
-	GuildID snowflake.ID
+	GuildID               snowflake.ID
 	GuildScheduledEventID snowflake.ID
-	WithMember bool
-	StartID snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	WithMember            bool
+	StartID               snowflake.ID
+	Limit                 int
+	Opts                  []rest.RequestOpt
 }
 type _clientRest_GetGuildScheduledEvents_Call struct {
-	GuildID snowflake.ID
+	GuildID        snowflake.ID
 	WithUserCounts bool
-	Opts []rest.RequestOpt
+	Opts           []rest.RequestOpt
 }
 type _clientRest_GetGuildSoundboardSound_Call struct {
 	GuildID snowflake.ID
 	SoundID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildSoundboardSounds_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildTemplate_Call struct {
 	TemplateCode string
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_GetGuildTemplates_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildVanityURL_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildVoiceRegions_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetGuildWelcomeScreen_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetIntegrations_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetInteractionResponse_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID    snowflake.ID
 	InteractionToken string
-	Opts []rest.RequestOpt
+	Opts             []rest.RequestOpt
 }
 type _clientRest_GetInvite_Call struct {
 	Code string
@@ -1095,471 +1096,471 @@ type _clientRest_GetInvite_Call struct {
 }
 type _clientRest_GetJoinedPrivateArchivedThreads_Call struct {
 	ChannelID snowflake.ID
-	Before time.Time
-	Limit int
-	Opts []rest.RequestOpt
+	Before    time.Time
+	Limit     int
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetMember_Call struct {
 	GuildID snowflake.ID
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetMembers_Call struct {
 	GuildID snowflake.ID
-	Limit int
-	After snowflake.ID
-	Opts []rest.RequestOpt
+	Limit   int
+	After   snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetMessage_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetMessages_Call struct {
 	ChannelID snowflake.ID
-	Around snowflake.ID
-	Before snowflake.ID
-	After snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	Around    snowflake.ID
+	Before    snowflake.ID
+	After     snowflake.ID
+	Limit     int
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetMessagesPage_Call struct {
 	ChannelID snowflake.ID
-	StartID snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	StartID   snowflake.ID
+	Limit     int
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetNitroStickerPack_Call struct {
 	PackID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts   []rest.RequestOpt
 }
 type _clientRest_GetNitroStickerPacks_Call struct {
 	Opts []rest.RequestOpt
 }
 type _clientRest_GetPinnedMessages_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetPollAnswerVotes_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	AnswerID int
-	After snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	AnswerID  int
+	After     snowflake.ID
+	Limit     int
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetPollAnswerVotesPage_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	AnswerID int
-	StartID snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	AnswerID  int
+	StartID   snowflake.ID
+	Limit     int
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetPrivateArchivedThreads_Call struct {
 	ChannelID snowflake.ID
-	Before time.Time
-	Limit int
-	Opts []rest.RequestOpt
+	Before    time.Time
+	Limit     int
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetPublicArchivedThreads_Call struct {
 	ChannelID snowflake.ID
-	Before time.Time
-	Limit int
-	Opts []rest.RequestOpt
+	Before    time.Time
+	Limit     int
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetReactions_Call struct {
-	ChannelID snowflake.ID
-	MessageID snowflake.ID
-	Emoji string
+	ChannelID    snowflake.ID
+	MessageID    snowflake.ID
+	Emoji        string
 	ReactionType discord.MessageReactionType
-	After int
-	Limit int
-	Opts []rest.RequestOpt
+	After        int
+	Limit        int
+	Opts         []rest.RequestOpt
 }
 type _clientRest_GetRole_Call struct {
 	GuildID snowflake.ID
-	RoleID snowflake.ID
-	Opts []rest.RequestOpt
+	RoleID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetRoles_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetSKUSubscription_Call struct {
-	SkuID snowflake.ID
+	SkuID          snowflake.ID
 	SubscriptionID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts           []rest.RequestOpt
 }
 type _clientRest_GetSKUSubscriptions_Call struct {
-	SkuID snowflake.ID
+	SkuID  snowflake.ID
 	Before snowflake.ID
-	After snowflake.ID
-	Limit int
+	After  snowflake.ID
+	Limit  int
 	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts   []rest.RequestOpt
 }
 type _clientRest_GetSKUSubscriptionsPage_Call struct {
-	SkuID snowflake.ID
-	UserID snowflake.ID
+	SkuID   snowflake.ID
+	UserID  snowflake.ID
 	StartID snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	Limit   int
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetSKUs_Call struct {
 	ApplicationID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_GetSoundboardDefaultSounds_Call struct {
 	Opts []rest.RequestOpt
 }
 type _clientRest_GetStageInstance_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetSticker_Call struct {
 	StickerID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetStickers_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetThreadMember_Call struct {
-	ThreadID snowflake.ID
-	UserID snowflake.ID
+	ThreadID   snowflake.ID
+	UserID     snowflake.ID
 	WithMember bool
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_GetThreadMembers_Call struct {
 	ThreadID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts     []rest.RequestOpt
 }
 type _clientRest_GetThreadMembersPage_Call struct {
 	ThreadID snowflake.ID
-	StartID snowflake.ID
-	Limit int
-	Opts []rest.RequestOpt
+	StartID  snowflake.ID
+	Limit    int
+	Opts     []rest.RequestOpt
 }
 type _clientRest_GetUser_Call struct {
 	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts   []rest.RequestOpt
 }
 type _clientRest_GetUserVoiceState_Call struct {
 	GuildID snowflake.ID
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_GetVoiceRegions_Call struct {
 	Opts []rest.RequestOpt
 }
 type _clientRest_GetWebhook_Call struct {
 	WebhookID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_GetWebhookWithToken_Call struct {
-	WebhookID snowflake.ID
+	WebhookID    snowflake.ID
 	WebhookToken string
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_GetWebhooks_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
-type _clientRest_HTTPClient_Call struct {}
+type _clientRest_HTTPClient_Call struct{}
 type _clientRest_JoinThread_Call struct {
 	ThreadID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts     []rest.RequestOpt
 }
 type _clientRest_LeaveGuild_Call struct {
 	GuildID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts    []rest.RequestOpt
 }
 type _clientRest_LeaveThread_Call struct {
 	ThreadID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts     []rest.RequestOpt
 }
 type _clientRest_PinMessage_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
-type _clientRest_RateLimiter_Call struct {}
+type _clientRest_RateLimiter_Call struct{}
 type _clientRest_RefreshAccessToken_Call struct {
-	ClientID snowflake.ID
+	ClientID     snowflake.ID
 	ClientSecret string
 	RefreshToken string
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_RemoveAllReactions_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_RemoveAllReactionsForEmoji_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Emoji string
-	Opts []rest.RequestOpt
+	Emoji     string
+	Opts      []rest.RequestOpt
 }
 type _clientRest_RemoveMember_Call struct {
 	GuildID snowflake.ID
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_RemoveMemberRole_Call struct {
 	GuildID snowflake.ID
-	UserID snowflake.ID
-	RoleID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID  snowflake.ID
+	RoleID  snowflake.ID
+	Opts    []rest.RequestOpt
 }
 type _clientRest_RemoveOwnReaction_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Emoji string
-	Opts []rest.RequestOpt
+	Emoji     string
+	Opts      []rest.RequestOpt
 }
 type _clientRest_RemoveThreadMember_Call struct {
 	ThreadID snowflake.ID
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	UserID   snowflake.ID
+	Opts     []rest.RequestOpt
 }
 type _clientRest_RemoveUserReaction_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Emoji string
-	UserID snowflake.ID
-	Opts []rest.RequestOpt
+	Emoji     string
+	UserID    snowflake.ID
+	Opts      []rest.RequestOpt
 }
 type _clientRest_SearchMembers_Call struct {
 	GuildID snowflake.ID
-	Query string
-	Limit int
-	Opts []rest.RequestOpt
+	Query   string
+	Limit   int
+	Opts    []rest.RequestOpt
 }
 type _clientRest_SendSoundboardSound_Call struct {
 	ChannelID snowflake.ID
 	SendSound discord.SendSoundboardSound
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_SendTyping_Call struct {
 	ChannelID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_SetGlobalCommands_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID  snowflake.ID
 	CommandCreates []discord.ApplicationCommandCreate
-	Opts []rest.RequestOpt
+	Opts           []rest.RequestOpt
 }
 type _clientRest_SetGuildCommandPermissions_Call struct {
-	BearerToken string
-	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	CommandID snowflake.ID
+	BearerToken        string
+	ApplicationID      snowflake.ID
+	GuildID            snowflake.ID
+	CommandID          snowflake.ID
 	CommandPermissions []discord.ApplicationCommandPermission
-	Opts []rest.RequestOpt
+	Opts               []rest.RequestOpt
 }
 type _clientRest_SetGuildCommands_Call struct {
 	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	Commands []discord.ApplicationCommandCreate
-	Opts []rest.RequestOpt
+	GuildID       snowflake.ID
+	Commands      []discord.ApplicationCommandCreate
+	Opts          []rest.RequestOpt
 }
 type _clientRest_SyncGuildTemplate_Call struct {
-	GuildID snowflake.ID
+	GuildID      snowflake.ID
 	TemplateCode string
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_UnpinMessage_Call struct {
 	ChannelID snowflake.ID
 	MessageID snowflake.ID
-	Opts []rest.RequestOpt
+	Opts      []rest.RequestOpt
 }
 type _clientRest_UpdateApplicationEmoji_Call struct {
 	ApplicationID snowflake.ID
-	EmojiID snowflake.ID
-	EmojiUpdate discord.EmojiUpdate
-	Opts []rest.RequestOpt
+	EmojiID       snowflake.ID
+	EmojiUpdate   discord.EmojiUpdate
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateApplicationRoleConnectionMetadata_Call struct {
 	ApplicationID snowflake.ID
-	NewRecords []discord.ApplicationRoleConnectionMetadata
-	Opts []rest.RequestOpt
+	NewRecords    []discord.ApplicationRoleConnectionMetadata
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateAutoModerationRule_Call struct {
-	GuildID snowflake.ID
-	RuleID snowflake.ID
+	GuildID    snowflake.ID
+	RuleID     snowflake.ID
 	RuleUpdate discord.AutoModerationRuleUpdate
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_UpdateChannel_Call struct {
-	ChannelID snowflake.ID
+	ChannelID     snowflake.ID
 	ChannelUpdate discord.ChannelUpdate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateChannelPositions_Call struct {
-	GuildID snowflake.ID
+	GuildID                     snowflake.ID
 	GuildChannelPositionUpdates []discord.GuildChannelPositionUpdate
-	Opts []rest.RequestOpt
+	Opts                        []rest.RequestOpt
 }
 type _clientRest_UpdateCurrentApplication_Call struct {
 	ApplicationUpdate discord.ApplicationUpdate
-	Opts []rest.RequestOpt
+	Opts              []rest.RequestOpt
 }
 type _clientRest_UpdateCurrentMember_Call struct {
 	GuildID snowflake.ID
-	Nick string
-	Opts []rest.RequestOpt
+	Nick    string
+	Opts    []rest.RequestOpt
 }
 type _clientRest_UpdateCurrentUser_Call struct {
 	UserUpdate discord.UserUpdate
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_UpdateCurrentUserApplicationRoleConnection_Call struct {
-	BearerToken string
-	ApplicationID snowflake.ID
+	BearerToken      string
+	ApplicationID    snowflake.ID
 	ConnectionUpdate discord.ApplicationRoleConnectionUpdate
-	Opts []rest.RequestOpt
+	Opts             []rest.RequestOpt
 }
 type _clientRest_UpdateCurrentUserVoiceState_Call struct {
-	GuildID snowflake.ID
+	GuildID                     snowflake.ID
 	CurrentUserVoiceStateUpdate discord.CurrentUserVoiceStateUpdate
-	Opts []rest.RequestOpt
+	Opts                        []rest.RequestOpt
 }
 type _clientRest_UpdateEmoji_Call struct {
-	GuildID snowflake.ID
-	EmojiID snowflake.ID
+	GuildID     snowflake.ID
+	EmojiID     snowflake.ID
 	EmojiUpdate discord.EmojiUpdate
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_UpdateFollowupMessage_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID    snowflake.ID
 	InteractionToken string
-	MessageID snowflake.ID
-	MessageUpdate discord.MessageUpdate
-	Opts []rest.RequestOpt
+	MessageID        snowflake.ID
+	MessageUpdate    discord.MessageUpdate
+	Opts             []rest.RequestOpt
 }
 type _clientRest_UpdateGlobalCommand_Call struct {
 	ApplicationID snowflake.ID
-	CommandID snowflake.ID
+	CommandID     snowflake.ID
 	CommandUpdate discord.ApplicationCommandUpdate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateGuild_Call struct {
-	GuildID snowflake.ID
+	GuildID     snowflake.ID
 	GuildUpdate discord.GuildUpdate
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_UpdateGuildCommand_Call struct {
 	ApplicationID snowflake.ID
-	GuildID snowflake.ID
-	CommandID snowflake.ID
-	Command discord.ApplicationCommandUpdate
-	Opts []rest.RequestOpt
+	GuildID       snowflake.ID
+	CommandID     snowflake.ID
+	Command       discord.ApplicationCommandUpdate
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateGuildIncidentActions_Call struct {
-	GuildID snowflake.ID
+	GuildID       snowflake.ID
 	ActionsUpdate discord.GuildIncidentActionsUpdate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateGuildOnboarding_Call struct {
-	GuildID snowflake.ID
+	GuildID          snowflake.ID
 	OnboardingUpdate discord.GuildOnboardingUpdate
-	Opts []rest.RequestOpt
+	Opts             []rest.RequestOpt
 }
 type _clientRest_UpdateGuildScheduledEvent_Call struct {
-	GuildID snowflake.ID
-	GuildScheduledEventID snowflake.ID
+	GuildID                   snowflake.ID
+	GuildScheduledEventID     snowflake.ID
 	GuildScheduledEventUpdate discord.GuildScheduledEventUpdate
-	Opts []rest.RequestOpt
+	Opts                      []rest.RequestOpt
 }
 type _clientRest_UpdateGuildSoundboardSound_Call struct {
-	GuildID snowflake.ID
-	SoundID snowflake.ID
+	GuildID     snowflake.ID
+	SoundID     snowflake.ID
 	SoundUpdate discord.SoundboardSoundUpdate
-	Opts []rest.RequestOpt
+	Opts        []rest.RequestOpt
 }
 type _clientRest_UpdateGuildTemplate_Call struct {
-	GuildID snowflake.ID
-	TemplateCode string
+	GuildID             snowflake.ID
+	TemplateCode        string
 	GuildTemplateUpdate discord.GuildTemplateUpdate
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_UpdateGuildWelcomeScreen_Call struct {
-	GuildID snowflake.ID
+	GuildID      snowflake.ID
 	ScreenUpdate discord.GuildWelcomeScreenUpdate
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_UpdateInteractionResponse_Call struct {
-	ApplicationID snowflake.ID
+	ApplicationID    snowflake.ID
 	InteractionToken string
-	MessageUpdate discord.MessageUpdate
-	Opts []rest.RequestOpt
+	MessageUpdate    discord.MessageUpdate
+	Opts             []rest.RequestOpt
 }
 type _clientRest_UpdateMember_Call struct {
-	GuildID snowflake.ID
-	UserID snowflake.ID
+	GuildID      snowflake.ID
+	UserID       snowflake.ID
 	MemberUpdate discord.MemberUpdate
-	Opts []rest.RequestOpt
+	Opts         []rest.RequestOpt
 }
 type _clientRest_UpdateMessage_Call struct {
-	ChannelID snowflake.ID
-	MessageID snowflake.ID
+	ChannelID     snowflake.ID
+	MessageID     snowflake.ID
 	MessageUpdate discord.MessageUpdate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdatePermissionOverwrite_Call struct {
-	ChannelID snowflake.ID
-	OverwriteID snowflake.ID
+	ChannelID           snowflake.ID
+	OverwriteID         snowflake.ID
 	PermissionOverwrite discord.PermissionOverwriteUpdate
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_UpdateRole_Call struct {
-	GuildID snowflake.ID
-	RoleID snowflake.ID
+	GuildID    snowflake.ID
+	RoleID     snowflake.ID
 	RoleUpdate discord.RoleUpdate
-	Opts []rest.RequestOpt
+	Opts       []rest.RequestOpt
 }
 type _clientRest_UpdateRolePositions_Call struct {
-	GuildID snowflake.ID
+	GuildID             snowflake.ID
 	RolePositionUpdates []discord.RolePositionUpdate
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_UpdateStageInstance_Call struct {
-	ChannelID snowflake.ID
+	ChannelID           snowflake.ID
 	StageInstanceUpdate discord.StageInstanceUpdate
-	Opts []rest.RequestOpt
+	Opts                []rest.RequestOpt
 }
 type _clientRest_UpdateSticker_Call struct {
-	GuildID snowflake.ID
-	StickerID snowflake.ID
+	GuildID       snowflake.ID
+	StickerID     snowflake.ID
 	StickerUpdate discord.StickerUpdate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateUserVoiceState_Call struct {
-	GuildID snowflake.ID
-	UserID snowflake.ID
+	GuildID              snowflake.ID
+	UserID               snowflake.ID
 	UserVoiceStateUpdate discord.UserVoiceStateUpdate
-	Opts []rest.RequestOpt
+	Opts                 []rest.RequestOpt
 }
 type _clientRest_UpdateWebhook_Call struct {
-	WebhookID snowflake.ID
+	WebhookID     snowflake.ID
 	WebhookUpdate discord.WebhookUpdate
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateWebhookMessage_Call struct {
-	WebhookID snowflake.ID
-	WebhookToken string
-	MessageID snowflake.ID
+	WebhookID     snowflake.ID
+	WebhookToken  string
+	MessageID     snowflake.ID
 	MessageUpdate discord.WebhookMessageUpdate
-	Params rest.UpdateWebhookMessageParams
-	Opts []rest.RequestOpt
+	Params        rest.UpdateWebhookMessageParams
+	Opts          []rest.RequestOpt
 }
 type _clientRest_UpdateWebhookWithToken_Call struct {
-	WebhookID snowflake.ID
-	WebhookToken string
+	WebhookID     snowflake.ID
+	WebhookToken  string
 	WebhookUpdate discord.WebhookUpdateWithToken
-	Opts []rest.RequestOpt
+	Opts          []rest.RequestOpt
 }
 
 func (_recv *clientRest) AddBan(guildID snowflake.ID, userID snowflake.ID, deleteMessageDuration time.Duration, opts ...rest.RequestOpt) error {
@@ -1572,7 +1573,7 @@ func (_recv *clientRest) AddBan(guildID snowflake.ID, userID snowflake.ID, delet
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.AddBanCalls = append(_all.AddBanCalls, _clientRest_AddBan_Call{guildID, userID, deleteMessageDuration, opts})
-	var _fn func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error
 	if len(_dat.AddBanMocks) > 0 {
 		_fn = _dat.AddBanMocks[0]
 		if len(_dat.AddBanMocks) > 1 {
@@ -1591,7 +1592,7 @@ func (_recv *clientRest) AddBan(guildID snowflake.ID, userID snowflake.ID, delet
 	return _fn(guildID, userID, deleteMessageDuration, opts...)
 }
 
-func (_recv *clientRest) _AddBan_Do(fn func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _AddBan_Do(fn func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.AddBan: nil pointer receiver")
 	}
@@ -1599,9 +1600,9 @@ func (_recv *clientRest) _AddBan_Do(fn func(snowflake.ID, snowflake.ID, time.Dur
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error){}
+		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddBanMocks) < 2 {
-		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddBanMocks = _dat.AddBanMocks[:len(_dat.AddBanMocks)-1]
 		_dat.AddBanMocks = append(_dat.AddBanMocks, fn)
@@ -1609,14 +1610,14 @@ func (_recv *clientRest) _AddBan_Do(fn func(snowflake.ID, snowflake.ID, time.Dur
 	}
 }
 
-func (clientRest) _AddBan_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error)) {
+func (clientRest) _AddBan_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error){}
+		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddBanMocks) < 2 {
-		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddBanMocks = _dat.AddBanMocks[:len(_dat.AddBanMocks)-1]
 		_dat.AddBanMocks = append(_dat.AddBanMocks, fn)
@@ -1626,7 +1627,7 @@ func (clientRest) _AddBan_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error){}
+			_dat.AddBanMocks = []func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1641,11 +1642,11 @@ func (clientRest) _AddBan_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _AddBan_Return(r0 error) {
-	_recv._AddBan_Do(func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error) { return r0 })
+	_recv._AddBan_Do(func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _AddBan_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._AddBan_DoAll(t, func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._AddBan_DoAll(t, func(snowflake.ID, snowflake.ID, time.Duration, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _AddBan_Calls() []_clientRest_AddBan_Call {
@@ -1676,7 +1677,6 @@ func (clientRest) _AddBan_BubbleCalls(t *testing.T) {
 		_dat.AddBanCalls = []_clientRest_AddBan_Call{}
 	})
 }
-
 
 func (_recv *clientRest) AddMember(guildID snowflake.ID, userID snowflake.ID, memberAdd discord.MemberAdd, opts ...rest.RequestOpt) (*discord.Member, error) {
 	if _recv == nil {
@@ -1749,19 +1749,27 @@ func (clientRest) _AddMember_DoAll(t *testing.T, fn func(snowflake.ID, snowflake
 }
 
 func (_recv *clientRest) _AddMember_Stub() {
-	_recv._AddMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (r0 *discord.Member, r1 error) { return })
+	_recv._AddMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (r0 *discord.Member, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _AddMember_StubAll(t *testing.T) {
-	new(clientRest)._AddMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (r0 *discord.Member, r1 error) { return })
+	new(clientRest)._AddMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (r0 *discord.Member, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _AddMember_Return(r0 *discord.Member, r1 error) {
-	_recv._AddMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (*discord.Member, error) { return r0, r1 })
+	_recv._AddMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (*discord.Member, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _AddMember_ReturnAll(t *testing.T, r0 *discord.Member, r1 error) {
-	new(clientRest)._AddMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (*discord.Member, error) { return r0, r1 })
+	new(clientRest)._AddMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberAdd, ...rest.RequestOpt) (*discord.Member, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _AddMember_Calls() []_clientRest_AddMember_Call {
@@ -1793,7 +1801,6 @@ func (clientRest) _AddMember_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) AddMemberRole(guildID snowflake.ID, userID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.AddMemberRole: nil pointer receiver")
@@ -1804,7 +1811,7 @@ func (_recv *clientRest) AddMemberRole(guildID snowflake.ID, userID snowflake.ID
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.AddMemberRoleCalls = append(_all.AddMemberRoleCalls, _clientRest_AddMemberRole_Call{guildID, userID, roleID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.AddMemberRoleMocks) > 0 {
 		_fn = _dat.AddMemberRoleMocks[0]
 		if len(_dat.AddMemberRoleMocks) > 1 {
@@ -1823,7 +1830,7 @@ func (_recv *clientRest) AddMemberRole(guildID snowflake.ID, userID snowflake.ID
 	return _fn(guildID, userID, roleID, opts...)
 }
 
-func (_recv *clientRest) _AddMemberRole_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _AddMemberRole_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.AddMemberRole: nil pointer receiver")
 	}
@@ -1831,9 +1838,9 @@ func (_recv *clientRest) _AddMemberRole_Do(fn func(snowflake.ID, snowflake.ID, s
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddMemberRoleMocks) < 2 {
-		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddMemberRoleMocks = _dat.AddMemberRoleMocks[:len(_dat.AddMemberRoleMocks)-1]
 		_dat.AddMemberRoleMocks = append(_dat.AddMemberRoleMocks, fn)
@@ -1841,14 +1848,14 @@ func (_recv *clientRest) _AddMemberRole_Do(fn func(snowflake.ID, snowflake.ID, s
 	}
 }
 
-func (clientRest) _AddMemberRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _AddMemberRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddMemberRoleMocks) < 2 {
-		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddMemberRoleMocks = _dat.AddMemberRoleMocks[:len(_dat.AddMemberRoleMocks)-1]
 		_dat.AddMemberRoleMocks = append(_dat.AddMemberRoleMocks, fn)
@@ -1858,7 +1865,7 @@ func (clientRest) _AddMemberRole_DoAll(t *testing.T, fn func(snowflake.ID, snowf
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.AddMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1873,11 +1880,11 @@ func (clientRest) _AddMemberRole_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _AddMemberRole_Return(r0 error) {
-	_recv._AddMemberRole_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._AddMemberRole_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _AddMemberRole_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._AddMemberRole_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._AddMemberRole_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _AddMemberRole_Calls() []_clientRest_AddMemberRole_Call {
@@ -1909,7 +1916,6 @@ func (clientRest) _AddMemberRole_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) AddReaction(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.AddReaction: nil pointer receiver")
@@ -1920,7 +1926,7 @@ func (_recv *clientRest) AddReaction(channelID snowflake.ID, messageID snowflake
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.AddReactionCalls = append(_all.AddReactionCalls, _clientRest_AddReaction_Call{channelID, messageID, emoji, opts})
-	var _fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error
 	if len(_dat.AddReactionMocks) > 0 {
 		_fn = _dat.AddReactionMocks[0]
 		if len(_dat.AddReactionMocks) > 1 {
@@ -1939,7 +1945,7 @@ func (_recv *clientRest) AddReaction(channelID snowflake.ID, messageID snowflake
 	return _fn(channelID, messageID, emoji, opts...)
 }
 
-func (_recv *clientRest) _AddReaction_Do(fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _AddReaction_Do(fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.AddReaction: nil pointer receiver")
 	}
@@ -1947,9 +1953,9 @@ func (_recv *clientRest) _AddReaction_Do(fn func(snowflake.ID, snowflake.ID, str
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddReactionMocks) < 2 {
-		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddReactionMocks = _dat.AddReactionMocks[:len(_dat.AddReactionMocks)-1]
 		_dat.AddReactionMocks = append(_dat.AddReactionMocks, fn)
@@ -1957,14 +1963,14 @@ func (_recv *clientRest) _AddReaction_Do(fn func(snowflake.ID, snowflake.ID, str
 	}
 }
 
-func (clientRest) _AddReaction_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (clientRest) _AddReaction_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddReactionMocks) < 2 {
-		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddReactionMocks = _dat.AddReactionMocks[:len(_dat.AddReactionMocks)-1]
 		_dat.AddReactionMocks = append(_dat.AddReactionMocks, fn)
@@ -1974,7 +1980,7 @@ func (clientRest) _AddReaction_DoAll(t *testing.T, fn func(snowflake.ID, snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+			_dat.AddReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -1989,11 +1995,11 @@ func (clientRest) _AddReaction_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _AddReaction_Return(r0 error) {
-	_recv._AddReaction_Do(func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	_recv._AddReaction_Do(func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _AddReaction_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._AddReaction_DoAll(t, func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._AddReaction_DoAll(t, func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _AddReaction_Calls() []_clientRest_AddReaction_Call {
@@ -2025,7 +2031,6 @@ func (clientRest) _AddReaction_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) AddThreadMember(threadID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.AddThreadMember: nil pointer receiver")
@@ -2036,7 +2041,7 @@ func (_recv *clientRest) AddThreadMember(threadID snowflake.ID, userID snowflake
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.AddThreadMemberCalls = append(_all.AddThreadMemberCalls, _clientRest_AddThreadMember_Call{threadID, userID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.AddThreadMemberMocks) > 0 {
 		_fn = _dat.AddThreadMemberMocks[0]
 		if len(_dat.AddThreadMemberMocks) > 1 {
@@ -2055,7 +2060,7 @@ func (_recv *clientRest) AddThreadMember(threadID snowflake.ID, userID snowflake
 	return _fn(threadID, userID, opts...)
 }
 
-func (_recv *clientRest) _AddThreadMember_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _AddThreadMember_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.AddThreadMember: nil pointer receiver")
 	}
@@ -2063,9 +2068,9 @@ func (_recv *clientRest) _AddThreadMember_Do(fn func(snowflake.ID, snowflake.ID,
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddThreadMemberMocks) < 2 {
-		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddThreadMemberMocks = _dat.AddThreadMemberMocks[:len(_dat.AddThreadMemberMocks)-1]
 		_dat.AddThreadMemberMocks = append(_dat.AddThreadMemberMocks, fn)
@@ -2073,14 +2078,14 @@ func (_recv *clientRest) _AddThreadMember_Do(fn func(snowflake.ID, snowflake.ID,
 	}
 }
 
-func (clientRest) _AddThreadMember_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _AddThreadMember_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.AddThreadMemberMocks) < 2 {
-		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.AddThreadMemberMocks = _dat.AddThreadMemberMocks[:len(_dat.AddThreadMemberMocks)-1]
 		_dat.AddThreadMemberMocks = append(_dat.AddThreadMemberMocks, fn)
@@ -2090,7 +2095,7 @@ func (clientRest) _AddThreadMember_DoAll(t *testing.T, fn func(snowflake.ID, sno
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.AddThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2105,11 +2110,11 @@ func (clientRest) _AddThreadMember_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _AddThreadMember_Return(r0 error) {
-	_recv._AddThreadMember_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._AddThreadMember_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _AddThreadMember_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._AddThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._AddThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _AddThreadMember_Calls() []_clientRest_AddThreadMember_Call {
@@ -2140,7 +2145,6 @@ func (clientRest) _AddThreadMember_BubbleCalls(t *testing.T) {
 		_dat.AddThreadMemberCalls = []_clientRest_AddThreadMember_Call{}
 	})
 }
-
 
 func (_recv *clientRest) BeginGuildPrune(guildID snowflake.ID, guildPrune discord.GuildPrune, opts ...rest.RequestOpt) (*discord.GuildPruneResult, error) {
 	if _recv == nil {
@@ -2213,19 +2217,27 @@ func (clientRest) _BeginGuildPrune_DoAll(t *testing.T, fn func(snowflake.ID, dis
 }
 
 func (_recv *clientRest) _BeginGuildPrune_Stub() {
-	_recv._BeginGuildPrune_Do(func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) { return })
+	_recv._BeginGuildPrune_Do(func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _BeginGuildPrune_StubAll(t *testing.T) {
-	new(clientRest)._BeginGuildPrune_DoAll(t, func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) { return })
+	new(clientRest)._BeginGuildPrune_DoAll(t, func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _BeginGuildPrune_Return(r0 *discord.GuildPruneResult, r1 error) {
-	_recv._BeginGuildPrune_Do(func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (*discord.GuildPruneResult, error) { return r0, r1 })
+	_recv._BeginGuildPrune_Do(func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (*discord.GuildPruneResult, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _BeginGuildPrune_ReturnAll(t *testing.T, r0 *discord.GuildPruneResult, r1 error) {
-	new(clientRest)._BeginGuildPrune_DoAll(t, func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (*discord.GuildPruneResult, error) { return r0, r1 })
+	new(clientRest)._BeginGuildPrune_DoAll(t, func(snowflake.ID, discord.GuildPrune, ...rest.RequestOpt) (*discord.GuildPruneResult, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _BeginGuildPrune_Calls() []_clientRest_BeginGuildPrune_Call {
@@ -2256,7 +2268,6 @@ func (clientRest) _BeginGuildPrune_BubbleCalls(t *testing.T) {
 		_dat.BeginGuildPruneCalls = []_clientRest_BeginGuildPrune_Call{}
 	})
 }
-
 
 func (_recv *clientRest) BulkBan(guildID snowflake.ID, ban discord.BulkBan, opts ...rest.RequestOpt) (*discord.BulkBanResult, error) {
 	if _recv == nil {
@@ -2373,7 +2384,6 @@ func (clientRest) _BulkBan_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) BulkDeleteMessages(channelID snowflake.ID, messageIDs []snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.BulkDeleteMessages: nil pointer receiver")
@@ -2384,7 +2394,7 @@ func (_recv *clientRest) BulkDeleteMessages(channelID snowflake.ID, messageIDs [
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.BulkDeleteMessagesCalls = append(_all.BulkDeleteMessagesCalls, _clientRest_BulkDeleteMessages_Call{channelID, messageIDs, opts})
-	var _fn func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.BulkDeleteMessagesMocks) > 0 {
 		_fn = _dat.BulkDeleteMessagesMocks[0]
 		if len(_dat.BulkDeleteMessagesMocks) > 1 {
@@ -2403,7 +2413,7 @@ func (_recv *clientRest) BulkDeleteMessages(channelID snowflake.ID, messageIDs [
 	return _fn(channelID, messageIDs, opts...)
 }
 
-func (_recv *clientRest) _BulkDeleteMessages_Do(fn func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _BulkDeleteMessages_Do(fn func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.BulkDeleteMessages: nil pointer receiver")
 	}
@@ -2411,9 +2421,9 @@ func (_recv *clientRest) _BulkDeleteMessages_Do(fn func(snowflake.ID, []snowflak
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.BulkDeleteMessagesMocks) < 2 {
-		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.BulkDeleteMessagesMocks = _dat.BulkDeleteMessagesMocks[:len(_dat.BulkDeleteMessagesMocks)-1]
 		_dat.BulkDeleteMessagesMocks = append(_dat.BulkDeleteMessagesMocks, fn)
@@ -2421,14 +2431,14 @@ func (_recv *clientRest) _BulkDeleteMessages_Do(fn func(snowflake.ID, []snowflak
 	}
 }
 
-func (clientRest) _BulkDeleteMessages_DoAll(t *testing.T, fn func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _BulkDeleteMessages_DoAll(t *testing.T, fn func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.BulkDeleteMessagesMocks) < 2 {
-		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.BulkDeleteMessagesMocks = _dat.BulkDeleteMessagesMocks[:len(_dat.BulkDeleteMessagesMocks)-1]
 		_dat.BulkDeleteMessagesMocks = append(_dat.BulkDeleteMessagesMocks, fn)
@@ -2438,7 +2448,7 @@ func (clientRest) _BulkDeleteMessages_DoAll(t *testing.T, fn func(snowflake.ID, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.BulkDeleteMessagesMocks = []func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2453,11 +2463,11 @@ func (clientRest) _BulkDeleteMessages_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _BulkDeleteMessages_Return(r0 error) {
-	_recv._BulkDeleteMessages_Do(func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._BulkDeleteMessages_Do(func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _BulkDeleteMessages_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._BulkDeleteMessages_DoAll(t, func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._BulkDeleteMessages_DoAll(t, func(snowflake.ID, []snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _BulkDeleteMessages_Calls() []_clientRest_BulkDeleteMessages_Call {
@@ -2489,7 +2499,6 @@ func (clientRest) _BulkDeleteMessages_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) Close(ctx context.Context) {
 	if _recv == nil {
 		panic("clientRest.Close: nil pointer receiver")
@@ -2500,7 +2509,7 @@ func (_recv *clientRest) Close(ctx context.Context) {
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.CloseCalls = append(_all.CloseCalls, _clientRest_Close_Call{ctx})
-	var _fn func(context.Context) ()
+	var _fn func(context.Context)
 	if len(_dat.CloseMocks) > 0 {
 		_fn = _dat.CloseMocks[0]
 		if len(_dat.CloseMocks) > 1 {
@@ -2519,7 +2528,7 @@ func (_recv *clientRest) Close(ctx context.Context) {
 	_fn(ctx)
 }
 
-func (_recv *clientRest) _Close_Do(fn func(context.Context) ()) {
+func (_recv *clientRest) _Close_Do(fn func(context.Context)) {
 	if _recv == nil {
 		panic("clientRest.Close: nil pointer receiver")
 	}
@@ -2527,9 +2536,9 @@ func (_recv *clientRest) _Close_Do(fn func(context.Context) ()) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CloseMocks = []func(context.Context) (){}
+		_dat.CloseMocks = []func(context.Context){}
 	} else if len(_dat.CloseMocks) < 2 {
-		_dat.CloseMocks = []func(context.Context) (){fn, fn}
+		_dat.CloseMocks = []func(context.Context){fn, fn}
 	} else {
 		_dat.CloseMocks = _dat.CloseMocks[:len(_dat.CloseMocks)-1]
 		_dat.CloseMocks = append(_dat.CloseMocks, fn)
@@ -2537,14 +2546,14 @@ func (_recv *clientRest) _Close_Do(fn func(context.Context) ()) {
 	}
 }
 
-func (clientRest) _Close_DoAll(t *testing.T, fn func(context.Context) ()) {
+func (clientRest) _Close_DoAll(t *testing.T, fn func(context.Context)) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CloseMocks = []func(context.Context) (){}
+		_dat.CloseMocks = []func(context.Context){}
 	} else if len(_dat.CloseMocks) < 2 {
-		_dat.CloseMocks = []func(context.Context) (){fn, fn}
+		_dat.CloseMocks = []func(context.Context){fn, fn}
 	} else {
 		_dat.CloseMocks = _dat.CloseMocks[:len(_dat.CloseMocks)-1]
 		_dat.CloseMocks = append(_dat.CloseMocks, fn)
@@ -2554,26 +2563,26 @@ func (clientRest) _Close_DoAll(t *testing.T, fn func(context.Context) ()) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.CloseMocks = []func(context.Context) (){}
+			_dat.CloseMocks = []func(context.Context){}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *clientRest) _Close_Stub() {
-	_recv._Close_Do(func(context.Context) () { return })
+	_recv._Close_Do(func(context.Context) { return })
 }
 
 func (clientRest) _Close_StubAll(t *testing.T) {
-	new(clientRest)._Close_DoAll(t, func(context.Context) () { return })
+	new(clientRest)._Close_DoAll(t, func(context.Context) { return })
 }
 
 func (_recv *clientRest) _Close_Return() {
-	_recv._Close_Do(func(context.Context) () { return  })
+	_recv._Close_Do(func(context.Context) { return })
 }
 
-func (clientRest) _Close_ReturnAll(t *testing.T, ) {
-	new(clientRest)._Close_DoAll(t, func(context.Context) () { return  })
+func (clientRest) _Close_ReturnAll(t *testing.T) {
+	new(clientRest)._Close_DoAll(t, func(context.Context) { return })
 }
 
 func (_recv *clientRest) _Close_Calls() []_clientRest_Close_Call {
@@ -2605,7 +2614,6 @@ func (clientRest) _Close_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) ConsumeEntitlement(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.ConsumeEntitlement: nil pointer receiver")
@@ -2616,7 +2624,7 @@ func (_recv *clientRest) ConsumeEntitlement(applicationID snowflake.ID, entitlem
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.ConsumeEntitlementCalls = append(_all.ConsumeEntitlementCalls, _clientRest_ConsumeEntitlement_Call{applicationID, entitlementID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.ConsumeEntitlementMocks) > 0 {
 		_fn = _dat.ConsumeEntitlementMocks[0]
 		if len(_dat.ConsumeEntitlementMocks) > 1 {
@@ -2635,7 +2643,7 @@ func (_recv *clientRest) ConsumeEntitlement(applicationID snowflake.ID, entitlem
 	return _fn(applicationID, entitlementID, opts...)
 }
 
-func (_recv *clientRest) _ConsumeEntitlement_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _ConsumeEntitlement_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.ConsumeEntitlement: nil pointer receiver")
 	}
@@ -2643,9 +2651,9 @@ func (_recv *clientRest) _ConsumeEntitlement_Do(fn func(snowflake.ID, snowflake.
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.ConsumeEntitlementMocks) < 2 {
-		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.ConsumeEntitlementMocks = _dat.ConsumeEntitlementMocks[:len(_dat.ConsumeEntitlementMocks)-1]
 		_dat.ConsumeEntitlementMocks = append(_dat.ConsumeEntitlementMocks, fn)
@@ -2653,14 +2661,14 @@ func (_recv *clientRest) _ConsumeEntitlement_Do(fn func(snowflake.ID, snowflake.
 	}
 }
 
-func (clientRest) _ConsumeEntitlement_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _ConsumeEntitlement_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.ConsumeEntitlementMocks) < 2 {
-		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.ConsumeEntitlementMocks = _dat.ConsumeEntitlementMocks[:len(_dat.ConsumeEntitlementMocks)-1]
 		_dat.ConsumeEntitlementMocks = append(_dat.ConsumeEntitlementMocks, fn)
@@ -2670,7 +2678,7 @@ func (clientRest) _ConsumeEntitlement_DoAll(t *testing.T, fn func(snowflake.ID, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.ConsumeEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -2685,11 +2693,11 @@ func (clientRest) _ConsumeEntitlement_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _ConsumeEntitlement_Return(r0 error) {
-	_recv._ConsumeEntitlement_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._ConsumeEntitlement_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _ConsumeEntitlement_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._ConsumeEntitlement_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._ConsumeEntitlement_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _ConsumeEntitlement_Calls() []_clientRest_ConsumeEntitlement_Call {
@@ -2720,7 +2728,6 @@ func (clientRest) _ConsumeEntitlement_BubbleCalls(t *testing.T) {
 		_dat.ConsumeEntitlementCalls = []_clientRest_ConsumeEntitlement_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateApplicationEmoji(applicationID snowflake.ID, emojiCreate discord.EmojiCreate, opts ...rest.RequestOpt) (*discord.Emoji, error) {
 	if _recv == nil {
@@ -2837,7 +2844,6 @@ func (clientRest) _CreateApplicationEmoji_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateAutoModerationRule(guildID snowflake.ID, ruleCreate discord.AutoModerationRuleCreate, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
 	if _recv == nil {
 		panic("clientRest.CreateAutoModerationRule: nil pointer receiver")
@@ -2909,19 +2915,27 @@ func (clientRest) _CreateAutoModerationRule_DoAll(t *testing.T, fn func(snowflak
 }
 
 func (_recv *clientRest) _CreateAutoModerationRule_Stub() {
-	_recv._CreateAutoModerationRule_Do(func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) { return })
+	_recv._CreateAutoModerationRule_Do(func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateAutoModerationRule_StubAll(t *testing.T) {
-	new(clientRest)._CreateAutoModerationRule_DoAll(t, func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) { return })
+	new(clientRest)._CreateAutoModerationRule_DoAll(t, func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateAutoModerationRule_Return(r0 *discord.AutoModerationRule, r1 error) {
-	_recv._CreateAutoModerationRule_Do(func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) { return r0, r1 })
+	_recv._CreateAutoModerationRule_Do(func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateAutoModerationRule_ReturnAll(t *testing.T, r0 *discord.AutoModerationRule, r1 error) {
-	new(clientRest)._CreateAutoModerationRule_DoAll(t, func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) { return r0, r1 })
+	new(clientRest)._CreateAutoModerationRule_DoAll(t, func(snowflake.ID, discord.AutoModerationRuleCreate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateAutoModerationRule_Calls() []_clientRest_CreateAutoModerationRule_Call {
@@ -2952,7 +2966,6 @@ func (clientRest) _CreateAutoModerationRule_BubbleCalls(t *testing.T) {
 		_dat.CreateAutoModerationRuleCalls = []_clientRest_CreateAutoModerationRule_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateDMChannel(userID snowflake.ID, opts ...rest.RequestOpt) (*discord.DMChannel, error) {
 	if _recv == nil {
@@ -3069,7 +3082,6 @@ func (clientRest) _CreateDMChannel_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateEmoji(guildID snowflake.ID, emojiCreate discord.EmojiCreate, opts ...rest.RequestOpt) (*discord.Emoji, error) {
 	if _recv == nil {
 		panic("clientRest.CreateEmoji: nil pointer receiver")
@@ -3185,7 +3197,6 @@ func (clientRest) _CreateEmoji_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateFollowupMessage(applicationID snowflake.ID, interactionToken string, messageCreate discord.MessageCreate, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
 		panic("clientRest.CreateFollowupMessage: nil pointer receiver")
@@ -3257,19 +3268,27 @@ func (clientRest) _CreateFollowupMessage_DoAll(t *testing.T, fn func(snowflake.I
 }
 
 func (_recv *clientRest) _CreateFollowupMessage_Stub() {
-	_recv._CreateFollowupMessage_Do(func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._CreateFollowupMessage_Do(func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateFollowupMessage_StubAll(t *testing.T) {
-	new(clientRest)._CreateFollowupMessage_DoAll(t, func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._CreateFollowupMessage_DoAll(t, func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateFollowupMessage_Return(r0 *discord.Message, r1 error) {
-	_recv._CreateFollowupMessage_Do(func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._CreateFollowupMessage_Do(func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateFollowupMessage_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._CreateFollowupMessage_DoAll(t, func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._CreateFollowupMessage_DoAll(t, func(snowflake.ID, string, discord.MessageCreate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateFollowupMessage_Calls() []_clientRest_CreateFollowupMessage_Call {
@@ -3300,7 +3319,6 @@ func (clientRest) _CreateFollowupMessage_BubbleCalls(t *testing.T) {
 		_dat.CreateFollowupMessageCalls = []_clientRest_CreateFollowupMessage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateGlobalCommand(applicationID snowflake.ID, commandCreate discord.ApplicationCommandCreate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error) {
 	if _recv == nil {
@@ -3373,19 +3391,27 @@ func (clientRest) _CreateGlobalCommand_DoAll(t *testing.T, fn func(snowflake.ID,
 }
 
 func (_recv *clientRest) _CreateGlobalCommand_Stub() {
-	_recv._CreateGlobalCommand_Do(func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	_recv._CreateGlobalCommand_Do(func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateGlobalCommand_StubAll(t *testing.T) {
-	new(clientRest)._CreateGlobalCommand_DoAll(t, func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._CreateGlobalCommand_DoAll(t, func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateGlobalCommand_Return(r0 discord.ApplicationCommand, r1 error) {
-	_recv._CreateGlobalCommand_Do(func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._CreateGlobalCommand_Do(func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateGlobalCommand_ReturnAll(t *testing.T, r0 discord.ApplicationCommand, r1 error) {
-	new(clientRest)._CreateGlobalCommand_DoAll(t, func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._CreateGlobalCommand_DoAll(t, func(snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateGlobalCommand_Calls() []_clientRest_CreateGlobalCommand_Call {
@@ -3416,7 +3442,6 @@ func (clientRest) _CreateGlobalCommand_BubbleCalls(t *testing.T) {
 		_dat.CreateGlobalCommandCalls = []_clientRest_CreateGlobalCommand_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateGuild(guildCreate discord.GuildCreate, opts ...rest.RequestOpt) (*discord.RestGuild, error) {
 	if _recv == nil {
@@ -3533,7 +3558,6 @@ func (clientRest) _CreateGuild_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateGuildChannel(guildID snowflake.ID, guildChannelCreate discord.GuildChannelCreate, opts ...rest.RequestOpt) (discord.GuildChannel, error) {
 	if _recv == nil {
 		panic("clientRest.CreateGuildChannel: nil pointer receiver")
@@ -3605,19 +3629,27 @@ func (clientRest) _CreateGuildChannel_DoAll(t *testing.T, fn func(snowflake.ID, 
 }
 
 func (_recv *clientRest) _CreateGuildChannel_Stub() {
-	_recv._CreateGuildChannel_Do(func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (r0 discord.GuildChannel, r1 error) { return })
+	_recv._CreateGuildChannel_Do(func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (r0 discord.GuildChannel, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateGuildChannel_StubAll(t *testing.T) {
-	new(clientRest)._CreateGuildChannel_DoAll(t, func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (r0 discord.GuildChannel, r1 error) { return })
+	new(clientRest)._CreateGuildChannel_DoAll(t, func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (r0 discord.GuildChannel, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateGuildChannel_Return(r0 discord.GuildChannel, r1 error) {
-	_recv._CreateGuildChannel_Do(func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (discord.GuildChannel, error) { return r0, r1 })
+	_recv._CreateGuildChannel_Do(func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (discord.GuildChannel, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateGuildChannel_ReturnAll(t *testing.T, r0 discord.GuildChannel, r1 error) {
-	new(clientRest)._CreateGuildChannel_DoAll(t, func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (discord.GuildChannel, error) { return r0, r1 })
+	new(clientRest)._CreateGuildChannel_DoAll(t, func(snowflake.ID, discord.GuildChannelCreate, ...rest.RequestOpt) (discord.GuildChannel, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateGuildChannel_Calls() []_clientRest_CreateGuildChannel_Call {
@@ -3648,7 +3680,6 @@ func (clientRest) _CreateGuildChannel_BubbleCalls(t *testing.T) {
 		_dat.CreateGuildChannelCalls = []_clientRest_CreateGuildChannel_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateGuildCommand(applicationID snowflake.ID, guildID snowflake.ID, command discord.ApplicationCommandCreate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error) {
 	if _recv == nil {
@@ -3721,19 +3752,27 @@ func (clientRest) _CreateGuildCommand_DoAll(t *testing.T, fn func(snowflake.ID, 
 }
 
 func (_recv *clientRest) _CreateGuildCommand_Stub() {
-	_recv._CreateGuildCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	_recv._CreateGuildCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateGuildCommand_StubAll(t *testing.T) {
-	new(clientRest)._CreateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._CreateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateGuildCommand_Return(r0 discord.ApplicationCommand, r1 error) {
-	_recv._CreateGuildCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._CreateGuildCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateGuildCommand_ReturnAll(t *testing.T, r0 discord.ApplicationCommand, r1 error) {
-	new(clientRest)._CreateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._CreateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandCreate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateGuildCommand_Calls() []_clientRest_CreateGuildCommand_Call {
@@ -3764,7 +3803,6 @@ func (clientRest) _CreateGuildCommand_BubbleCalls(t *testing.T) {
 		_dat.CreateGuildCommandCalls = []_clientRest_CreateGuildCommand_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateGuildFromTemplate(templateCode string, createGuildFromTemplate discord.GuildFromTemplateCreate, opts ...rest.RequestOpt) (*discord.Guild, error) {
 	if _recv == nil {
@@ -3837,19 +3875,27 @@ func (clientRest) _CreateGuildFromTemplate_DoAll(t *testing.T, fn func(string, d
 }
 
 func (_recv *clientRest) _CreateGuildFromTemplate_Stub() {
-	_recv._CreateGuildFromTemplate_Do(func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (r0 *discord.Guild, r1 error) { return })
+	_recv._CreateGuildFromTemplate_Do(func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (r0 *discord.Guild, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateGuildFromTemplate_StubAll(t *testing.T) {
-	new(clientRest)._CreateGuildFromTemplate_DoAll(t, func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (r0 *discord.Guild, r1 error) { return })
+	new(clientRest)._CreateGuildFromTemplate_DoAll(t, func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (r0 *discord.Guild, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateGuildFromTemplate_Return(r0 *discord.Guild, r1 error) {
-	_recv._CreateGuildFromTemplate_Do(func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (*discord.Guild, error) { return r0, r1 })
+	_recv._CreateGuildFromTemplate_Do(func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (*discord.Guild, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateGuildFromTemplate_ReturnAll(t *testing.T, r0 *discord.Guild, r1 error) {
-	new(clientRest)._CreateGuildFromTemplate_DoAll(t, func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (*discord.Guild, error) { return r0, r1 })
+	new(clientRest)._CreateGuildFromTemplate_DoAll(t, func(string, discord.GuildFromTemplateCreate, ...rest.RequestOpt) (*discord.Guild, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateGuildFromTemplate_Calls() []_clientRest_CreateGuildFromTemplate_Call {
@@ -3880,7 +3926,6 @@ func (clientRest) _CreateGuildFromTemplate_BubbleCalls(t *testing.T) {
 		_dat.CreateGuildFromTemplateCalls = []_clientRest_CreateGuildFromTemplate_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateGuildScheduledEvent(guildID snowflake.ID, guildScheduledEventCreate discord.GuildScheduledEventCreate, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
 	if _recv == nil {
@@ -3953,19 +3998,27 @@ func (clientRest) _CreateGuildScheduledEvent_DoAll(t *testing.T, fn func(snowfla
 }
 
 func (_recv *clientRest) _CreateGuildScheduledEvent_Stub() {
-	_recv._CreateGuildScheduledEvent_Do(func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) { return })
+	_recv._CreateGuildScheduledEvent_Do(func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateGuildScheduledEvent_StubAll(t *testing.T) {
-	new(clientRest)._CreateGuildScheduledEvent_DoAll(t, func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) { return })
+	new(clientRest)._CreateGuildScheduledEvent_DoAll(t, func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateGuildScheduledEvent_Return(r0 *discord.GuildScheduledEvent, r1 error) {
-	_recv._CreateGuildScheduledEvent_Do(func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) { return r0, r1 })
+	_recv._CreateGuildScheduledEvent_Do(func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateGuildScheduledEvent_ReturnAll(t *testing.T, r0 *discord.GuildScheduledEvent, r1 error) {
-	new(clientRest)._CreateGuildScheduledEvent_DoAll(t, func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) { return r0, r1 })
+	new(clientRest)._CreateGuildScheduledEvent_DoAll(t, func(snowflake.ID, discord.GuildScheduledEventCreate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateGuildScheduledEvent_Calls() []_clientRest_CreateGuildScheduledEvent_Call {
@@ -3996,7 +4049,6 @@ func (clientRest) _CreateGuildScheduledEvent_BubbleCalls(t *testing.T) {
 		_dat.CreateGuildScheduledEventCalls = []_clientRest_CreateGuildScheduledEvent_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateGuildSoundboardSound(guildID snowflake.ID, soundCreate discord.SoundboardSoundCreate, opts ...rest.RequestOpt) (*discord.SoundboardSound, error) {
 	if _recv == nil {
@@ -4069,19 +4121,27 @@ func (clientRest) _CreateGuildSoundboardSound_DoAll(t *testing.T, fn func(snowfl
 }
 
 func (_recv *clientRest) _CreateGuildSoundboardSound_Stub() {
-	_recv._CreateGuildSoundboardSound_Do(func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) { return })
+	_recv._CreateGuildSoundboardSound_Do(func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateGuildSoundboardSound_StubAll(t *testing.T) {
-	new(clientRest)._CreateGuildSoundboardSound_DoAll(t, func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) { return })
+	new(clientRest)._CreateGuildSoundboardSound_DoAll(t, func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateGuildSoundboardSound_Return(r0 *discord.SoundboardSound, r1 error) {
-	_recv._CreateGuildSoundboardSound_Do(func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (*discord.SoundboardSound, error) { return r0, r1 })
+	_recv._CreateGuildSoundboardSound_Do(func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (*discord.SoundboardSound, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateGuildSoundboardSound_ReturnAll(t *testing.T, r0 *discord.SoundboardSound, r1 error) {
-	new(clientRest)._CreateGuildSoundboardSound_DoAll(t, func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (*discord.SoundboardSound, error) { return r0, r1 })
+	new(clientRest)._CreateGuildSoundboardSound_DoAll(t, func(snowflake.ID, discord.SoundboardSoundCreate, ...rest.RequestOpt) (*discord.SoundboardSound, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateGuildSoundboardSound_Calls() []_clientRest_CreateGuildSoundboardSound_Call {
@@ -4112,7 +4172,6 @@ func (clientRest) _CreateGuildSoundboardSound_BubbleCalls(t *testing.T) {
 		_dat.CreateGuildSoundboardSoundCalls = []_clientRest_CreateGuildSoundboardSound_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateGuildTemplate(guildID snowflake.ID, guildTemplateCreate discord.GuildTemplateCreate, opts ...rest.RequestOpt) (*discord.GuildTemplate, error) {
 	if _recv == nil {
@@ -4185,19 +4244,27 @@ func (clientRest) _CreateGuildTemplate_DoAll(t *testing.T, fn func(snowflake.ID,
 }
 
 func (_recv *clientRest) _CreateGuildTemplate_Stub() {
-	_recv._CreateGuildTemplate_Do(func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) { return })
+	_recv._CreateGuildTemplate_Do(func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateGuildTemplate_StubAll(t *testing.T) {
-	new(clientRest)._CreateGuildTemplate_DoAll(t, func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) { return })
+	new(clientRest)._CreateGuildTemplate_DoAll(t, func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateGuildTemplate_Return(r0 *discord.GuildTemplate, r1 error) {
-	_recv._CreateGuildTemplate_Do(func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (*discord.GuildTemplate, error) { return r0, r1 })
+	_recv._CreateGuildTemplate_Do(func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (*discord.GuildTemplate, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateGuildTemplate_ReturnAll(t *testing.T, r0 *discord.GuildTemplate, r1 error) {
-	new(clientRest)._CreateGuildTemplate_DoAll(t, func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (*discord.GuildTemplate, error) { return r0, r1 })
+	new(clientRest)._CreateGuildTemplate_DoAll(t, func(snowflake.ID, discord.GuildTemplateCreate, ...rest.RequestOpt) (*discord.GuildTemplate, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateGuildTemplate_Calls() []_clientRest_CreateGuildTemplate_Call {
@@ -4229,7 +4296,6 @@ func (clientRest) _CreateGuildTemplate_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateInteractionResponse(interactionID snowflake.ID, interactionToken string, interactionResponse discord.InteractionResponse, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.CreateInteractionResponse: nil pointer receiver")
@@ -4240,7 +4306,7 @@ func (_recv *clientRest) CreateInteractionResponse(interactionID snowflake.ID, i
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.CreateInteractionResponseCalls = append(_all.CreateInteractionResponseCalls, _clientRest_CreateInteractionResponse_Call{interactionID, interactionToken, interactionResponse, opts})
-	var _fn func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error
 	if len(_dat.CreateInteractionResponseMocks) > 0 {
 		_fn = _dat.CreateInteractionResponseMocks[0]
 		if len(_dat.CreateInteractionResponseMocks) > 1 {
@@ -4259,7 +4325,7 @@ func (_recv *clientRest) CreateInteractionResponse(interactionID snowflake.ID, i
 	return _fn(interactionID, interactionToken, interactionResponse, opts...)
 }
 
-func (_recv *clientRest) _CreateInteractionResponse_Do(fn func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _CreateInteractionResponse_Do(fn func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.CreateInteractionResponse: nil pointer receiver")
 	}
@@ -4267,9 +4333,9 @@ func (_recv *clientRest) _CreateInteractionResponse_Do(fn func(snowflake.ID, str
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error){}
+		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error{}
 	} else if len(_dat.CreateInteractionResponseMocks) < 2 {
-		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error){fn, fn}
+		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.CreateInteractionResponseMocks = _dat.CreateInteractionResponseMocks[:len(_dat.CreateInteractionResponseMocks)-1]
 		_dat.CreateInteractionResponseMocks = append(_dat.CreateInteractionResponseMocks, fn)
@@ -4277,14 +4343,14 @@ func (_recv *clientRest) _CreateInteractionResponse_Do(fn func(snowflake.ID, str
 	}
 }
 
-func (clientRest) _CreateInteractionResponse_DoAll(t *testing.T, fn func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error)) {
+func (clientRest) _CreateInteractionResponse_DoAll(t *testing.T, fn func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error){}
+		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error{}
 	} else if len(_dat.CreateInteractionResponseMocks) < 2 {
-		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error){fn, fn}
+		_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.CreateInteractionResponseMocks = _dat.CreateInteractionResponseMocks[:len(_dat.CreateInteractionResponseMocks)-1]
 		_dat.CreateInteractionResponseMocks = append(_dat.CreateInteractionResponseMocks, fn)
@@ -4294,7 +4360,7 @@ func (clientRest) _CreateInteractionResponse_DoAll(t *testing.T, fn func(snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error){}
+			_dat.CreateInteractionResponseMocks = []func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -4309,11 +4375,11 @@ func (clientRest) _CreateInteractionResponse_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _CreateInteractionResponse_Return(r0 error) {
-	_recv._CreateInteractionResponse_Do(func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error) { return r0 })
+	_recv._CreateInteractionResponse_Do(func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _CreateInteractionResponse_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._CreateInteractionResponse_DoAll(t, func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._CreateInteractionResponse_DoAll(t, func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _CreateInteractionResponse_Calls() []_clientRest_CreateInteractionResponse_Call {
@@ -4344,7 +4410,6 @@ func (clientRest) _CreateInteractionResponse_BubbleCalls(t *testing.T) {
 		_dat.CreateInteractionResponseCalls = []_clientRest_CreateInteractionResponse_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateInteractionResponseWithCallback(interactionID snowflake.ID, interactionToken string, interactionResponse discord.InteractionResponse, opts ...rest.RequestOpt) (*discord.InteractionCallbackResponse, error) {
 	if _recv == nil {
@@ -4417,19 +4482,27 @@ func (clientRest) _CreateInteractionResponseWithCallback_DoAll(t *testing.T, fn 
 }
 
 func (_recv *clientRest) _CreateInteractionResponseWithCallback_Stub() {
-	_recv._CreateInteractionResponseWithCallback_Do(func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (r0 *discord.InteractionCallbackResponse, r1 error) { return })
+	_recv._CreateInteractionResponseWithCallback_Do(func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (r0 *discord.InteractionCallbackResponse, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateInteractionResponseWithCallback_StubAll(t *testing.T) {
-	new(clientRest)._CreateInteractionResponseWithCallback_DoAll(t, func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (r0 *discord.InteractionCallbackResponse, r1 error) { return })
+	new(clientRest)._CreateInteractionResponseWithCallback_DoAll(t, func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (r0 *discord.InteractionCallbackResponse, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateInteractionResponseWithCallback_Return(r0 *discord.InteractionCallbackResponse, r1 error) {
-	_recv._CreateInteractionResponseWithCallback_Do(func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (*discord.InteractionCallbackResponse, error) { return r0, r1 })
+	_recv._CreateInteractionResponseWithCallback_Do(func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (*discord.InteractionCallbackResponse, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateInteractionResponseWithCallback_ReturnAll(t *testing.T, r0 *discord.InteractionCallbackResponse, r1 error) {
-	new(clientRest)._CreateInteractionResponseWithCallback_DoAll(t, func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (*discord.InteractionCallbackResponse, error) { return r0, r1 })
+	new(clientRest)._CreateInteractionResponseWithCallback_DoAll(t, func(snowflake.ID, string, discord.InteractionResponse, ...rest.RequestOpt) (*discord.InteractionCallbackResponse, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateInteractionResponseWithCallback_Calls() []_clientRest_CreateInteractionResponseWithCallback_Call {
@@ -4460,7 +4533,6 @@ func (clientRest) _CreateInteractionResponseWithCallback_BubbleCalls(t *testing.
 		_dat.CreateInteractionResponseWithCallbackCalls = []_clientRest_CreateInteractionResponseWithCallback_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateInvite(channelID snowflake.ID, inviteCreate discord.InviteCreate, opts ...rest.RequestOpt) (*discord.Invite, error) {
 	if _recv == nil {
@@ -4577,7 +4649,6 @@ func (clientRest) _CreateInvite_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateMessage(channelID snowflake.ID, messageCreate discord.MessageCreate, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
 		panic("clientRest.CreateMessage: nil pointer receiver")
@@ -4693,7 +4764,6 @@ func (clientRest) _CreateMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreatePostInThreadChannel(channelID snowflake.ID, postCreateInChannel discord.ThreadChannelPostCreate, opts ...rest.RequestOpt) (*discord.ThreadChannelPost, error) {
 	if _recv == nil {
 		panic("clientRest.CreatePostInThreadChannel: nil pointer receiver")
@@ -4765,19 +4835,27 @@ func (clientRest) _CreatePostInThreadChannel_DoAll(t *testing.T, fn func(snowfla
 }
 
 func (_recv *clientRest) _CreatePostInThreadChannel_Stub() {
-	_recv._CreatePostInThreadChannel_Do(func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (post *discord.ThreadChannelPost, err error) { return })
+	_recv._CreatePostInThreadChannel_Do(func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (post *discord.ThreadChannelPost, err error) {
+		return
+	})
 }
 
 func (clientRest) _CreatePostInThreadChannel_StubAll(t *testing.T) {
-	new(clientRest)._CreatePostInThreadChannel_DoAll(t, func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (post *discord.ThreadChannelPost, err error) { return })
+	new(clientRest)._CreatePostInThreadChannel_DoAll(t, func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (post *discord.ThreadChannelPost, err error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreatePostInThreadChannel_Return(post *discord.ThreadChannelPost, err error) {
-	_recv._CreatePostInThreadChannel_Do(func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (*discord.ThreadChannelPost, error) { return post, err })
+	_recv._CreatePostInThreadChannel_Do(func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (*discord.ThreadChannelPost, error) {
+		return post, err
+	})
 }
 
 func (clientRest) _CreatePostInThreadChannel_ReturnAll(t *testing.T, post *discord.ThreadChannelPost, err error) {
-	new(clientRest)._CreatePostInThreadChannel_DoAll(t, func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (*discord.ThreadChannelPost, error) { return post, err })
+	new(clientRest)._CreatePostInThreadChannel_DoAll(t, func(snowflake.ID, discord.ThreadChannelPostCreate, ...rest.RequestOpt) (*discord.ThreadChannelPost, error) {
+		return post, err
+	})
 }
 
 func (_recv *clientRest) _CreatePostInThreadChannel_Calls() []_clientRest_CreatePostInThreadChannel_Call {
@@ -4808,7 +4886,6 @@ func (clientRest) _CreatePostInThreadChannel_BubbleCalls(t *testing.T) {
 		_dat.CreatePostInThreadChannelCalls = []_clientRest_CreatePostInThreadChannel_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateRole(guildID snowflake.ID, createRole discord.RoleCreate, opts ...rest.RequestOpt) (*discord.Role, error) {
 	if _recv == nil {
@@ -4925,7 +5002,6 @@ func (clientRest) _CreateRole_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateStageInstance(stageInstanceCreate discord.StageInstanceCreate, opts ...rest.RequestOpt) (*discord.StageInstance, error) {
 	if _recv == nil {
 		panic("clientRest.CreateStageInstance: nil pointer receiver")
@@ -5040,7 +5116,6 @@ func (clientRest) _CreateStageInstance_BubbleCalls(t *testing.T) {
 		_dat.CreateStageInstanceCalls = []_clientRest_CreateStageInstance_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateSticker(guildID snowflake.ID, createSticker discord.StickerCreate, opts ...rest.RequestOpt) (*discord.Sticker, error) {
 	if _recv == nil {
@@ -5157,7 +5232,6 @@ func (clientRest) _CreateSticker_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) CreateTestEntitlement(applicationID snowflake.ID, entitlementCreate discord.TestEntitlementCreate, opts ...rest.RequestOpt) (*discord.Entitlement, error) {
 	if _recv == nil {
 		panic("clientRest.CreateTestEntitlement: nil pointer receiver")
@@ -5229,19 +5303,27 @@ func (clientRest) _CreateTestEntitlement_DoAll(t *testing.T, fn func(snowflake.I
 }
 
 func (_recv *clientRest) _CreateTestEntitlement_Stub() {
-	_recv._CreateTestEntitlement_Do(func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (r0 *discord.Entitlement, r1 error) { return })
+	_recv._CreateTestEntitlement_Do(func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (r0 *discord.Entitlement, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateTestEntitlement_StubAll(t *testing.T) {
-	new(clientRest)._CreateTestEntitlement_DoAll(t, func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (r0 *discord.Entitlement, r1 error) { return })
+	new(clientRest)._CreateTestEntitlement_DoAll(t, func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (r0 *discord.Entitlement, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateTestEntitlement_Return(r0 *discord.Entitlement, r1 error) {
-	_recv._CreateTestEntitlement_Do(func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (*discord.Entitlement, error) { return r0, r1 })
+	_recv._CreateTestEntitlement_Do(func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (*discord.Entitlement, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateTestEntitlement_ReturnAll(t *testing.T, r0 *discord.Entitlement, r1 error) {
-	new(clientRest)._CreateTestEntitlement_DoAll(t, func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (*discord.Entitlement, error) { return r0, r1 })
+	new(clientRest)._CreateTestEntitlement_DoAll(t, func(snowflake.ID, discord.TestEntitlementCreate, ...rest.RequestOpt) (*discord.Entitlement, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateTestEntitlement_Calls() []_clientRest_CreateTestEntitlement_Call {
@@ -5272,7 +5354,6 @@ func (clientRest) _CreateTestEntitlement_BubbleCalls(t *testing.T) {
 		_dat.CreateTestEntitlementCalls = []_clientRest_CreateTestEntitlement_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateThread(channelID snowflake.ID, threadCreate discord.ThreadCreate, opts ...rest.RequestOpt) (*discord.GuildThread, error) {
 	if _recv == nil {
@@ -5345,19 +5426,27 @@ func (clientRest) _CreateThread_DoAll(t *testing.T, fn func(snowflake.ID, discor
 }
 
 func (_recv *clientRest) _CreateThread_Stub() {
-	_recv._CreateThread_Do(func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (thread *discord.GuildThread, err error) { return })
+	_recv._CreateThread_Do(func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (thread *discord.GuildThread, err error) {
+		return
+	})
 }
 
 func (clientRest) _CreateThread_StubAll(t *testing.T) {
-	new(clientRest)._CreateThread_DoAll(t, func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (thread *discord.GuildThread, err error) { return })
+	new(clientRest)._CreateThread_DoAll(t, func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (thread *discord.GuildThread, err error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateThread_Return(thread *discord.GuildThread, err error) {
-	_recv._CreateThread_Do(func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (*discord.GuildThread, error) { return thread, err })
+	_recv._CreateThread_Do(func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (*discord.GuildThread, error) {
+		return thread, err
+	})
 }
 
 func (clientRest) _CreateThread_ReturnAll(t *testing.T, thread *discord.GuildThread, err error) {
-	new(clientRest)._CreateThread_DoAll(t, func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (*discord.GuildThread, error) { return thread, err })
+	new(clientRest)._CreateThread_DoAll(t, func(snowflake.ID, discord.ThreadCreate, ...rest.RequestOpt) (*discord.GuildThread, error) {
+		return thread, err
+	})
 }
 
 func (_recv *clientRest) _CreateThread_Calls() []_clientRest_CreateThread_Call {
@@ -5388,7 +5477,6 @@ func (clientRest) _CreateThread_BubbleCalls(t *testing.T) {
 		_dat.CreateThreadCalls = []_clientRest_CreateThread_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateThreadFromMessage(channelID snowflake.ID, messageID snowflake.ID, threadCreateFromMessage discord.ThreadCreateFromMessage, opts ...rest.RequestOpt) (*discord.GuildThread, error) {
 	if _recv == nil {
@@ -5461,19 +5549,27 @@ func (clientRest) _CreateThreadFromMessage_DoAll(t *testing.T, fn func(snowflake
 }
 
 func (_recv *clientRest) _CreateThreadFromMessage_Stub() {
-	_recv._CreateThreadFromMessage_Do(func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (thread *discord.GuildThread, err error) { return })
+	_recv._CreateThreadFromMessage_Do(func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (thread *discord.GuildThread, err error) {
+		return
+	})
 }
 
 func (clientRest) _CreateThreadFromMessage_StubAll(t *testing.T) {
-	new(clientRest)._CreateThreadFromMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (thread *discord.GuildThread, err error) { return })
+	new(clientRest)._CreateThreadFromMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (thread *discord.GuildThread, err error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateThreadFromMessage_Return(thread *discord.GuildThread, err error) {
-	_recv._CreateThreadFromMessage_Do(func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (*discord.GuildThread, error) { return thread, err })
+	_recv._CreateThreadFromMessage_Do(func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (*discord.GuildThread, error) {
+		return thread, err
+	})
 }
 
 func (clientRest) _CreateThreadFromMessage_ReturnAll(t *testing.T, thread *discord.GuildThread, err error) {
-	new(clientRest)._CreateThreadFromMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (*discord.GuildThread, error) { return thread, err })
+	new(clientRest)._CreateThreadFromMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ThreadCreateFromMessage, ...rest.RequestOpt) (*discord.GuildThread, error) {
+		return thread, err
+	})
 }
 
 func (_recv *clientRest) _CreateThreadFromMessage_Calls() []_clientRest_CreateThreadFromMessage_Call {
@@ -5504,7 +5600,6 @@ func (clientRest) _CreateThreadFromMessage_BubbleCalls(t *testing.T) {
 		_dat.CreateThreadFromMessageCalls = []_clientRest_CreateThreadFromMessage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateWebhook(channelID snowflake.ID, webhookCreate discord.WebhookCreate, opts ...rest.RequestOpt) (*discord.IncomingWebhook, error) {
 	if _recv == nil {
@@ -5577,19 +5672,27 @@ func (clientRest) _CreateWebhook_DoAll(t *testing.T, fn func(snowflake.ID, disco
 }
 
 func (_recv *clientRest) _CreateWebhook_Stub() {
-	_recv._CreateWebhook_Do(func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (r0 *discord.IncomingWebhook, r1 error) { return })
+	_recv._CreateWebhook_Do(func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (r0 *discord.IncomingWebhook, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateWebhook_StubAll(t *testing.T) {
-	new(clientRest)._CreateWebhook_DoAll(t, func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (r0 *discord.IncomingWebhook, r1 error) { return })
+	new(clientRest)._CreateWebhook_DoAll(t, func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (r0 *discord.IncomingWebhook, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateWebhook_Return(r0 *discord.IncomingWebhook, r1 error) {
-	_recv._CreateWebhook_Do(func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (*discord.IncomingWebhook, error) { return r0, r1 })
+	_recv._CreateWebhook_Do(func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (*discord.IncomingWebhook, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateWebhook_ReturnAll(t *testing.T, r0 *discord.IncomingWebhook, r1 error) {
-	new(clientRest)._CreateWebhook_DoAll(t, func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (*discord.IncomingWebhook, error) { return r0, r1 })
+	new(clientRest)._CreateWebhook_DoAll(t, func(snowflake.ID, discord.WebhookCreate, ...rest.RequestOpt) (*discord.IncomingWebhook, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateWebhook_Calls() []_clientRest_CreateWebhook_Call {
@@ -5620,7 +5723,6 @@ func (clientRest) _CreateWebhook_BubbleCalls(t *testing.T) {
 		_dat.CreateWebhookCalls = []_clientRest_CreateWebhook_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateWebhookMessage(webhookID snowflake.ID, webhookToken string, messageCreate discord.WebhookMessageCreate, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -5693,19 +5795,27 @@ func (clientRest) _CreateWebhookMessage_DoAll(t *testing.T, fn func(snowflake.ID
 }
 
 func (_recv *clientRest) _CreateWebhookMessage_Stub() {
-	_recv._CreateWebhookMessage_Do(func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._CreateWebhookMessage_Do(func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateWebhookMessage_StubAll(t *testing.T) {
-	new(clientRest)._CreateWebhookMessage_DoAll(t, func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._CreateWebhookMessage_DoAll(t, func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateWebhookMessage_Return(r0 *discord.Message, r1 error) {
-	_recv._CreateWebhookMessage_Do(func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._CreateWebhookMessage_Do(func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateWebhookMessage_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._CreateWebhookMessage_DoAll(t, func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._CreateWebhookMessage_DoAll(t, func(snowflake.ID, string, discord.WebhookMessageCreate, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateWebhookMessage_Calls() []_clientRest_CreateWebhookMessage_Call {
@@ -5736,7 +5846,6 @@ func (clientRest) _CreateWebhookMessage_BubbleCalls(t *testing.T) {
 		_dat.CreateWebhookMessageCalls = []_clientRest_CreateWebhookMessage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateWebhookMessageGitHub(webhookID snowflake.ID, webhookToken string, messageCreate discord.Payload, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -5809,19 +5918,27 @@ func (clientRest) _CreateWebhookMessageGitHub_DoAll(t *testing.T, fn func(snowfl
 }
 
 func (_recv *clientRest) _CreateWebhookMessageGitHub_Stub() {
-	_recv._CreateWebhookMessageGitHub_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._CreateWebhookMessageGitHub_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateWebhookMessageGitHub_StubAll(t *testing.T) {
-	new(clientRest)._CreateWebhookMessageGitHub_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._CreateWebhookMessageGitHub_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateWebhookMessageGitHub_Return(r0 *discord.Message, r1 error) {
-	_recv._CreateWebhookMessageGitHub_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._CreateWebhookMessageGitHub_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateWebhookMessageGitHub_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._CreateWebhookMessageGitHub_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._CreateWebhookMessageGitHub_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateWebhookMessageGitHub_Calls() []_clientRest_CreateWebhookMessageGitHub_Call {
@@ -5852,7 +5969,6 @@ func (clientRest) _CreateWebhookMessageGitHub_BubbleCalls(t *testing.T) {
 		_dat.CreateWebhookMessageGitHubCalls = []_clientRest_CreateWebhookMessageGitHub_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CreateWebhookMessageSlack(webhookID snowflake.ID, webhookToken string, messageCreate discord.Payload, params rest.CreateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -5925,19 +6041,27 @@ func (clientRest) _CreateWebhookMessageSlack_DoAll(t *testing.T, fn func(snowfla
 }
 
 func (_recv *clientRest) _CreateWebhookMessageSlack_Stub() {
-	_recv._CreateWebhookMessageSlack_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._CreateWebhookMessageSlack_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _CreateWebhookMessageSlack_StubAll(t *testing.T) {
-	new(clientRest)._CreateWebhookMessageSlack_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._CreateWebhookMessageSlack_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _CreateWebhookMessageSlack_Return(r0 *discord.Message, r1 error) {
-	_recv._CreateWebhookMessageSlack_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._CreateWebhookMessageSlack_Do(func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _CreateWebhookMessageSlack_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._CreateWebhookMessageSlack_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._CreateWebhookMessageSlack_DoAll(t, func(snowflake.ID, string, discord.Payload, rest.CreateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _CreateWebhookMessageSlack_Calls() []_clientRest_CreateWebhookMessageSlack_Call {
@@ -5968,7 +6092,6 @@ func (clientRest) _CreateWebhookMessageSlack_BubbleCalls(t *testing.T) {
 		_dat.CreateWebhookMessageSlackCalls = []_clientRest_CreateWebhookMessageSlack_Call{}
 	})
 }
-
 
 func (_recv *clientRest) CrosspostMessage(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -6085,7 +6208,6 @@ func (clientRest) _CrosspostMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteApplicationEmoji(applicationID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteApplicationEmoji: nil pointer receiver")
@@ -6096,7 +6218,7 @@ func (_recv *clientRest) DeleteApplicationEmoji(applicationID snowflake.ID, emoj
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteApplicationEmojiCalls = append(_all.DeleteApplicationEmojiCalls, _clientRest_DeleteApplicationEmoji_Call{applicationID, emojiID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteApplicationEmojiMocks) > 0 {
 		_fn = _dat.DeleteApplicationEmojiMocks[0]
 		if len(_dat.DeleteApplicationEmojiMocks) > 1 {
@@ -6115,7 +6237,7 @@ func (_recv *clientRest) DeleteApplicationEmoji(applicationID snowflake.ID, emoj
 	return _fn(applicationID, emojiID, opts...)
 }
 
-func (_recv *clientRest) _DeleteApplicationEmoji_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteApplicationEmoji_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteApplicationEmoji: nil pointer receiver")
 	}
@@ -6123,9 +6245,9 @@ func (_recv *clientRest) _DeleteApplicationEmoji_Do(fn func(snowflake.ID, snowfl
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteApplicationEmojiMocks) < 2 {
-		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteApplicationEmojiMocks = _dat.DeleteApplicationEmojiMocks[:len(_dat.DeleteApplicationEmojiMocks)-1]
 		_dat.DeleteApplicationEmojiMocks = append(_dat.DeleteApplicationEmojiMocks, fn)
@@ -6133,14 +6255,14 @@ func (_recv *clientRest) _DeleteApplicationEmoji_Do(fn func(snowflake.ID, snowfl
 	}
 }
 
-func (clientRest) _DeleteApplicationEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteApplicationEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteApplicationEmojiMocks) < 2 {
-		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteApplicationEmojiMocks = _dat.DeleteApplicationEmojiMocks[:len(_dat.DeleteApplicationEmojiMocks)-1]
 		_dat.DeleteApplicationEmojiMocks = append(_dat.DeleteApplicationEmojiMocks, fn)
@@ -6150,7 +6272,7 @@ func (clientRest) _DeleteApplicationEmoji_DoAll(t *testing.T, fn func(snowflake.
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteApplicationEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6165,11 +6287,11 @@ func (clientRest) _DeleteApplicationEmoji_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteApplicationEmoji_Return(r0 error) {
-	_recv._DeleteApplicationEmoji_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteApplicationEmoji_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteApplicationEmoji_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteApplicationEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteApplicationEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteApplicationEmoji_Calls() []_clientRest_DeleteApplicationEmoji_Call {
@@ -6201,7 +6323,6 @@ func (clientRest) _DeleteApplicationEmoji_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteAutoModerationRule(guildID snowflake.ID, ruleID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteAutoModerationRule: nil pointer receiver")
@@ -6212,7 +6333,7 @@ func (_recv *clientRest) DeleteAutoModerationRule(guildID snowflake.ID, ruleID s
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteAutoModerationRuleCalls = append(_all.DeleteAutoModerationRuleCalls, _clientRest_DeleteAutoModerationRule_Call{guildID, ruleID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteAutoModerationRuleMocks) > 0 {
 		_fn = _dat.DeleteAutoModerationRuleMocks[0]
 		if len(_dat.DeleteAutoModerationRuleMocks) > 1 {
@@ -6231,7 +6352,7 @@ func (_recv *clientRest) DeleteAutoModerationRule(guildID snowflake.ID, ruleID s
 	return _fn(guildID, ruleID, opts...)
 }
 
-func (_recv *clientRest) _DeleteAutoModerationRule_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteAutoModerationRule_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteAutoModerationRule: nil pointer receiver")
 	}
@@ -6239,9 +6360,9 @@ func (_recv *clientRest) _DeleteAutoModerationRule_Do(fn func(snowflake.ID, snow
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteAutoModerationRuleMocks) < 2 {
-		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteAutoModerationRuleMocks = _dat.DeleteAutoModerationRuleMocks[:len(_dat.DeleteAutoModerationRuleMocks)-1]
 		_dat.DeleteAutoModerationRuleMocks = append(_dat.DeleteAutoModerationRuleMocks, fn)
@@ -6249,14 +6370,14 @@ func (_recv *clientRest) _DeleteAutoModerationRule_Do(fn func(snowflake.ID, snow
 	}
 }
 
-func (clientRest) _DeleteAutoModerationRule_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteAutoModerationRule_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteAutoModerationRuleMocks) < 2 {
-		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteAutoModerationRuleMocks = _dat.DeleteAutoModerationRuleMocks[:len(_dat.DeleteAutoModerationRuleMocks)-1]
 		_dat.DeleteAutoModerationRuleMocks = append(_dat.DeleteAutoModerationRuleMocks, fn)
@@ -6266,7 +6387,7 @@ func (clientRest) _DeleteAutoModerationRule_DoAll(t *testing.T, fn func(snowflak
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteAutoModerationRuleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6281,11 +6402,11 @@ func (clientRest) _DeleteAutoModerationRule_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteAutoModerationRule_Return(r0 error) {
-	_recv._DeleteAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteAutoModerationRule_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteAutoModerationRule_Calls() []_clientRest_DeleteAutoModerationRule_Call {
@@ -6317,7 +6438,6 @@ func (clientRest) _DeleteAutoModerationRule_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteBan(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteBan: nil pointer receiver")
@@ -6328,7 +6448,7 @@ func (_recv *clientRest) DeleteBan(guildID snowflake.ID, userID snowflake.ID, op
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteBanCalls = append(_all.DeleteBanCalls, _clientRest_DeleteBan_Call{guildID, userID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteBanMocks) > 0 {
 		_fn = _dat.DeleteBanMocks[0]
 		if len(_dat.DeleteBanMocks) > 1 {
@@ -6347,7 +6467,7 @@ func (_recv *clientRest) DeleteBan(guildID snowflake.ID, userID snowflake.ID, op
 	return _fn(guildID, userID, opts...)
 }
 
-func (_recv *clientRest) _DeleteBan_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteBan_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteBan: nil pointer receiver")
 	}
@@ -6355,9 +6475,9 @@ func (_recv *clientRest) _DeleteBan_Do(fn func(snowflake.ID, snowflake.ID, ...re
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteBanMocks) < 2 {
-		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteBanMocks = _dat.DeleteBanMocks[:len(_dat.DeleteBanMocks)-1]
 		_dat.DeleteBanMocks = append(_dat.DeleteBanMocks, fn)
@@ -6365,14 +6485,14 @@ func (_recv *clientRest) _DeleteBan_Do(fn func(snowflake.ID, snowflake.ID, ...re
 	}
 }
 
-func (clientRest) _DeleteBan_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteBan_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteBanMocks) < 2 {
-		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteBanMocks = _dat.DeleteBanMocks[:len(_dat.DeleteBanMocks)-1]
 		_dat.DeleteBanMocks = append(_dat.DeleteBanMocks, fn)
@@ -6382,7 +6502,7 @@ func (clientRest) _DeleteBan_DoAll(t *testing.T, fn func(snowflake.ID, snowflake
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteBanMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6397,11 +6517,11 @@ func (clientRest) _DeleteBan_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteBan_Return(r0 error) {
-	_recv._DeleteBan_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteBan_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteBan_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteBan_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteBan_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteBan_Calls() []_clientRest_DeleteBan_Call {
@@ -6433,7 +6553,6 @@ func (clientRest) _DeleteBan_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteChannel(channelID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteChannel: nil pointer receiver")
@@ -6444,7 +6563,7 @@ func (_recv *clientRest) DeleteChannel(channelID snowflake.ID, opts ...rest.Requ
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteChannelCalls = append(_all.DeleteChannelCalls, _clientRest_DeleteChannel_Call{channelID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteChannelMocks) > 0 {
 		_fn = _dat.DeleteChannelMocks[0]
 		if len(_dat.DeleteChannelMocks) > 1 {
@@ -6463,7 +6582,7 @@ func (_recv *clientRest) DeleteChannel(channelID snowflake.ID, opts ...rest.Requ
 	return _fn(channelID, opts...)
 }
 
-func (_recv *clientRest) _DeleteChannel_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteChannel_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteChannel: nil pointer receiver")
 	}
@@ -6471,9 +6590,9 @@ func (_recv *clientRest) _DeleteChannel_Do(fn func(snowflake.ID, ...rest.Request
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteChannelMocks) < 2 {
-		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteChannelMocks = _dat.DeleteChannelMocks[:len(_dat.DeleteChannelMocks)-1]
 		_dat.DeleteChannelMocks = append(_dat.DeleteChannelMocks, fn)
@@ -6481,14 +6600,14 @@ func (_recv *clientRest) _DeleteChannel_Do(fn func(snowflake.ID, ...rest.Request
 	}
 }
 
-func (clientRest) _DeleteChannel_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteChannel_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteChannelMocks) < 2 {
-		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteChannelMocks = _dat.DeleteChannelMocks[:len(_dat.DeleteChannelMocks)-1]
 		_dat.DeleteChannelMocks = append(_dat.DeleteChannelMocks, fn)
@@ -6498,7 +6617,7 @@ func (clientRest) _DeleteChannel_DoAll(t *testing.T, fn func(snowflake.ID, ...re
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteChannelMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6513,11 +6632,11 @@ func (clientRest) _DeleteChannel_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteChannel_Return(r0 error) {
-	_recv._DeleteChannel_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteChannel_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteChannel_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteChannel_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteChannel_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteChannel_Calls() []_clientRest_DeleteChannel_Call {
@@ -6549,7 +6668,6 @@ func (clientRest) _DeleteChannel_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteEmoji(guildID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteEmoji: nil pointer receiver")
@@ -6560,7 +6678,7 @@ func (_recv *clientRest) DeleteEmoji(guildID snowflake.ID, emojiID snowflake.ID,
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteEmojiCalls = append(_all.DeleteEmojiCalls, _clientRest_DeleteEmoji_Call{guildID, emojiID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteEmojiMocks) > 0 {
 		_fn = _dat.DeleteEmojiMocks[0]
 		if len(_dat.DeleteEmojiMocks) > 1 {
@@ -6579,7 +6697,7 @@ func (_recv *clientRest) DeleteEmoji(guildID snowflake.ID, emojiID snowflake.ID,
 	return _fn(guildID, emojiID, opts...)
 }
 
-func (_recv *clientRest) _DeleteEmoji_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteEmoji_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteEmoji: nil pointer receiver")
 	}
@@ -6587,9 +6705,9 @@ func (_recv *clientRest) _DeleteEmoji_Do(fn func(snowflake.ID, snowflake.ID, ...
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteEmojiMocks) < 2 {
-		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteEmojiMocks = _dat.DeleteEmojiMocks[:len(_dat.DeleteEmojiMocks)-1]
 		_dat.DeleteEmojiMocks = append(_dat.DeleteEmojiMocks, fn)
@@ -6597,14 +6715,14 @@ func (_recv *clientRest) _DeleteEmoji_Do(fn func(snowflake.ID, snowflake.ID, ...
 	}
 }
 
-func (clientRest) _DeleteEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteEmojiMocks) < 2 {
-		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteEmojiMocks = _dat.DeleteEmojiMocks[:len(_dat.DeleteEmojiMocks)-1]
 		_dat.DeleteEmojiMocks = append(_dat.DeleteEmojiMocks, fn)
@@ -6614,7 +6732,7 @@ func (clientRest) _DeleteEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteEmojiMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6629,11 +6747,11 @@ func (clientRest) _DeleteEmoji_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteEmoji_Return(r0 error) {
-	_recv._DeleteEmoji_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteEmoji_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteEmoji_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteEmoji_Calls() []_clientRest_DeleteEmoji_Call {
@@ -6665,7 +6783,6 @@ func (clientRest) _DeleteEmoji_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteFollowupMessage(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteFollowupMessage: nil pointer receiver")
@@ -6676,7 +6793,7 @@ func (_recv *clientRest) DeleteFollowupMessage(applicationID snowflake.ID, inter
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteFollowupMessageCalls = append(_all.DeleteFollowupMessageCalls, _clientRest_DeleteFollowupMessage_Call{applicationID, interactionToken, messageID, opts})
-	var _fn func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteFollowupMessageMocks) > 0 {
 		_fn = _dat.DeleteFollowupMessageMocks[0]
 		if len(_dat.DeleteFollowupMessageMocks) > 1 {
@@ -6695,7 +6812,7 @@ func (_recv *clientRest) DeleteFollowupMessage(applicationID snowflake.ID, inter
 	return _fn(applicationID, interactionToken, messageID, opts...)
 }
 
-func (_recv *clientRest) _DeleteFollowupMessage_Do(fn func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteFollowupMessage_Do(fn func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteFollowupMessage: nil pointer receiver")
 	}
@@ -6703,9 +6820,9 @@ func (_recv *clientRest) _DeleteFollowupMessage_Do(fn func(snowflake.ID, string,
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteFollowupMessageMocks) < 2 {
-		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteFollowupMessageMocks = _dat.DeleteFollowupMessageMocks[:len(_dat.DeleteFollowupMessageMocks)-1]
 		_dat.DeleteFollowupMessageMocks = append(_dat.DeleteFollowupMessageMocks, fn)
@@ -6713,14 +6830,14 @@ func (_recv *clientRest) _DeleteFollowupMessage_Do(fn func(snowflake.ID, string,
 	}
 }
 
-func (clientRest) _DeleteFollowupMessage_DoAll(t *testing.T, fn func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteFollowupMessage_DoAll(t *testing.T, fn func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteFollowupMessageMocks) < 2 {
-		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteFollowupMessageMocks = _dat.DeleteFollowupMessageMocks[:len(_dat.DeleteFollowupMessageMocks)-1]
 		_dat.DeleteFollowupMessageMocks = append(_dat.DeleteFollowupMessageMocks, fn)
@@ -6730,7 +6847,7 @@ func (clientRest) _DeleteFollowupMessage_DoAll(t *testing.T, fn func(snowflake.I
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteFollowupMessageMocks = []func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6745,11 +6862,11 @@ func (clientRest) _DeleteFollowupMessage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteFollowupMessage_Return(r0 error) {
-	_recv._DeleteFollowupMessage_Do(func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteFollowupMessage_Do(func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteFollowupMessage_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteFollowupMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteFollowupMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteFollowupMessage_Calls() []_clientRest_DeleteFollowupMessage_Call {
@@ -6781,7 +6898,6 @@ func (clientRest) _DeleteFollowupMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteGlobalCommand(applicationID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteGlobalCommand: nil pointer receiver")
@@ -6792,7 +6908,7 @@ func (_recv *clientRest) DeleteGlobalCommand(applicationID snowflake.ID, command
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteGlobalCommandCalls = append(_all.DeleteGlobalCommandCalls, _clientRest_DeleteGlobalCommand_Call{applicationID, commandID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteGlobalCommandMocks) > 0 {
 		_fn = _dat.DeleteGlobalCommandMocks[0]
 		if len(_dat.DeleteGlobalCommandMocks) > 1 {
@@ -6811,7 +6927,7 @@ func (_recv *clientRest) DeleteGlobalCommand(applicationID snowflake.ID, command
 	return _fn(applicationID, commandID, opts...)
 }
 
-func (_recv *clientRest) _DeleteGlobalCommand_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteGlobalCommand_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteGlobalCommand: nil pointer receiver")
 	}
@@ -6819,9 +6935,9 @@ func (_recv *clientRest) _DeleteGlobalCommand_Do(fn func(snowflake.ID, snowflake
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGlobalCommandMocks) < 2 {
-		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGlobalCommandMocks = _dat.DeleteGlobalCommandMocks[:len(_dat.DeleteGlobalCommandMocks)-1]
 		_dat.DeleteGlobalCommandMocks = append(_dat.DeleteGlobalCommandMocks, fn)
@@ -6829,14 +6945,14 @@ func (_recv *clientRest) _DeleteGlobalCommand_Do(fn func(snowflake.ID, snowflake
 	}
 }
 
-func (clientRest) _DeleteGlobalCommand_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteGlobalCommand_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGlobalCommandMocks) < 2 {
-		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGlobalCommandMocks = _dat.DeleteGlobalCommandMocks[:len(_dat.DeleteGlobalCommandMocks)-1]
 		_dat.DeleteGlobalCommandMocks = append(_dat.DeleteGlobalCommandMocks, fn)
@@ -6846,7 +6962,7 @@ func (clientRest) _DeleteGlobalCommand_DoAll(t *testing.T, fn func(snowflake.ID,
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteGlobalCommandMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6861,11 +6977,11 @@ func (clientRest) _DeleteGlobalCommand_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteGlobalCommand_Return(r0 error) {
-	_recv._DeleteGlobalCommand_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteGlobalCommand_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteGlobalCommand_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteGlobalCommand_Calls() []_clientRest_DeleteGlobalCommand_Call {
@@ -6897,7 +7013,6 @@ func (clientRest) _DeleteGlobalCommand_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteGuild(guildID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteGuild: nil pointer receiver")
@@ -6908,7 +7023,7 @@ func (_recv *clientRest) DeleteGuild(guildID snowflake.ID, opts ...rest.RequestO
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteGuildCalls = append(_all.DeleteGuildCalls, _clientRest_DeleteGuild_Call{guildID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteGuildMocks) > 0 {
 		_fn = _dat.DeleteGuildMocks[0]
 		if len(_dat.DeleteGuildMocks) > 1 {
@@ -6927,7 +7042,7 @@ func (_recv *clientRest) DeleteGuild(guildID snowflake.ID, opts ...rest.RequestO
 	return _fn(guildID, opts...)
 }
 
-func (_recv *clientRest) _DeleteGuild_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteGuild_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteGuild: nil pointer receiver")
 	}
@@ -6935,9 +7050,9 @@ func (_recv *clientRest) _DeleteGuild_Do(fn func(snowflake.ID, ...rest.RequestOp
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildMocks) < 2 {
-		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildMocks = _dat.DeleteGuildMocks[:len(_dat.DeleteGuildMocks)-1]
 		_dat.DeleteGuildMocks = append(_dat.DeleteGuildMocks, fn)
@@ -6945,14 +7060,14 @@ func (_recv *clientRest) _DeleteGuild_Do(fn func(snowflake.ID, ...rest.RequestOp
 	}
 }
 
-func (clientRest) _DeleteGuild_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteGuild_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildMocks) < 2 {
-		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildMocks = _dat.DeleteGuildMocks[:len(_dat.DeleteGuildMocks)-1]
 		_dat.DeleteGuildMocks = append(_dat.DeleteGuildMocks, fn)
@@ -6962,7 +7077,7 @@ func (clientRest) _DeleteGuild_DoAll(t *testing.T, fn func(snowflake.ID, ...rest
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -6977,11 +7092,11 @@ func (clientRest) _DeleteGuild_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteGuild_Return(r0 error) {
-	_recv._DeleteGuild_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteGuild_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteGuild_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteGuild_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteGuild_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteGuild_Calls() []_clientRest_DeleteGuild_Call {
@@ -7013,7 +7128,6 @@ func (clientRest) _DeleteGuild_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteGuildCommand(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteGuildCommand: nil pointer receiver")
@@ -7024,7 +7138,7 @@ func (_recv *clientRest) DeleteGuildCommand(applicationID snowflake.ID, guildID 
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteGuildCommandCalls = append(_all.DeleteGuildCommandCalls, _clientRest_DeleteGuildCommand_Call{applicationID, guildID, commandID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteGuildCommandMocks) > 0 {
 		_fn = _dat.DeleteGuildCommandMocks[0]
 		if len(_dat.DeleteGuildCommandMocks) > 1 {
@@ -7043,7 +7157,7 @@ func (_recv *clientRest) DeleteGuildCommand(applicationID snowflake.ID, guildID 
 	return _fn(applicationID, guildID, commandID, opts...)
 }
 
-func (_recv *clientRest) _DeleteGuildCommand_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteGuildCommand_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteGuildCommand: nil pointer receiver")
 	}
@@ -7051,9 +7165,9 @@ func (_recv *clientRest) _DeleteGuildCommand_Do(fn func(snowflake.ID, snowflake.
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildCommandMocks) < 2 {
-		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildCommandMocks = _dat.DeleteGuildCommandMocks[:len(_dat.DeleteGuildCommandMocks)-1]
 		_dat.DeleteGuildCommandMocks = append(_dat.DeleteGuildCommandMocks, fn)
@@ -7061,14 +7175,14 @@ func (_recv *clientRest) _DeleteGuildCommand_Do(fn func(snowflake.ID, snowflake.
 	}
 }
 
-func (clientRest) _DeleteGuildCommand_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteGuildCommand_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildCommandMocks) < 2 {
-		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildCommandMocks = _dat.DeleteGuildCommandMocks[:len(_dat.DeleteGuildCommandMocks)-1]
 		_dat.DeleteGuildCommandMocks = append(_dat.DeleteGuildCommandMocks, fn)
@@ -7078,7 +7192,7 @@ func (clientRest) _DeleteGuildCommand_DoAll(t *testing.T, fn func(snowflake.ID, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteGuildCommandMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -7093,11 +7207,11 @@ func (clientRest) _DeleteGuildCommand_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteGuildCommand_Return(r0 error) {
-	_recv._DeleteGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteGuildCommand_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteGuildCommand_Calls() []_clientRest_DeleteGuildCommand_Call {
@@ -7129,7 +7243,6 @@ func (clientRest) _DeleteGuildCommand_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteGuildScheduledEvent(guildID snowflake.ID, guildScheduledEventID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteGuildScheduledEvent: nil pointer receiver")
@@ -7140,7 +7253,7 @@ func (_recv *clientRest) DeleteGuildScheduledEvent(guildID snowflake.ID, guildSc
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteGuildScheduledEventCalls = append(_all.DeleteGuildScheduledEventCalls, _clientRest_DeleteGuildScheduledEvent_Call{guildID, guildScheduledEventID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteGuildScheduledEventMocks) > 0 {
 		_fn = _dat.DeleteGuildScheduledEventMocks[0]
 		if len(_dat.DeleteGuildScheduledEventMocks) > 1 {
@@ -7159,7 +7272,7 @@ func (_recv *clientRest) DeleteGuildScheduledEvent(guildID snowflake.ID, guildSc
 	return _fn(guildID, guildScheduledEventID, opts...)
 }
 
-func (_recv *clientRest) _DeleteGuildScheduledEvent_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteGuildScheduledEvent_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteGuildScheduledEvent: nil pointer receiver")
 	}
@@ -7167,9 +7280,9 @@ func (_recv *clientRest) _DeleteGuildScheduledEvent_Do(fn func(snowflake.ID, sno
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildScheduledEventMocks) < 2 {
-		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildScheduledEventMocks = _dat.DeleteGuildScheduledEventMocks[:len(_dat.DeleteGuildScheduledEventMocks)-1]
 		_dat.DeleteGuildScheduledEventMocks = append(_dat.DeleteGuildScheduledEventMocks, fn)
@@ -7177,14 +7290,14 @@ func (_recv *clientRest) _DeleteGuildScheduledEvent_Do(fn func(snowflake.ID, sno
 	}
 }
 
-func (clientRest) _DeleteGuildScheduledEvent_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteGuildScheduledEvent_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildScheduledEventMocks) < 2 {
-		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildScheduledEventMocks = _dat.DeleteGuildScheduledEventMocks[:len(_dat.DeleteGuildScheduledEventMocks)-1]
 		_dat.DeleteGuildScheduledEventMocks = append(_dat.DeleteGuildScheduledEventMocks, fn)
@@ -7194,7 +7307,7 @@ func (clientRest) _DeleteGuildScheduledEvent_DoAll(t *testing.T, fn func(snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteGuildScheduledEventMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -7209,11 +7322,11 @@ func (clientRest) _DeleteGuildScheduledEvent_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteGuildScheduledEvent_Return(r0 error) {
-	_recv._DeleteGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteGuildScheduledEvent_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteGuildScheduledEvent_Calls() []_clientRest_DeleteGuildScheduledEvent_Call {
@@ -7245,7 +7358,6 @@ func (clientRest) _DeleteGuildScheduledEvent_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteGuildSoundboardSound(guildID snowflake.ID, soundID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteGuildSoundboardSound: nil pointer receiver")
@@ -7256,7 +7368,7 @@ func (_recv *clientRest) DeleteGuildSoundboardSound(guildID snowflake.ID, soundI
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteGuildSoundboardSoundCalls = append(_all.DeleteGuildSoundboardSoundCalls, _clientRest_DeleteGuildSoundboardSound_Call{guildID, soundID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteGuildSoundboardSoundMocks) > 0 {
 		_fn = _dat.DeleteGuildSoundboardSoundMocks[0]
 		if len(_dat.DeleteGuildSoundboardSoundMocks) > 1 {
@@ -7275,7 +7387,7 @@ func (_recv *clientRest) DeleteGuildSoundboardSound(guildID snowflake.ID, soundI
 	return _fn(guildID, soundID, opts...)
 }
 
-func (_recv *clientRest) _DeleteGuildSoundboardSound_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteGuildSoundboardSound_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteGuildSoundboardSound: nil pointer receiver")
 	}
@@ -7283,9 +7395,9 @@ func (_recv *clientRest) _DeleteGuildSoundboardSound_Do(fn func(snowflake.ID, sn
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildSoundboardSoundMocks) < 2 {
-		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildSoundboardSoundMocks = _dat.DeleteGuildSoundboardSoundMocks[:len(_dat.DeleteGuildSoundboardSoundMocks)-1]
 		_dat.DeleteGuildSoundboardSoundMocks = append(_dat.DeleteGuildSoundboardSoundMocks, fn)
@@ -7293,14 +7405,14 @@ func (_recv *clientRest) _DeleteGuildSoundboardSound_Do(fn func(snowflake.ID, sn
 	}
 }
 
-func (clientRest) _DeleteGuildSoundboardSound_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteGuildSoundboardSound_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteGuildSoundboardSoundMocks) < 2 {
-		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteGuildSoundboardSoundMocks = _dat.DeleteGuildSoundboardSoundMocks[:len(_dat.DeleteGuildSoundboardSoundMocks)-1]
 		_dat.DeleteGuildSoundboardSoundMocks = append(_dat.DeleteGuildSoundboardSoundMocks, fn)
@@ -7310,7 +7422,7 @@ func (clientRest) _DeleteGuildSoundboardSound_DoAll(t *testing.T, fn func(snowfl
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteGuildSoundboardSoundMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -7325,11 +7437,11 @@ func (clientRest) _DeleteGuildSoundboardSound_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteGuildSoundboardSound_Return(r0 error) {
-	_recv._DeleteGuildSoundboardSound_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteGuildSoundboardSound_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteGuildSoundboardSound_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteGuildSoundboardSound_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteGuildSoundboardSound_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteGuildSoundboardSound_Calls() []_clientRest_DeleteGuildSoundboardSound_Call {
@@ -7360,7 +7472,6 @@ func (clientRest) _DeleteGuildSoundboardSound_BubbleCalls(t *testing.T) {
 		_dat.DeleteGuildSoundboardSoundCalls = []_clientRest_DeleteGuildSoundboardSound_Call{}
 	})
 }
-
 
 func (_recv *clientRest) DeleteGuildTemplate(guildID snowflake.ID, templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error) {
 	if _recv == nil {
@@ -7477,7 +7588,6 @@ func (clientRest) _DeleteGuildTemplate_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteIntegration(guildID snowflake.ID, integrationID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteIntegration: nil pointer receiver")
@@ -7488,7 +7598,7 @@ func (_recv *clientRest) DeleteIntegration(guildID snowflake.ID, integrationID s
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteIntegrationCalls = append(_all.DeleteIntegrationCalls, _clientRest_DeleteIntegration_Call{guildID, integrationID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteIntegrationMocks) > 0 {
 		_fn = _dat.DeleteIntegrationMocks[0]
 		if len(_dat.DeleteIntegrationMocks) > 1 {
@@ -7507,7 +7617,7 @@ func (_recv *clientRest) DeleteIntegration(guildID snowflake.ID, integrationID s
 	return _fn(guildID, integrationID, opts...)
 }
 
-func (_recv *clientRest) _DeleteIntegration_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteIntegration_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteIntegration: nil pointer receiver")
 	}
@@ -7515,9 +7625,9 @@ func (_recv *clientRest) _DeleteIntegration_Do(fn func(snowflake.ID, snowflake.I
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteIntegrationMocks) < 2 {
-		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteIntegrationMocks = _dat.DeleteIntegrationMocks[:len(_dat.DeleteIntegrationMocks)-1]
 		_dat.DeleteIntegrationMocks = append(_dat.DeleteIntegrationMocks, fn)
@@ -7525,14 +7635,14 @@ func (_recv *clientRest) _DeleteIntegration_Do(fn func(snowflake.ID, snowflake.I
 	}
 }
 
-func (clientRest) _DeleteIntegration_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteIntegration_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteIntegrationMocks) < 2 {
-		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteIntegrationMocks = _dat.DeleteIntegrationMocks[:len(_dat.DeleteIntegrationMocks)-1]
 		_dat.DeleteIntegrationMocks = append(_dat.DeleteIntegrationMocks, fn)
@@ -7542,7 +7652,7 @@ func (clientRest) _DeleteIntegration_DoAll(t *testing.T, fn func(snowflake.ID, s
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteIntegrationMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -7557,11 +7667,11 @@ func (clientRest) _DeleteIntegration_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteIntegration_Return(r0 error) {
-	_recv._DeleteIntegration_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteIntegration_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteIntegration_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteIntegration_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteIntegration_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteIntegration_Calls() []_clientRest_DeleteIntegration_Call {
@@ -7593,7 +7703,6 @@ func (clientRest) _DeleteIntegration_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteInteractionResponse(applicationID snowflake.ID, interactionToken string, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteInteractionResponse: nil pointer receiver")
@@ -7604,7 +7713,7 @@ func (_recv *clientRest) DeleteInteractionResponse(applicationID snowflake.ID, i
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteInteractionResponseCalls = append(_all.DeleteInteractionResponseCalls, _clientRest_DeleteInteractionResponse_Call{applicationID, interactionToken, opts})
-	var _fn func(snowflake.ID, string, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, string, ...rest.RequestOpt) error
 	if len(_dat.DeleteInteractionResponseMocks) > 0 {
 		_fn = _dat.DeleteInteractionResponseMocks[0]
 		if len(_dat.DeleteInteractionResponseMocks) > 1 {
@@ -7623,7 +7732,7 @@ func (_recv *clientRest) DeleteInteractionResponse(applicationID snowflake.ID, i
 	return _fn(applicationID, interactionToken, opts...)
 }
 
-func (_recv *clientRest) _DeleteInteractionResponse_Do(fn func(snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteInteractionResponse_Do(fn func(snowflake.ID, string, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteInteractionResponse: nil pointer receiver")
 	}
@@ -7631,9 +7740,9 @@ func (_recv *clientRest) _DeleteInteractionResponse_Do(fn func(snowflake.ID, str
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteInteractionResponseMocks) < 2 {
-		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteInteractionResponseMocks = _dat.DeleteInteractionResponseMocks[:len(_dat.DeleteInteractionResponseMocks)-1]
 		_dat.DeleteInteractionResponseMocks = append(_dat.DeleteInteractionResponseMocks, fn)
@@ -7641,14 +7750,14 @@ func (_recv *clientRest) _DeleteInteractionResponse_Do(fn func(snowflake.ID, str
 	}
 }
 
-func (clientRest) _DeleteInteractionResponse_DoAll(t *testing.T, fn func(snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteInteractionResponse_DoAll(t *testing.T, fn func(snowflake.ID, string, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteInteractionResponseMocks) < 2 {
-		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteInteractionResponseMocks = _dat.DeleteInteractionResponseMocks[:len(_dat.DeleteInteractionResponseMocks)-1]
 		_dat.DeleteInteractionResponseMocks = append(_dat.DeleteInteractionResponseMocks, fn)
@@ -7658,7 +7767,7 @@ func (clientRest) _DeleteInteractionResponse_DoAll(t *testing.T, fn func(snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){}
+			_dat.DeleteInteractionResponseMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -7673,11 +7782,11 @@ func (clientRest) _DeleteInteractionResponse_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteInteractionResponse_Return(r0 error) {
-	_recv._DeleteInteractionResponse_Do(func(snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteInteractionResponse_Do(func(snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteInteractionResponse_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteInteractionResponse_DoAll(t, func(snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteInteractionResponse_DoAll(t, func(snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteInteractionResponse_Calls() []_clientRest_DeleteInteractionResponse_Call {
@@ -7708,7 +7817,6 @@ func (clientRest) _DeleteInteractionResponse_BubbleCalls(t *testing.T) {
 		_dat.DeleteInteractionResponseCalls = []_clientRest_DeleteInteractionResponse_Call{}
 	})
 }
-
 
 func (_recv *clientRest) DeleteInvite(code string, opts ...rest.RequestOpt) (*discord.Invite, error) {
 	if _recv == nil {
@@ -7825,7 +7933,6 @@ func (clientRest) _DeleteInvite_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteMessage(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteMessage: nil pointer receiver")
@@ -7836,7 +7943,7 @@ func (_recv *clientRest) DeleteMessage(channelID snowflake.ID, messageID snowfla
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteMessageCalls = append(_all.DeleteMessageCalls, _clientRest_DeleteMessage_Call{channelID, messageID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteMessageMocks) > 0 {
 		_fn = _dat.DeleteMessageMocks[0]
 		if len(_dat.DeleteMessageMocks) > 1 {
@@ -7855,7 +7962,7 @@ func (_recv *clientRest) DeleteMessage(channelID snowflake.ID, messageID snowfla
 	return _fn(channelID, messageID, opts...)
 }
 
-func (_recv *clientRest) _DeleteMessage_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteMessage_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteMessage: nil pointer receiver")
 	}
@@ -7863,9 +7970,9 @@ func (_recv *clientRest) _DeleteMessage_Do(fn func(snowflake.ID, snowflake.ID, .
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteMessageMocks) < 2 {
-		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteMessageMocks = _dat.DeleteMessageMocks[:len(_dat.DeleteMessageMocks)-1]
 		_dat.DeleteMessageMocks = append(_dat.DeleteMessageMocks, fn)
@@ -7873,14 +7980,14 @@ func (_recv *clientRest) _DeleteMessage_Do(fn func(snowflake.ID, snowflake.ID, .
 	}
 }
 
-func (clientRest) _DeleteMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteMessageMocks) < 2 {
-		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteMessageMocks = _dat.DeleteMessageMocks[:len(_dat.DeleteMessageMocks)-1]
 		_dat.DeleteMessageMocks = append(_dat.DeleteMessageMocks, fn)
@@ -7890,7 +7997,7 @@ func (clientRest) _DeleteMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowf
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -7905,11 +8012,11 @@ func (clientRest) _DeleteMessage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteMessage_Return(r0 error) {
-	_recv._DeleteMessage_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteMessage_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteMessage_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteMessage_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteMessage_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteMessage_Calls() []_clientRest_DeleteMessage_Call {
@@ -7941,7 +8048,6 @@ func (clientRest) _DeleteMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeletePermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeletePermissionOverwrite: nil pointer receiver")
@@ -7952,7 +8058,7 @@ func (_recv *clientRest) DeletePermissionOverwrite(channelID snowflake.ID, overw
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeletePermissionOverwriteCalls = append(_all.DeletePermissionOverwriteCalls, _clientRest_DeletePermissionOverwrite_Call{channelID, overwriteID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeletePermissionOverwriteMocks) > 0 {
 		_fn = _dat.DeletePermissionOverwriteMocks[0]
 		if len(_dat.DeletePermissionOverwriteMocks) > 1 {
@@ -7971,7 +8077,7 @@ func (_recv *clientRest) DeletePermissionOverwrite(channelID snowflake.ID, overw
 	return _fn(channelID, overwriteID, opts...)
 }
 
-func (_recv *clientRest) _DeletePermissionOverwrite_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeletePermissionOverwrite_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeletePermissionOverwrite: nil pointer receiver")
 	}
@@ -7979,9 +8085,9 @@ func (_recv *clientRest) _DeletePermissionOverwrite_Do(fn func(snowflake.ID, sno
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeletePermissionOverwriteMocks) < 2 {
-		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeletePermissionOverwriteMocks = _dat.DeletePermissionOverwriteMocks[:len(_dat.DeletePermissionOverwriteMocks)-1]
 		_dat.DeletePermissionOverwriteMocks = append(_dat.DeletePermissionOverwriteMocks, fn)
@@ -7989,14 +8095,14 @@ func (_recv *clientRest) _DeletePermissionOverwrite_Do(fn func(snowflake.ID, sno
 	}
 }
 
-func (clientRest) _DeletePermissionOverwrite_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeletePermissionOverwrite_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeletePermissionOverwriteMocks) < 2 {
-		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeletePermissionOverwriteMocks = _dat.DeletePermissionOverwriteMocks[:len(_dat.DeletePermissionOverwriteMocks)-1]
 		_dat.DeletePermissionOverwriteMocks = append(_dat.DeletePermissionOverwriteMocks, fn)
@@ -8006,7 +8112,7 @@ func (clientRest) _DeletePermissionOverwrite_DoAll(t *testing.T, fn func(snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeletePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8021,11 +8127,11 @@ func (clientRest) _DeletePermissionOverwrite_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeletePermissionOverwrite_Return(r0 error) {
-	_recv._DeletePermissionOverwrite_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeletePermissionOverwrite_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeletePermissionOverwrite_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeletePermissionOverwrite_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeletePermissionOverwrite_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeletePermissionOverwrite_Calls() []_clientRest_DeletePermissionOverwrite_Call {
@@ -8057,7 +8163,6 @@ func (clientRest) _DeletePermissionOverwrite_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteRole(guildID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteRole: nil pointer receiver")
@@ -8068,7 +8173,7 @@ func (_recv *clientRest) DeleteRole(guildID snowflake.ID, roleID snowflake.ID, o
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteRoleCalls = append(_all.DeleteRoleCalls, _clientRest_DeleteRole_Call{guildID, roleID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteRoleMocks) > 0 {
 		_fn = _dat.DeleteRoleMocks[0]
 		if len(_dat.DeleteRoleMocks) > 1 {
@@ -8087,7 +8192,7 @@ func (_recv *clientRest) DeleteRole(guildID snowflake.ID, roleID snowflake.ID, o
 	return _fn(guildID, roleID, opts...)
 }
 
-func (_recv *clientRest) _DeleteRole_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteRole_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteRole: nil pointer receiver")
 	}
@@ -8095,9 +8200,9 @@ func (_recv *clientRest) _DeleteRole_Do(fn func(snowflake.ID, snowflake.ID, ...r
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteRoleMocks) < 2 {
-		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteRoleMocks = _dat.DeleteRoleMocks[:len(_dat.DeleteRoleMocks)-1]
 		_dat.DeleteRoleMocks = append(_dat.DeleteRoleMocks, fn)
@@ -8105,14 +8210,14 @@ func (_recv *clientRest) _DeleteRole_Do(fn func(snowflake.ID, snowflake.ID, ...r
 	}
 }
 
-func (clientRest) _DeleteRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteRoleMocks) < 2 {
-		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteRoleMocks = _dat.DeleteRoleMocks[:len(_dat.DeleteRoleMocks)-1]
 		_dat.DeleteRoleMocks = append(_dat.DeleteRoleMocks, fn)
@@ -8122,7 +8227,7 @@ func (clientRest) _DeleteRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflak
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteRoleMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8137,11 +8242,11 @@ func (clientRest) _DeleteRole_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteRole_Return(r0 error) {
-	_recv._DeleteRole_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteRole_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteRole_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteRole_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteRole_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteRole_Calls() []_clientRest_DeleteRole_Call {
@@ -8173,7 +8278,6 @@ func (clientRest) _DeleteRole_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteStageInstance(channelID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteStageInstance: nil pointer receiver")
@@ -8184,7 +8288,7 @@ func (_recv *clientRest) DeleteStageInstance(channelID snowflake.ID, opts ...res
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteStageInstanceCalls = append(_all.DeleteStageInstanceCalls, _clientRest_DeleteStageInstance_Call{channelID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteStageInstanceMocks) > 0 {
 		_fn = _dat.DeleteStageInstanceMocks[0]
 		if len(_dat.DeleteStageInstanceMocks) > 1 {
@@ -8203,7 +8307,7 @@ func (_recv *clientRest) DeleteStageInstance(channelID snowflake.ID, opts ...res
 	return _fn(channelID, opts...)
 }
 
-func (_recv *clientRest) _DeleteStageInstance_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteStageInstance_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteStageInstance: nil pointer receiver")
 	}
@@ -8211,9 +8315,9 @@ func (_recv *clientRest) _DeleteStageInstance_Do(fn func(snowflake.ID, ...rest.R
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteStageInstanceMocks) < 2 {
-		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteStageInstanceMocks = _dat.DeleteStageInstanceMocks[:len(_dat.DeleteStageInstanceMocks)-1]
 		_dat.DeleteStageInstanceMocks = append(_dat.DeleteStageInstanceMocks, fn)
@@ -8221,14 +8325,14 @@ func (_recv *clientRest) _DeleteStageInstance_Do(fn func(snowflake.ID, ...rest.R
 	}
 }
 
-func (clientRest) _DeleteStageInstance_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteStageInstance_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteStageInstanceMocks) < 2 {
-		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteStageInstanceMocks = _dat.DeleteStageInstanceMocks[:len(_dat.DeleteStageInstanceMocks)-1]
 		_dat.DeleteStageInstanceMocks = append(_dat.DeleteStageInstanceMocks, fn)
@@ -8238,7 +8342,7 @@ func (clientRest) _DeleteStageInstance_DoAll(t *testing.T, fn func(snowflake.ID,
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteStageInstanceMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8253,11 +8357,11 @@ func (clientRest) _DeleteStageInstance_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteStageInstance_Return(r0 error) {
-	_recv._DeleteStageInstance_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteStageInstance_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteStageInstance_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteStageInstance_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteStageInstance_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteStageInstance_Calls() []_clientRest_DeleteStageInstance_Call {
@@ -8289,7 +8393,6 @@ func (clientRest) _DeleteStageInstance_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteSticker(guildID snowflake.ID, stickerID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteSticker: nil pointer receiver")
@@ -8300,7 +8403,7 @@ func (_recv *clientRest) DeleteSticker(guildID snowflake.ID, stickerID snowflake
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteStickerCalls = append(_all.DeleteStickerCalls, _clientRest_DeleteSticker_Call{guildID, stickerID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteStickerMocks) > 0 {
 		_fn = _dat.DeleteStickerMocks[0]
 		if len(_dat.DeleteStickerMocks) > 1 {
@@ -8319,7 +8422,7 @@ func (_recv *clientRest) DeleteSticker(guildID snowflake.ID, stickerID snowflake
 	return _fn(guildID, stickerID, opts...)
 }
 
-func (_recv *clientRest) _DeleteSticker_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteSticker_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteSticker: nil pointer receiver")
 	}
@@ -8327,9 +8430,9 @@ func (_recv *clientRest) _DeleteSticker_Do(fn func(snowflake.ID, snowflake.ID, .
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteStickerMocks) < 2 {
-		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteStickerMocks = _dat.DeleteStickerMocks[:len(_dat.DeleteStickerMocks)-1]
 		_dat.DeleteStickerMocks = append(_dat.DeleteStickerMocks, fn)
@@ -8337,14 +8440,14 @@ func (_recv *clientRest) _DeleteSticker_Do(fn func(snowflake.ID, snowflake.ID, .
 	}
 }
 
-func (clientRest) _DeleteSticker_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteSticker_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteStickerMocks) < 2 {
-		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteStickerMocks = _dat.DeleteStickerMocks[:len(_dat.DeleteStickerMocks)-1]
 		_dat.DeleteStickerMocks = append(_dat.DeleteStickerMocks, fn)
@@ -8354,7 +8457,7 @@ func (clientRest) _DeleteSticker_DoAll(t *testing.T, fn func(snowflake.ID, snowf
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteStickerMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8369,11 +8472,11 @@ func (clientRest) _DeleteSticker_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteSticker_Return(r0 error) {
-	_recv._DeleteSticker_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteSticker_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteSticker_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteSticker_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteSticker_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteSticker_Calls() []_clientRest_DeleteSticker_Call {
@@ -8405,7 +8508,6 @@ func (clientRest) _DeleteSticker_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteTestEntitlement(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteTestEntitlement: nil pointer receiver")
@@ -8416,7 +8518,7 @@ func (_recv *clientRest) DeleteTestEntitlement(applicationID snowflake.ID, entit
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteTestEntitlementCalls = append(_all.DeleteTestEntitlementCalls, _clientRest_DeleteTestEntitlement_Call{applicationID, entitlementID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteTestEntitlementMocks) > 0 {
 		_fn = _dat.DeleteTestEntitlementMocks[0]
 		if len(_dat.DeleteTestEntitlementMocks) > 1 {
@@ -8435,7 +8537,7 @@ func (_recv *clientRest) DeleteTestEntitlement(applicationID snowflake.ID, entit
 	return _fn(applicationID, entitlementID, opts...)
 }
 
-func (_recv *clientRest) _DeleteTestEntitlement_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteTestEntitlement_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteTestEntitlement: nil pointer receiver")
 	}
@@ -8443,9 +8545,9 @@ func (_recv *clientRest) _DeleteTestEntitlement_Do(fn func(snowflake.ID, snowfla
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteTestEntitlementMocks) < 2 {
-		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteTestEntitlementMocks = _dat.DeleteTestEntitlementMocks[:len(_dat.DeleteTestEntitlementMocks)-1]
 		_dat.DeleteTestEntitlementMocks = append(_dat.DeleteTestEntitlementMocks, fn)
@@ -8453,14 +8555,14 @@ func (_recv *clientRest) _DeleteTestEntitlement_Do(fn func(snowflake.ID, snowfla
 	}
 }
 
-func (clientRest) _DeleteTestEntitlement_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteTestEntitlement_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteTestEntitlementMocks) < 2 {
-		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteTestEntitlementMocks = _dat.DeleteTestEntitlementMocks[:len(_dat.DeleteTestEntitlementMocks)-1]
 		_dat.DeleteTestEntitlementMocks = append(_dat.DeleteTestEntitlementMocks, fn)
@@ -8470,7 +8572,7 @@ func (clientRest) _DeleteTestEntitlement_DoAll(t *testing.T, fn func(snowflake.I
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteTestEntitlementMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8485,11 +8587,11 @@ func (clientRest) _DeleteTestEntitlement_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteTestEntitlement_Return(r0 error) {
-	_recv._DeleteTestEntitlement_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteTestEntitlement_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteTestEntitlement_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteTestEntitlement_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteTestEntitlement_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteTestEntitlement_Calls() []_clientRest_DeleteTestEntitlement_Call {
@@ -8521,7 +8623,6 @@ func (clientRest) _DeleteTestEntitlement_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteWebhook(webhookID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteWebhook: nil pointer receiver")
@@ -8532,7 +8633,7 @@ func (_recv *clientRest) DeleteWebhook(webhookID snowflake.ID, opts ...rest.Requ
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteWebhookCalls = append(_all.DeleteWebhookCalls, _clientRest_DeleteWebhook_Call{webhookID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteWebhookMocks) > 0 {
 		_fn = _dat.DeleteWebhookMocks[0]
 		if len(_dat.DeleteWebhookMocks) > 1 {
@@ -8551,7 +8652,7 @@ func (_recv *clientRest) DeleteWebhook(webhookID snowflake.ID, opts ...rest.Requ
 	return _fn(webhookID, opts...)
 }
 
-func (_recv *clientRest) _DeleteWebhook_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteWebhook_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteWebhook: nil pointer receiver")
 	}
@@ -8559,9 +8660,9 @@ func (_recv *clientRest) _DeleteWebhook_Do(fn func(snowflake.ID, ...rest.Request
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteWebhookMocks) < 2 {
-		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteWebhookMocks = _dat.DeleteWebhookMocks[:len(_dat.DeleteWebhookMocks)-1]
 		_dat.DeleteWebhookMocks = append(_dat.DeleteWebhookMocks, fn)
@@ -8569,14 +8670,14 @@ func (_recv *clientRest) _DeleteWebhook_Do(fn func(snowflake.ID, ...rest.Request
 	}
 }
 
-func (clientRest) _DeleteWebhook_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteWebhook_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteWebhookMocks) < 2 {
-		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteWebhookMocks = _dat.DeleteWebhookMocks[:len(_dat.DeleteWebhookMocks)-1]
 		_dat.DeleteWebhookMocks = append(_dat.DeleteWebhookMocks, fn)
@@ -8586,7 +8687,7 @@ func (clientRest) _DeleteWebhook_DoAll(t *testing.T, fn func(snowflake.ID, ...re
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteWebhookMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8601,11 +8702,11 @@ func (clientRest) _DeleteWebhook_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteWebhook_Return(r0 error) {
-	_recv._DeleteWebhook_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteWebhook_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteWebhook_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteWebhook_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteWebhook_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteWebhook_Calls() []_clientRest_DeleteWebhook_Call {
@@ -8637,7 +8738,6 @@ func (clientRest) _DeleteWebhook_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteWebhookMessage(webhookID snowflake.ID, webhookToken string, messageID snowflake.ID, threadID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteWebhookMessage: nil pointer receiver")
@@ -8648,7 +8748,7 @@ func (_recv *clientRest) DeleteWebhookMessage(webhookID snowflake.ID, webhookTok
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteWebhookMessageCalls = append(_all.DeleteWebhookMessageCalls, _clientRest_DeleteWebhookMessage_Call{webhookID, webhookToken, messageID, threadID, opts})
-	var _fn func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.DeleteWebhookMessageMocks) > 0 {
 		_fn = _dat.DeleteWebhookMessageMocks[0]
 		if len(_dat.DeleteWebhookMessageMocks) > 1 {
@@ -8667,7 +8767,7 @@ func (_recv *clientRest) DeleteWebhookMessage(webhookID snowflake.ID, webhookTok
 	return _fn(webhookID, webhookToken, messageID, threadID, opts...)
 }
 
-func (_recv *clientRest) _DeleteWebhookMessage_Do(fn func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteWebhookMessage_Do(fn func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteWebhookMessage: nil pointer receiver")
 	}
@@ -8675,9 +8775,9 @@ func (_recv *clientRest) _DeleteWebhookMessage_Do(fn func(snowflake.ID, string, 
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteWebhookMessageMocks) < 2 {
-		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteWebhookMessageMocks = _dat.DeleteWebhookMessageMocks[:len(_dat.DeleteWebhookMessageMocks)-1]
 		_dat.DeleteWebhookMessageMocks = append(_dat.DeleteWebhookMessageMocks, fn)
@@ -8685,14 +8785,14 @@ func (_recv *clientRest) _DeleteWebhookMessage_Do(fn func(snowflake.ID, string, 
 	}
 }
 
-func (clientRest) _DeleteWebhookMessage_DoAll(t *testing.T, fn func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteWebhookMessage_DoAll(t *testing.T, fn func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteWebhookMessageMocks) < 2 {
-		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteWebhookMessageMocks = _dat.DeleteWebhookMessageMocks[:len(_dat.DeleteWebhookMessageMocks)-1]
 		_dat.DeleteWebhookMessageMocks = append(_dat.DeleteWebhookMessageMocks, fn)
@@ -8702,7 +8802,7 @@ func (clientRest) _DeleteWebhookMessage_DoAll(t *testing.T, fn func(snowflake.ID
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.DeleteWebhookMessageMocks = []func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8717,11 +8817,11 @@ func (clientRest) _DeleteWebhookMessage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteWebhookMessage_Return(r0 error) {
-	_recv._DeleteWebhookMessage_Do(func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteWebhookMessage_Do(func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteWebhookMessage_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteWebhookMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteWebhookMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteWebhookMessage_Calls() []_clientRest_DeleteWebhookMessage_Call {
@@ -8753,7 +8853,6 @@ func (clientRest) _DeleteWebhookMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) DeleteWebhookWithToken(webhookID snowflake.ID, webhookToken string, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.DeleteWebhookWithToken: nil pointer receiver")
@@ -8764,7 +8863,7 @@ func (_recv *clientRest) DeleteWebhookWithToken(webhookID snowflake.ID, webhookT
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DeleteWebhookWithTokenCalls = append(_all.DeleteWebhookWithTokenCalls, _clientRest_DeleteWebhookWithToken_Call{webhookID, webhookToken, opts})
-	var _fn func(snowflake.ID, string, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, string, ...rest.RequestOpt) error
 	if len(_dat.DeleteWebhookWithTokenMocks) > 0 {
 		_fn = _dat.DeleteWebhookWithTokenMocks[0]
 		if len(_dat.DeleteWebhookWithTokenMocks) > 1 {
@@ -8783,7 +8882,7 @@ func (_recv *clientRest) DeleteWebhookWithToken(webhookID snowflake.ID, webhookT
 	return _fn(webhookID, webhookToken, opts...)
 }
 
-func (_recv *clientRest) _DeleteWebhookWithToken_Do(fn func(snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _DeleteWebhookWithToken_Do(fn func(snowflake.ID, string, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.DeleteWebhookWithToken: nil pointer receiver")
 	}
@@ -8791,9 +8890,9 @@ func (_recv *clientRest) _DeleteWebhookWithToken_Do(fn func(snowflake.ID, string
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteWebhookWithTokenMocks) < 2 {
-		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteWebhookWithTokenMocks = _dat.DeleteWebhookWithTokenMocks[:len(_dat.DeleteWebhookWithTokenMocks)-1]
 		_dat.DeleteWebhookWithTokenMocks = append(_dat.DeleteWebhookWithTokenMocks, fn)
@@ -8801,14 +8900,14 @@ func (_recv *clientRest) _DeleteWebhookWithToken_Do(fn func(snowflake.ID, string
 	}
 }
 
-func (clientRest) _DeleteWebhookWithToken_DoAll(t *testing.T, fn func(snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (clientRest) _DeleteWebhookWithToken_DoAll(t *testing.T, fn func(snowflake.ID, string, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.DeleteWebhookWithTokenMocks) < 2 {
-		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DeleteWebhookWithTokenMocks = _dat.DeleteWebhookWithTokenMocks[:len(_dat.DeleteWebhookWithTokenMocks)-1]
 		_dat.DeleteWebhookWithTokenMocks = append(_dat.DeleteWebhookWithTokenMocks, fn)
@@ -8818,7 +8917,7 @@ func (clientRest) _DeleteWebhookWithToken_DoAll(t *testing.T, fn func(snowflake.
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) (error){}
+			_dat.DeleteWebhookWithTokenMocks = []func(snowflake.ID, string, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8833,11 +8932,11 @@ func (clientRest) _DeleteWebhookWithToken_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _DeleteWebhookWithToken_Return(r0 error) {
-	_recv._DeleteWebhookWithToken_Do(func(snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	_recv._DeleteWebhookWithToken_Do(func(snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _DeleteWebhookWithToken_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._DeleteWebhookWithToken_DoAll(t, func(snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._DeleteWebhookWithToken_DoAll(t, func(snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _DeleteWebhookWithToken_Calls() []_clientRest_DeleteWebhookWithToken_Call {
@@ -8869,7 +8968,6 @@ func (clientRest) _DeleteWebhookWithToken_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) Do(endpoint *rest.CompiledEndpoint, rqBody any, rsBody any, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.Do: nil pointer receiver")
@@ -8880,7 +8978,7 @@ func (_recv *clientRest) Do(endpoint *rest.CompiledEndpoint, rqBody any, rsBody 
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.DoCalls = append(_all.DoCalls, _clientRest_Do_Call{endpoint, rqBody, rsBody, opts})
-	var _fn func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error)
+	var _fn func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error
 	if len(_dat.DoMocks) > 0 {
 		_fn = _dat.DoMocks[0]
 		if len(_dat.DoMocks) > 1 {
@@ -8899,7 +8997,7 @@ func (_recv *clientRest) Do(endpoint *rest.CompiledEndpoint, rqBody any, rsBody 
 	return _fn(endpoint, rqBody, rsBody, opts...)
 }
 
-func (_recv *clientRest) _Do_Do(fn func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _Do_Do(fn func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.Do: nil pointer receiver")
 	}
@@ -8907,9 +9005,9 @@ func (_recv *clientRest) _Do_Do(fn func(*rest.CompiledEndpoint, any, any, ...res
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error){}
+		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error{}
 	} else if len(_dat.DoMocks) < 2 {
-		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DoMocks = _dat.DoMocks[:len(_dat.DoMocks)-1]
 		_dat.DoMocks = append(_dat.DoMocks, fn)
@@ -8917,14 +9015,14 @@ func (_recv *clientRest) _Do_Do(fn func(*rest.CompiledEndpoint, any, any, ...res
 	}
 }
 
-func (clientRest) _Do_DoAll(t *testing.T, fn func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error)) {
+func (clientRest) _Do_DoAll(t *testing.T, fn func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error){}
+		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error{}
 	} else if len(_dat.DoMocks) < 2 {
-		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error){fn, fn}
+		_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.DoMocks = _dat.DoMocks[:len(_dat.DoMocks)-1]
 		_dat.DoMocks = append(_dat.DoMocks, fn)
@@ -8934,7 +9032,7 @@ func (clientRest) _Do_DoAll(t *testing.T, fn func(*rest.CompiledEndpoint, any, a
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error){}
+			_dat.DoMocks = []func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -8949,11 +9047,11 @@ func (clientRest) _Do_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _Do_Return(r0 error) {
-	_recv._Do_Do(func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error) { return r0 })
+	_recv._Do_Do(func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _Do_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._Do_DoAll(t, func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._Do_DoAll(t, func(*rest.CompiledEndpoint, any, any, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _Do_Calls() []_clientRest_Do_Call {
@@ -8984,7 +9082,6 @@ func (clientRest) _Do_BubbleCalls(t *testing.T) {
 		_dat.DoCalls = []_clientRest_Do_Call{}
 	})
 }
-
 
 func (_recv *clientRest) ExpirePoll(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -9101,7 +9198,6 @@ func (clientRest) _ExpirePoll_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) Follow(channelID snowflake.ID, targetChannelID snowflake.ID, opts ...rest.RequestOpt) (*discord.FollowedChannel, error) {
 	if _recv == nil {
 		panic("clientRest.Follow: nil pointer receiver")
@@ -9217,7 +9313,6 @@ func (clientRest) _Follow_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetAccessToken(clientID snowflake.ID, clientSecret string, code string, redirectURI string, opts ...rest.RequestOpt) (*discord.AccessTokenResponse, error) {
 	if _recv == nil {
 		panic("clientRest.GetAccessToken: nil pointer receiver")
@@ -9289,19 +9384,27 @@ func (clientRest) _GetAccessToken_DoAll(t *testing.T, fn func(snowflake.ID, stri
 }
 
 func (_recv *clientRest) _GetAccessToken_Stub() {
-	_recv._GetAccessToken_Do(func(snowflake.ID, string, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) { return })
+	_recv._GetAccessToken_Do(func(snowflake.ID, string, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetAccessToken_StubAll(t *testing.T) {
-	new(clientRest)._GetAccessToken_DoAll(t, func(snowflake.ID, string, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) { return })
+	new(clientRest)._GetAccessToken_DoAll(t, func(snowflake.ID, string, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetAccessToken_Return(r0 *discord.AccessTokenResponse, r1 error) {
-	_recv._GetAccessToken_Do(func(snowflake.ID, string, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) { return r0, r1 })
+	_recv._GetAccessToken_Do(func(snowflake.ID, string, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetAccessToken_ReturnAll(t *testing.T, r0 *discord.AccessTokenResponse, r1 error) {
-	new(clientRest)._GetAccessToken_DoAll(t, func(snowflake.ID, string, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) { return r0, r1 })
+	new(clientRest)._GetAccessToken_DoAll(t, func(snowflake.ID, string, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetAccessToken_Calls() []_clientRest_GetAccessToken_Call {
@@ -9332,7 +9435,6 @@ func (clientRest) _GetAccessToken_BubbleCalls(t *testing.T) {
 		_dat.GetAccessTokenCalls = []_clientRest_GetAccessToken_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetActiveGuildThreads(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildActiveThreads, error) {
 	if _recv == nil {
@@ -9449,7 +9551,6 @@ func (clientRest) _GetActiveGuildThreads_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetActivityInstance(applicationID snowflake.ID, instanceID string, opts ...rest.RequestOpt) (*discord.ActivityInstance, error) {
 	if _recv == nil {
 		panic("clientRest.GetActivityInstance: nil pointer receiver")
@@ -9564,7 +9665,6 @@ func (clientRest) _GetActivityInstance_BubbleCalls(t *testing.T) {
 		_dat.GetActivityInstanceCalls = []_clientRest_GetActivityInstance_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetAllWebhooks(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Webhook, error) {
 	if _recv == nil {
@@ -9681,7 +9781,6 @@ func (clientRest) _GetAllWebhooks_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetApplicationEmoji(applicationID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) (*discord.Emoji, error) {
 	if _recv == nil {
 		panic("clientRest.GetApplicationEmoji: nil pointer receiver")
@@ -9796,7 +9895,6 @@ func (clientRest) _GetApplicationEmoji_BubbleCalls(t *testing.T) {
 		_dat.GetApplicationEmojiCalls = []_clientRest_GetApplicationEmoji_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetApplicationEmojis(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Emoji, error) {
 	if _recv == nil {
@@ -9913,7 +10011,6 @@ func (clientRest) _GetApplicationEmojis_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetApplicationRoleConnectionMetadata(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) {
 	if _recv == nil {
 		panic("clientRest.GetApplicationRoleConnectionMetadata: nil pointer receiver")
@@ -9985,19 +10082,27 @@ func (clientRest) _GetApplicationRoleConnectionMetadata_DoAll(t *testing.T, fn f
 }
 
 func (_recv *clientRest) _GetApplicationRoleConnectionMetadata_Stub() {
-	_recv._GetApplicationRoleConnectionMetadata_Do(func(snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) { return })
+	_recv._GetApplicationRoleConnectionMetadata_Do(func(snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetApplicationRoleConnectionMetadata_StubAll(t *testing.T) {
-	new(clientRest)._GetApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) { return })
+	new(clientRest)._GetApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetApplicationRoleConnectionMetadata_Return(r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
-	_recv._GetApplicationRoleConnectionMetadata_Do(func(snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) { return r0, r1 })
+	_recv._GetApplicationRoleConnectionMetadata_Do(func(snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetApplicationRoleConnectionMetadata_ReturnAll(t *testing.T, r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
-	new(clientRest)._GetApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) { return r0, r1 })
+	new(clientRest)._GetApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetApplicationRoleConnectionMetadata_Calls() []_clientRest_GetApplicationRoleConnectionMetadata_Call {
@@ -10028,7 +10133,6 @@ func (clientRest) _GetApplicationRoleConnectionMetadata_BubbleCalls(t *testing.T
 		_dat.GetApplicationRoleConnectionMetadataCalls = []_clientRest_GetApplicationRoleConnectionMetadata_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetAuditLog(guildID snowflake.ID, userID snowflake.ID, actionType discord.AuditLogEvent, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) (*discord.AuditLog, error) {
 	if _recv == nil {
@@ -10101,19 +10205,27 @@ func (clientRest) _GetAuditLog_DoAll(t *testing.T, fn func(snowflake.ID, snowfla
 }
 
 func (_recv *clientRest) _GetAuditLog_Stub() {
-	_recv._GetAuditLog_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 *discord.AuditLog, r1 error) { return })
+	_recv._GetAuditLog_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 *discord.AuditLog, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetAuditLog_StubAll(t *testing.T) {
-	new(clientRest)._GetAuditLog_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 *discord.AuditLog, r1 error) { return })
+	new(clientRest)._GetAuditLog_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 *discord.AuditLog, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetAuditLog_Return(r0 *discord.AuditLog, r1 error) {
-	_recv._GetAuditLog_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (*discord.AuditLog, error) { return r0, r1 })
+	_recv._GetAuditLog_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (*discord.AuditLog, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetAuditLog_ReturnAll(t *testing.T, r0 *discord.AuditLog, r1 error) {
-	new(clientRest)._GetAuditLog_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (*discord.AuditLog, error) { return r0, r1 })
+	new(clientRest)._GetAuditLog_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (*discord.AuditLog, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetAuditLog_Calls() []_clientRest_GetAuditLog_Call {
@@ -10145,7 +10257,6 @@ func (clientRest) _GetAuditLog_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetAuditLogPage(guildID snowflake.ID, userID snowflake.ID, actionType discord.AuditLogEvent, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.AuditLogPage {
 	if _recv == nil {
 		panic("clientRest.GetAuditLogPage: nil pointer receiver")
@@ -10156,7 +10267,7 @@ func (_recv *clientRest) GetAuditLogPage(guildID snowflake.ID, userID snowflake.
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetAuditLogPageCalls = append(_all.GetAuditLogPageCalls, _clientRest_GetAuditLogPage_Call{guildID, userID, actionType, startID, limit, opts})
-	var _fn func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage)
+	var _fn func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage
 	if len(_dat.GetAuditLogPageMocks) > 0 {
 		_fn = _dat.GetAuditLogPageMocks[0]
 		if len(_dat.GetAuditLogPageMocks) > 1 {
@@ -10175,7 +10286,7 @@ func (_recv *clientRest) GetAuditLogPage(guildID snowflake.ID, userID snowflake.
 	return _fn(guildID, userID, actionType, startID, limit, opts...)
 }
 
-func (_recv *clientRest) _GetAuditLogPage_Do(fn func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage)) {
+func (_recv *clientRest) _GetAuditLogPage_Do(fn func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage) {
 	if _recv == nil {
 		panic("clientRest.GetAuditLogPage: nil pointer receiver")
 	}
@@ -10183,9 +10294,9 @@ func (_recv *clientRest) _GetAuditLogPage_Do(fn func(snowflake.ID, snowflake.ID,
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage){}
+		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage{}
 	} else if len(_dat.GetAuditLogPageMocks) < 2 {
-		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage){fn, fn}
+		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage{fn, fn}
 	} else {
 		_dat.GetAuditLogPageMocks = _dat.GetAuditLogPageMocks[:len(_dat.GetAuditLogPageMocks)-1]
 		_dat.GetAuditLogPageMocks = append(_dat.GetAuditLogPageMocks, fn)
@@ -10193,14 +10304,14 @@ func (_recv *clientRest) _GetAuditLogPage_Do(fn func(snowflake.ID, snowflake.ID,
 	}
 }
 
-func (clientRest) _GetAuditLogPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage)) {
+func (clientRest) _GetAuditLogPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage){}
+		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage{}
 	} else if len(_dat.GetAuditLogPageMocks) < 2 {
-		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage){fn, fn}
+		_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage{fn, fn}
 	} else {
 		_dat.GetAuditLogPageMocks = _dat.GetAuditLogPageMocks[:len(_dat.GetAuditLogPageMocks)-1]
 		_dat.GetAuditLogPageMocks = append(_dat.GetAuditLogPageMocks, fn)
@@ -10210,26 +10321,34 @@ func (clientRest) _GetAuditLogPage_DoAll(t *testing.T, fn func(snowflake.ID, sno
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage){}
+			_dat.GetAuditLogPageMocks = []func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage{}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *clientRest) _GetAuditLogPage_Stub() {
-	_recv._GetAuditLogPage_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.AuditLogPage) { return })
+	_recv._GetAuditLogPage_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.AuditLogPage) {
+		return
+	})
 }
 
 func (clientRest) _GetAuditLogPage_StubAll(t *testing.T) {
-	new(clientRest)._GetAuditLogPage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.AuditLogPage) { return })
+	new(clientRest)._GetAuditLogPage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.AuditLogPage) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetAuditLogPage_Return(r0 rest.AuditLogPage) {
-	_recv._GetAuditLogPage_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage) { return r0 })
+	_recv._GetAuditLogPage_Do(func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage {
+		return r0
+	})
 }
 
 func (clientRest) _GetAuditLogPage_ReturnAll(t *testing.T, r0 rest.AuditLogPage) {
-	new(clientRest)._GetAuditLogPage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) (rest.AuditLogPage) { return r0 })
+	new(clientRest)._GetAuditLogPage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AuditLogEvent, snowflake.ID, int, ...rest.RequestOpt) rest.AuditLogPage {
+		return r0
+	})
 }
 
 func (_recv *clientRest) _GetAuditLogPage_Calls() []_clientRest_GetAuditLogPage_Call {
@@ -10260,7 +10379,6 @@ func (clientRest) _GetAuditLogPage_BubbleCalls(t *testing.T) {
 		_dat.GetAuditLogPageCalls = []_clientRest_GetAuditLogPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetAutoModerationRule(guildID snowflake.ID, ruleID snowflake.ID, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
 	if _recv == nil {
@@ -10333,19 +10451,27 @@ func (clientRest) _GetAutoModerationRule_DoAll(t *testing.T, fn func(snowflake.I
 }
 
 func (_recv *clientRest) _GetAutoModerationRule_Stub() {
-	_recv._GetAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) { return })
+	_recv._GetAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetAutoModerationRule_StubAll(t *testing.T) {
-	new(clientRest)._GetAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) { return })
+	new(clientRest)._GetAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetAutoModerationRule_Return(r0 *discord.AutoModerationRule, r1 error) {
-	_recv._GetAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.AutoModerationRule, error) { return r0, r1 })
+	_recv._GetAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetAutoModerationRule_ReturnAll(t *testing.T, r0 *discord.AutoModerationRule, r1 error) {
-	new(clientRest)._GetAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.AutoModerationRule, error) { return r0, r1 })
+	new(clientRest)._GetAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetAutoModerationRule_Calls() []_clientRest_GetAutoModerationRule_Call {
@@ -10376,7 +10502,6 @@ func (clientRest) _GetAutoModerationRule_BubbleCalls(t *testing.T) {
 		_dat.GetAutoModerationRuleCalls = []_clientRest_GetAutoModerationRule_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetAutoModerationRules(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.AutoModerationRule, error) {
 	if _recv == nil {
@@ -10493,7 +10618,6 @@ func (clientRest) _GetAutoModerationRules_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetBan(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.Ban, error) {
 	if _recv == nil {
 		panic("clientRest.GetBan: nil pointer receiver")
@@ -10609,7 +10733,6 @@ func (clientRest) _GetBan_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetBans(guildID snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.Ban, error) {
 	if _recv == nil {
 		panic("clientRest.GetBans: nil pointer receiver")
@@ -10681,19 +10804,27 @@ func (clientRest) _GetBans_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.I
 }
 
 func (_recv *clientRest) _GetBans_Stub() {
-	_recv._GetBans_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Ban, r1 error) { return })
+	_recv._GetBans_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Ban, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetBans_StubAll(t *testing.T) {
-	new(clientRest)._GetBans_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Ban, r1 error) { return })
+	new(clientRest)._GetBans_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Ban, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetBans_Return(r0 []discord.Ban, r1 error) {
-	_recv._GetBans_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Ban, error) { return r0, r1 })
+	_recv._GetBans_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Ban, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetBans_ReturnAll(t *testing.T, r0 []discord.Ban, r1 error) {
-	new(clientRest)._GetBans_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Ban, error) { return r0, r1 })
+	new(clientRest)._GetBans_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Ban, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetBans_Calls() []_clientRest_GetBans_Call {
@@ -10725,7 +10856,6 @@ func (clientRest) _GetBans_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetBansPage(guildID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Ban] {
 	if _recv == nil {
 		panic("clientRest.GetBansPage: nil pointer receiver")
@@ -10736,7 +10866,7 @@ func (_recv *clientRest) GetBansPage(guildID snowflake.ID, startID snowflake.ID,
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetBansPageCalls = append(_all.GetBansPageCalls, _clientRest_GetBansPage_Call{guildID, startID, limit, opts})
-	var _fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban])
+	var _fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]
 	if len(_dat.GetBansPageMocks) > 0 {
 		_fn = _dat.GetBansPageMocks[0]
 		if len(_dat.GetBansPageMocks) > 1 {
@@ -10755,7 +10885,7 @@ func (_recv *clientRest) GetBansPage(guildID snowflake.ID, startID snowflake.ID,
 	return _fn(guildID, startID, limit, opts...)
 }
 
-func (_recv *clientRest) _GetBansPage_Do(fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban])) {
+func (_recv *clientRest) _GetBansPage_Do(fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]) {
 	if _recv == nil {
 		panic("clientRest.GetBansPage: nil pointer receiver")
 	}
@@ -10763,9 +10893,9 @@ func (_recv *clientRest) _GetBansPage_Do(fn func(snowflake.ID, snowflake.ID, int
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban]){}
+		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]{}
 	} else if len(_dat.GetBansPageMocks) < 2 {
-		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban]){fn, fn}
+		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]{fn, fn}
 	} else {
 		_dat.GetBansPageMocks = _dat.GetBansPageMocks[:len(_dat.GetBansPageMocks)-1]
 		_dat.GetBansPageMocks = append(_dat.GetBansPageMocks, fn)
@@ -10773,14 +10903,14 @@ func (_recv *clientRest) _GetBansPage_Do(fn func(snowflake.ID, snowflake.ID, int
 	}
 }
 
-func (clientRest) _GetBansPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban])) {
+func (clientRest) _GetBansPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban]){}
+		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]{}
 	} else if len(_dat.GetBansPageMocks) < 2 {
-		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban]){fn, fn}
+		_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]{fn, fn}
 	} else {
 		_dat.GetBansPageMocks = _dat.GetBansPageMocks[:len(_dat.GetBansPageMocks)-1]
 		_dat.GetBansPageMocks = append(_dat.GetBansPageMocks, fn)
@@ -10790,7 +10920,7 @@ func (clientRest) _GetBansPage_DoAll(t *testing.T, fn func(snowflake.ID, snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban]){}
+			_dat.GetBansPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban]{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -10805,11 +10935,11 @@ func (clientRest) _GetBansPage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _GetBansPage_Return(r0 rest.Page[discord.Ban]) {
-	_recv._GetBansPage_Do(func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban]) { return r0 })
+	_recv._GetBansPage_Do(func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban] { return r0 })
 }
 
 func (clientRest) _GetBansPage_ReturnAll(t *testing.T, r0 rest.Page[discord.Ban]) {
-	new(clientRest)._GetBansPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Ban]) { return r0 })
+	new(clientRest)._GetBansPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Ban] { return r0 })
 }
 
 func (_recv *clientRest) _GetBansPage_Calls() []_clientRest_GetBansPage_Call {
@@ -10840,7 +10970,6 @@ func (clientRest) _GetBansPage_BubbleCalls(t *testing.T) {
 		_dat.GetBansPageCalls = []_clientRest_GetBansPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetBotApplicationInfo(opts ...rest.RequestOpt) (*discord.Application, error) {
 	if _recv == nil {
@@ -10957,7 +11086,6 @@ func (clientRest) _GetBotApplicationInfo_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetChannel(channelID snowflake.ID, opts ...rest.RequestOpt) (discord.Channel, error) {
 	if _recv == nil {
 		panic("clientRest.GetChannel: nil pointer receiver")
@@ -11072,7 +11200,6 @@ func (clientRest) _GetChannel_BubbleCalls(t *testing.T) {
 		_dat.GetChannelCalls = []_clientRest_GetChannel_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetChannelInvites(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ExtendedInvite, error) {
 	if _recv == nil {
@@ -11189,7 +11316,6 @@ func (clientRest) _GetChannelInvites_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetCurrentApplication(opts ...rest.RequestOpt) (*discord.Application, error) {
 	if _recv == nil {
 		panic("clientRest.GetCurrentApplication: nil pointer receiver")
@@ -11304,7 +11430,6 @@ func (clientRest) _GetCurrentApplication_BubbleCalls(t *testing.T) {
 		_dat.GetCurrentApplicationCalls = []_clientRest_GetCurrentApplication_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetCurrentAuthorizationInfo(bearerToken string, opts ...rest.RequestOpt) (*discord.AuthorizationInformation, error) {
 	if _recv == nil {
@@ -11421,7 +11546,6 @@ func (clientRest) _GetCurrentAuthorizationInfo_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetCurrentMember(bearerToken string, guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.Member, error) {
 	if _recv == nil {
 		panic("clientRest.GetCurrentMember: nil pointer receiver")
@@ -11536,7 +11660,6 @@ func (clientRest) _GetCurrentMember_BubbleCalls(t *testing.T) {
 		_dat.GetCurrentMemberCalls = []_clientRest_GetCurrentMember_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetCurrentUser(bearerToken string, opts ...rest.RequestOpt) (*discord.OAuth2User, error) {
 	if _recv == nil {
@@ -11653,7 +11776,6 @@ func (clientRest) _GetCurrentUser_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetCurrentUserApplicationRoleConnection(bearerToken string, applicationID snowflake.ID, opts ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) {
 	if _recv == nil {
 		panic("clientRest.GetCurrentUserApplicationRoleConnection: nil pointer receiver")
@@ -11725,19 +11847,27 @@ func (clientRest) _GetCurrentUserApplicationRoleConnection_DoAll(t *testing.T, f
 }
 
 func (_recv *clientRest) _GetCurrentUserApplicationRoleConnection_Stub() {
-	_recv._GetCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) { return })
+	_recv._GetCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetCurrentUserApplicationRoleConnection_StubAll(t *testing.T) {
-	new(clientRest)._GetCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) { return })
+	new(clientRest)._GetCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetCurrentUserApplicationRoleConnection_Return(r0 *discord.ApplicationRoleConnection, r1 error) {
-	_recv._GetCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) { return r0, r1 })
+	_recv._GetCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetCurrentUserApplicationRoleConnection_ReturnAll(t *testing.T, r0 *discord.ApplicationRoleConnection, r1 error) {
-	new(clientRest)._GetCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) { return r0, r1 })
+	new(clientRest)._GetCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetCurrentUserApplicationRoleConnection_Calls() []_clientRest_GetCurrentUserApplicationRoleConnection_Call {
@@ -11768,7 +11898,6 @@ func (clientRest) _GetCurrentUserApplicationRoleConnection_BubbleCalls(t *testin
 		_dat.GetCurrentUserApplicationRoleConnectionCalls = []_clientRest_GetCurrentUserApplicationRoleConnection_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetCurrentUserConnections(bearerToken string, opts ...rest.RequestOpt) ([]discord.Connection, error) {
 	if _recv == nil {
@@ -11885,7 +12014,6 @@ func (clientRest) _GetCurrentUserConnections_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetCurrentUserGuilds(bearerToken string, before snowflake.ID, after snowflake.ID, limit int, withCounts bool, opts ...rest.RequestOpt) ([]discord.OAuth2Guild, error) {
 	if _recv == nil {
 		panic("clientRest.GetCurrentUserGuilds: nil pointer receiver")
@@ -11957,19 +12085,27 @@ func (clientRest) _GetCurrentUserGuilds_DoAll(t *testing.T, fn func(string, snow
 }
 
 func (_recv *clientRest) _GetCurrentUserGuilds_Stub() {
-	_recv._GetCurrentUserGuilds_Do(func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) (r0 []discord.OAuth2Guild, r1 error) { return })
+	_recv._GetCurrentUserGuilds_Do(func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) (r0 []discord.OAuth2Guild, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetCurrentUserGuilds_StubAll(t *testing.T) {
-	new(clientRest)._GetCurrentUserGuilds_DoAll(t, func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) (r0 []discord.OAuth2Guild, r1 error) { return })
+	new(clientRest)._GetCurrentUserGuilds_DoAll(t, func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) (r0 []discord.OAuth2Guild, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetCurrentUserGuilds_Return(r0 []discord.OAuth2Guild, r1 error) {
-	_recv._GetCurrentUserGuilds_Do(func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) ([]discord.OAuth2Guild, error) { return r0, r1 })
+	_recv._GetCurrentUserGuilds_Do(func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) ([]discord.OAuth2Guild, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetCurrentUserGuilds_ReturnAll(t *testing.T, r0 []discord.OAuth2Guild, r1 error) {
-	new(clientRest)._GetCurrentUserGuilds_DoAll(t, func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) ([]discord.OAuth2Guild, error) { return r0, r1 })
+	new(clientRest)._GetCurrentUserGuilds_DoAll(t, func(string, snowflake.ID, snowflake.ID, int, bool, ...rest.RequestOpt) ([]discord.OAuth2Guild, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetCurrentUserGuilds_Calls() []_clientRest_GetCurrentUserGuilds_Call {
@@ -12001,7 +12137,6 @@ func (clientRest) _GetCurrentUserGuilds_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetCurrentUserGuildsPage(bearerToken string, startID snowflake.ID, limit int, withCounts bool, opts ...rest.RequestOpt) rest.Page[discord.OAuth2Guild] {
 	if _recv == nil {
 		panic("clientRest.GetCurrentUserGuildsPage: nil pointer receiver")
@@ -12012,7 +12147,7 @@ func (_recv *clientRest) GetCurrentUserGuildsPage(bearerToken string, startID sn
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetCurrentUserGuildsPageCalls = append(_all.GetCurrentUserGuildsPageCalls, _clientRest_GetCurrentUserGuildsPage_Call{bearerToken, startID, limit, withCounts, opts})
-	var _fn func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild])
+	var _fn func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]
 	if len(_dat.GetCurrentUserGuildsPageMocks) > 0 {
 		_fn = _dat.GetCurrentUserGuildsPageMocks[0]
 		if len(_dat.GetCurrentUserGuildsPageMocks) > 1 {
@@ -12031,7 +12166,7 @@ func (_recv *clientRest) GetCurrentUserGuildsPage(bearerToken string, startID sn
 	return _fn(bearerToken, startID, limit, withCounts, opts...)
 }
 
-func (_recv *clientRest) _GetCurrentUserGuildsPage_Do(fn func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild])) {
+func (_recv *clientRest) _GetCurrentUserGuildsPage_Do(fn func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]) {
 	if _recv == nil {
 		panic("clientRest.GetCurrentUserGuildsPage: nil pointer receiver")
 	}
@@ -12039,9 +12174,9 @@ func (_recv *clientRest) _GetCurrentUserGuildsPage_Do(fn func(string, snowflake.
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild]){}
+		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]{}
 	} else if len(_dat.GetCurrentUserGuildsPageMocks) < 2 {
-		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild]){fn, fn}
+		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]{fn, fn}
 	} else {
 		_dat.GetCurrentUserGuildsPageMocks = _dat.GetCurrentUserGuildsPageMocks[:len(_dat.GetCurrentUserGuildsPageMocks)-1]
 		_dat.GetCurrentUserGuildsPageMocks = append(_dat.GetCurrentUserGuildsPageMocks, fn)
@@ -12049,14 +12184,14 @@ func (_recv *clientRest) _GetCurrentUserGuildsPage_Do(fn func(string, snowflake.
 	}
 }
 
-func (clientRest) _GetCurrentUserGuildsPage_DoAll(t *testing.T, fn func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild])) {
+func (clientRest) _GetCurrentUserGuildsPage_DoAll(t *testing.T, fn func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild]){}
+		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]{}
 	} else if len(_dat.GetCurrentUserGuildsPageMocks) < 2 {
-		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild]){fn, fn}
+		_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]{fn, fn}
 	} else {
 		_dat.GetCurrentUserGuildsPageMocks = _dat.GetCurrentUserGuildsPageMocks[:len(_dat.GetCurrentUserGuildsPageMocks)-1]
 		_dat.GetCurrentUserGuildsPageMocks = append(_dat.GetCurrentUserGuildsPageMocks, fn)
@@ -12066,7 +12201,7 @@ func (clientRest) _GetCurrentUserGuildsPage_DoAll(t *testing.T, fn func(string, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild]){}
+			_dat.GetCurrentUserGuildsPageMocks = []func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild]{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -12081,11 +12216,11 @@ func (clientRest) _GetCurrentUserGuildsPage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _GetCurrentUserGuildsPage_Return(r0 rest.Page[discord.OAuth2Guild]) {
-	_recv._GetCurrentUserGuildsPage_Do(func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild]) { return r0 })
+	_recv._GetCurrentUserGuildsPage_Do(func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild] { return r0 })
 }
 
 func (clientRest) _GetCurrentUserGuildsPage_ReturnAll(t *testing.T, r0 rest.Page[discord.OAuth2Guild]) {
-	new(clientRest)._GetCurrentUserGuildsPage_DoAll(t, func(string, snowflake.ID, int, bool, ...rest.RequestOpt) (rest.Page[discord.OAuth2Guild]) { return r0 })
+	new(clientRest)._GetCurrentUserGuildsPage_DoAll(t, func(string, snowflake.ID, int, bool, ...rest.RequestOpt) rest.Page[discord.OAuth2Guild] { return r0 })
 }
 
 func (_recv *clientRest) _GetCurrentUserGuildsPage_Calls() []_clientRest_GetCurrentUserGuildsPage_Call {
@@ -12116,7 +12251,6 @@ func (clientRest) _GetCurrentUserGuildsPage_BubbleCalls(t *testing.T) {
 		_dat.GetCurrentUserGuildsPageCalls = []_clientRest_GetCurrentUserGuildsPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetCurrentUserVoiceState(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.VoiceState, error) {
 	if _recv == nil {
@@ -12233,7 +12367,6 @@ func (clientRest) _GetCurrentUserVoiceState_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetEmoji(guildID snowflake.ID, emojiID snowflake.ID, opts ...rest.RequestOpt) (*discord.Emoji, error) {
 	if _recv == nil {
 		panic("clientRest.GetEmoji: nil pointer receiver")
@@ -12348,7 +12481,6 @@ func (clientRest) _GetEmoji_BubbleCalls(t *testing.T) {
 		_dat.GetEmojiCalls = []_clientRest_GetEmoji_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetEmojis(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Emoji, error) {
 	if _recv == nil {
@@ -12465,7 +12597,6 @@ func (clientRest) _GetEmojis_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetEntitlement(applicationID snowflake.ID, entitlementID snowflake.ID, opts ...rest.RequestOpt) (*discord.Entitlement, error) {
 	if _recv == nil {
 		panic("clientRest.GetEntitlement: nil pointer receiver")
@@ -12581,7 +12712,6 @@ func (clientRest) _GetEntitlement_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetEntitlements(applicationID snowflake.ID, params rest.GetEntitlementsParams, opts ...rest.RequestOpt) ([]discord.Entitlement, error) {
 	if _recv == nil {
 		panic("clientRest.GetEntitlements: nil pointer receiver")
@@ -12653,19 +12783,27 @@ func (clientRest) _GetEntitlements_DoAll(t *testing.T, fn func(snowflake.ID, res
 }
 
 func (_recv *clientRest) _GetEntitlements_Stub() {
-	_recv._GetEntitlements_Do(func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) (r0 []discord.Entitlement, r1 error) { return })
+	_recv._GetEntitlements_Do(func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) (r0 []discord.Entitlement, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetEntitlements_StubAll(t *testing.T) {
-	new(clientRest)._GetEntitlements_DoAll(t, func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) (r0 []discord.Entitlement, r1 error) { return })
+	new(clientRest)._GetEntitlements_DoAll(t, func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) (r0 []discord.Entitlement, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetEntitlements_Return(r0 []discord.Entitlement, r1 error) {
-	_recv._GetEntitlements_Do(func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) ([]discord.Entitlement, error) { return r0, r1 })
+	_recv._GetEntitlements_Do(func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) ([]discord.Entitlement, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetEntitlements_ReturnAll(t *testing.T, r0 []discord.Entitlement, r1 error) {
-	new(clientRest)._GetEntitlements_DoAll(t, func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) ([]discord.Entitlement, error) { return r0, r1 })
+	new(clientRest)._GetEntitlements_DoAll(t, func(snowflake.ID, rest.GetEntitlementsParams, ...rest.RequestOpt) ([]discord.Entitlement, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetEntitlements_Calls() []_clientRest_GetEntitlements_Call {
@@ -12696,7 +12834,6 @@ func (clientRest) _GetEntitlements_BubbleCalls(t *testing.T) {
 		_dat.GetEntitlementsCalls = []_clientRest_GetEntitlements_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetFollowupMessage(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -12813,7 +12950,6 @@ func (clientRest) _GetFollowupMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGateway(opts ...rest.RequestOpt) (*discord.Gateway, error) {
 	if _recv == nil {
 		panic("clientRest.GetGateway: nil pointer receiver")
@@ -12928,7 +13064,6 @@ func (clientRest) _GetGateway_BubbleCalls(t *testing.T) {
 		_dat.GetGatewayCalls = []_clientRest_GetGateway_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGatewayBot(opts ...rest.RequestOpt) (*discord.GatewayBot, error) {
 	if _recv == nil {
@@ -13045,7 +13180,6 @@ func (clientRest) _GetGatewayBot_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGlobalCommand(applicationID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (discord.ApplicationCommand, error) {
 	if _recv == nil {
 		panic("clientRest.GetGlobalCommand: nil pointer receiver")
@@ -13125,11 +13259,15 @@ func (clientRest) _GetGlobalCommand_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _GetGlobalCommand_Return(r0 discord.ApplicationCommand, r1 error) {
-	_recv._GetGlobalCommand_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._GetGlobalCommand_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGlobalCommand_ReturnAll(t *testing.T, r0 discord.ApplicationCommand, r1 error) {
-	new(clientRest)._GetGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._GetGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGlobalCommand_Calls() []_clientRest_GetGlobalCommand_Call {
@@ -13160,7 +13298,6 @@ func (clientRest) _GetGlobalCommand_BubbleCalls(t *testing.T) {
 		_dat.GetGlobalCommandCalls = []_clientRest_GetGlobalCommand_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGlobalCommands(applicationID snowflake.ID, withLocalizations bool, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
 	if _recv == nil {
@@ -13277,7 +13414,6 @@ func (clientRest) _GetGlobalCommands_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuild(guildID snowflake.ID, withCounts bool, opts ...rest.RequestOpt) (*discord.RestGuild, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuild: nil pointer receiver")
@@ -13392,7 +13528,6 @@ func (clientRest) _GetGuild_BubbleCalls(t *testing.T) {
 		_dat.GetGuildCalls = []_clientRest_GetGuild_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildChannels(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.GuildChannel, error) {
 	if _recv == nil {
@@ -13509,7 +13644,6 @@ func (clientRest) _GetGuildChannels_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildCommand(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (discord.ApplicationCommand, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuildCommand: nil pointer receiver")
@@ -13581,19 +13715,27 @@ func (clientRest) _GetGuildCommand_DoAll(t *testing.T, fn func(snowflake.ID, sno
 }
 
 func (_recv *clientRest) _GetGuildCommand_Stub() {
-	_recv._GetGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	_recv._GetGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildCommand_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._GetGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommand_Return(r0 discord.ApplicationCommand, r1 error) {
-	_recv._GetGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._GetGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGuildCommand_ReturnAll(t *testing.T, r0 discord.ApplicationCommand, r1 error) {
-	new(clientRest)._GetGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._GetGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommand_Calls() []_clientRest_GetGuildCommand_Call {
@@ -13624,7 +13766,6 @@ func (clientRest) _GetGuildCommand_BubbleCalls(t *testing.T) {
 		_dat.GetGuildCommandCalls = []_clientRest_GetGuildCommand_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildCommandPermissions(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, opts ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) {
 	if _recv == nil {
@@ -13697,19 +13838,27 @@ func (clientRest) _GetGuildCommandPermissions_DoAll(t *testing.T, fn func(snowfl
 }
 
 func (_recv *clientRest) _GetGuildCommandPermissions_Stub() {
-	_recv._GetGuildCommandPermissions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) { return })
+	_recv._GetGuildCommandPermissions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildCommandPermissions_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildCommandPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) { return })
+	new(clientRest)._GetGuildCommandPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommandPermissions_Return(r0 *discord.ApplicationCommandPermissions, r1 error) {
-	_recv._GetGuildCommandPermissions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) { return r0, r1 })
+	_recv._GetGuildCommandPermissions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGuildCommandPermissions_ReturnAll(t *testing.T, r0 *discord.ApplicationCommandPermissions, r1 error) {
-	new(clientRest)._GetGuildCommandPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) { return r0, r1 })
+	new(clientRest)._GetGuildCommandPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommandPermissions_Calls() []_clientRest_GetGuildCommandPermissions_Call {
@@ -13740,7 +13889,6 @@ func (clientRest) _GetGuildCommandPermissions_BubbleCalls(t *testing.T) {
 		_dat.GetGuildCommandPermissionsCalls = []_clientRest_GetGuildCommandPermissions_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildCommands(applicationID snowflake.ID, guildID snowflake.ID, withLocalizations bool, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
 	if _recv == nil {
@@ -13813,19 +13961,27 @@ func (clientRest) _GetGuildCommands_DoAll(t *testing.T, fn func(snowflake.ID, sn
 }
 
 func (_recv *clientRest) _GetGuildCommands_Stub() {
-	_recv._GetGuildCommands_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) { return })
+	_recv._GetGuildCommands_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildCommands_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._GetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommands_Return(r0 []discord.ApplicationCommand, r1 error) {
-	_recv._GetGuildCommands_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._GetGuildCommands_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGuildCommands_ReturnAll(t *testing.T, r0 []discord.ApplicationCommand, r1 error) {
-	new(clientRest)._GetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._GetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommands_Calls() []_clientRest_GetGuildCommands_Call {
@@ -13856,7 +14012,6 @@ func (clientRest) _GetGuildCommands_BubbleCalls(t *testing.T) {
 		_dat.GetGuildCommandsCalls = []_clientRest_GetGuildCommands_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildCommandsPermissions(applicationID snowflake.ID, guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ApplicationCommandPermissions, error) {
 	if _recv == nil {
@@ -13929,19 +14084,27 @@ func (clientRest) _GetGuildCommandsPermissions_DoAll(t *testing.T, fn func(snowf
 }
 
 func (_recv *clientRest) _GetGuildCommandsPermissions_Stub() {
-	_recv._GetGuildCommandsPermissions_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationCommandPermissions, r1 error) { return })
+	_recv._GetGuildCommandsPermissions_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationCommandPermissions, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildCommandsPermissions_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildCommandsPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationCommandPermissions, r1 error) { return })
+	new(clientRest)._GetGuildCommandsPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (r0 []discord.ApplicationCommandPermissions, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommandsPermissions_Return(r0 []discord.ApplicationCommandPermissions, r1 error) {
-	_recv._GetGuildCommandsPermissions_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationCommandPermissions, error) { return r0, r1 })
+	_recv._GetGuildCommandsPermissions_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationCommandPermissions, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGuildCommandsPermissions_ReturnAll(t *testing.T, r0 []discord.ApplicationCommandPermissions, r1 error) {
-	new(clientRest)._GetGuildCommandsPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationCommandPermissions, error) { return r0, r1 })
+	new(clientRest)._GetGuildCommandsPermissions_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) ([]discord.ApplicationCommandPermissions, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGuildCommandsPermissions_Calls() []_clientRest_GetGuildCommandsPermissions_Call {
@@ -13972,7 +14135,6 @@ func (clientRest) _GetGuildCommandsPermissions_BubbleCalls(t *testing.T) {
 		_dat.GetGuildCommandsPermissionsCalls = []_clientRest_GetGuildCommandsPermissions_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildInvites(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ExtendedInvite, error) {
 	if _recv == nil {
@@ -14089,7 +14251,6 @@ func (clientRest) _GetGuildInvites_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildOnboarding(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildOnboarding, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuildOnboarding: nil pointer receiver")
@@ -14204,7 +14365,6 @@ func (clientRest) _GetGuildOnboarding_BubbleCalls(t *testing.T) {
 		_dat.GetGuildOnboardingCalls = []_clientRest_GetGuildOnboarding_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildPreview(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildPreview, error) {
 	if _recv == nil {
@@ -14321,7 +14481,6 @@ func (clientRest) _GetGuildPreview_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildPruneCount(guildID snowflake.ID, days int, includeRoles []snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildPruneResult, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuildPruneCount: nil pointer receiver")
@@ -14393,19 +14552,27 @@ func (clientRest) _GetGuildPruneCount_DoAll(t *testing.T, fn func(snowflake.ID, 
 }
 
 func (_recv *clientRest) _GetGuildPruneCount_Stub() {
-	_recv._GetGuildPruneCount_Do(func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) { return })
+	_recv._GetGuildPruneCount_Do(func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildPruneCount_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildPruneCount_DoAll(t, func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) { return })
+	new(clientRest)._GetGuildPruneCount_DoAll(t, func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (r0 *discord.GuildPruneResult, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildPruneCount_Return(r0 *discord.GuildPruneResult, r1 error) {
-	_recv._GetGuildPruneCount_Do(func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (*discord.GuildPruneResult, error) { return r0, r1 })
+	_recv._GetGuildPruneCount_Do(func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (*discord.GuildPruneResult, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGuildPruneCount_ReturnAll(t *testing.T, r0 *discord.GuildPruneResult, r1 error) {
-	new(clientRest)._GetGuildPruneCount_DoAll(t, func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (*discord.GuildPruneResult, error) { return r0, r1 })
+	new(clientRest)._GetGuildPruneCount_DoAll(t, func(snowflake.ID, int, []snowflake.ID, ...rest.RequestOpt) (*discord.GuildPruneResult, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGuildPruneCount_Calls() []_clientRest_GetGuildPruneCount_Call {
@@ -14436,7 +14603,6 @@ func (clientRest) _GetGuildPruneCount_BubbleCalls(t *testing.T) {
 		_dat.GetGuildPruneCountCalls = []_clientRest_GetGuildPruneCount_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildScheduledEvent(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withUserCounts bool, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
 	if _recv == nil {
@@ -14509,19 +14675,27 @@ func (clientRest) _GetGuildScheduledEvent_DoAll(t *testing.T, fn func(snowflake.
 }
 
 func (_recv *clientRest) _GetGuildScheduledEvent_Stub() {
-	_recv._GetGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) { return })
+	_recv._GetGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildScheduledEvent_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) { return })
+	new(clientRest)._GetGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildScheduledEvent_Return(r0 *discord.GuildScheduledEvent, r1 error) {
-	_recv._GetGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) { return r0, r1 })
+	_recv._GetGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGuildScheduledEvent_ReturnAll(t *testing.T, r0 *discord.GuildScheduledEvent, r1 error) {
-	new(clientRest)._GetGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) { return r0, r1 })
+	new(clientRest)._GetGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGuildScheduledEvent_Calls() []_clientRest_GetGuildScheduledEvent_Call {
@@ -14552,7 +14726,6 @@ func (clientRest) _GetGuildScheduledEvent_BubbleCalls(t *testing.T) {
 		_dat.GetGuildScheduledEventCalls = []_clientRest_GetGuildScheduledEvent_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildScheduledEventUsers(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withMember bool, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.GuildScheduledEventUser, error) {
 	if _recv == nil {
@@ -14625,19 +14798,27 @@ func (clientRest) _GetGuildScheduledEventUsers_DoAll(t *testing.T, fn func(snowf
 }
 
 func (_recv *clientRest) _GetGuildScheduledEventUsers_Stub() {
-	_recv._GetGuildScheduledEventUsers_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.GuildScheduledEventUser, r1 error) { return })
+	_recv._GetGuildScheduledEventUsers_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.GuildScheduledEventUser, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildScheduledEventUsers_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildScheduledEventUsers_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.GuildScheduledEventUser, r1 error) { return })
+	new(clientRest)._GetGuildScheduledEventUsers_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.GuildScheduledEventUser, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildScheduledEventUsers_Return(r0 []discord.GuildScheduledEventUser, r1 error) {
-	_recv._GetGuildScheduledEventUsers_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.GuildScheduledEventUser, error) { return r0, r1 })
+	_recv._GetGuildScheduledEventUsers_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.GuildScheduledEventUser, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetGuildScheduledEventUsers_ReturnAll(t *testing.T, r0 []discord.GuildScheduledEventUser, r1 error) {
-	new(clientRest)._GetGuildScheduledEventUsers_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.GuildScheduledEventUser, error) { return r0, r1 })
+	new(clientRest)._GetGuildScheduledEventUsers_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.GuildScheduledEventUser, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetGuildScheduledEventUsers_Calls() []_clientRest_GetGuildScheduledEventUsers_Call {
@@ -14669,7 +14850,6 @@ func (clientRest) _GetGuildScheduledEventUsers_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildScheduledEventUsersPage(guildID snowflake.ID, guildScheduledEventID snowflake.ID, withMember bool, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser] {
 	if _recv == nil {
 		panic("clientRest.GetGuildScheduledEventUsersPage: nil pointer receiver")
@@ -14680,7 +14860,7 @@ func (_recv *clientRest) GetGuildScheduledEventUsersPage(guildID snowflake.ID, g
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetGuildScheduledEventUsersPageCalls = append(_all.GetGuildScheduledEventUsersPageCalls, _clientRest_GetGuildScheduledEventUsersPage_Call{guildID, guildScheduledEventID, withMember, startID, limit, opts})
-	var _fn func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser])
+	var _fn func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]
 	if len(_dat.GetGuildScheduledEventUsersPageMocks) > 0 {
 		_fn = _dat.GetGuildScheduledEventUsersPageMocks[0]
 		if len(_dat.GetGuildScheduledEventUsersPageMocks) > 1 {
@@ -14699,7 +14879,7 @@ func (_recv *clientRest) GetGuildScheduledEventUsersPage(guildID snowflake.ID, g
 	return _fn(guildID, guildScheduledEventID, withMember, startID, limit, opts...)
 }
 
-func (_recv *clientRest) _GetGuildScheduledEventUsersPage_Do(fn func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser])) {
+func (_recv *clientRest) _GetGuildScheduledEventUsersPage_Do(fn func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]) {
 	if _recv == nil {
 		panic("clientRest.GetGuildScheduledEventUsersPage: nil pointer receiver")
 	}
@@ -14707,9 +14887,9 @@ func (_recv *clientRest) _GetGuildScheduledEventUsersPage_Do(fn func(snowflake.I
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser]){}
+		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]{}
 	} else if len(_dat.GetGuildScheduledEventUsersPageMocks) < 2 {
-		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser]){fn, fn}
+		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]{fn, fn}
 	} else {
 		_dat.GetGuildScheduledEventUsersPageMocks = _dat.GetGuildScheduledEventUsersPageMocks[:len(_dat.GetGuildScheduledEventUsersPageMocks)-1]
 		_dat.GetGuildScheduledEventUsersPageMocks = append(_dat.GetGuildScheduledEventUsersPageMocks, fn)
@@ -14717,14 +14897,14 @@ func (_recv *clientRest) _GetGuildScheduledEventUsersPage_Do(fn func(snowflake.I
 	}
 }
 
-func (clientRest) _GetGuildScheduledEventUsersPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser])) {
+func (clientRest) _GetGuildScheduledEventUsersPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser]){}
+		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]{}
 	} else if len(_dat.GetGuildScheduledEventUsersPageMocks) < 2 {
-		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser]){fn, fn}
+		_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]{fn, fn}
 	} else {
 		_dat.GetGuildScheduledEventUsersPageMocks = _dat.GetGuildScheduledEventUsersPageMocks[:len(_dat.GetGuildScheduledEventUsersPageMocks)-1]
 		_dat.GetGuildScheduledEventUsersPageMocks = append(_dat.GetGuildScheduledEventUsersPageMocks, fn)
@@ -14734,26 +14914,34 @@ func (clientRest) _GetGuildScheduledEventUsersPage_DoAll(t *testing.T, fn func(s
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser]){}
+			_dat.GetGuildScheduledEventUsersPageMocks = []func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser]{}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *clientRest) _GetGuildScheduledEventUsersPage_Stub() {
-	_recv._GetGuildScheduledEventUsersPage_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.GuildScheduledEventUser]) { return })
+	_recv._GetGuildScheduledEventUsersPage_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.GuildScheduledEventUser]) {
+		return
+	})
 }
 
 func (clientRest) _GetGuildScheduledEventUsersPage_StubAll(t *testing.T) {
-	new(clientRest)._GetGuildScheduledEventUsersPage_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.GuildScheduledEventUser]) { return })
+	new(clientRest)._GetGuildScheduledEventUsersPage_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.GuildScheduledEventUser]) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetGuildScheduledEventUsersPage_Return(r0 rest.Page[discord.GuildScheduledEventUser]) {
-	_recv._GetGuildScheduledEventUsersPage_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser]) { return r0 })
+	_recv._GetGuildScheduledEventUsersPage_Do(func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser] {
+		return r0
+	})
 }
 
 func (clientRest) _GetGuildScheduledEventUsersPage_ReturnAll(t *testing.T, r0 rest.Page[discord.GuildScheduledEventUser]) {
-	new(clientRest)._GetGuildScheduledEventUsersPage_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.GuildScheduledEventUser]) { return r0 })
+	new(clientRest)._GetGuildScheduledEventUsersPage_DoAll(t, func(snowflake.ID, snowflake.ID, bool, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.GuildScheduledEventUser] {
+		return r0
+	})
 }
 
 func (_recv *clientRest) _GetGuildScheduledEventUsersPage_Calls() []_clientRest_GetGuildScheduledEventUsersPage_Call {
@@ -14784,7 +14972,6 @@ func (clientRest) _GetGuildScheduledEventUsersPage_BubbleCalls(t *testing.T) {
 		_dat.GetGuildScheduledEventUsersPageCalls = []_clientRest_GetGuildScheduledEventUsersPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildScheduledEvents(guildID snowflake.ID, withUserCounts bool, opts ...rest.RequestOpt) ([]discord.GuildScheduledEvent, error) {
 	if _recv == nil {
@@ -14901,7 +15088,6 @@ func (clientRest) _GetGuildScheduledEvents_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildSoundboardSound(guildID snowflake.ID, soundID snowflake.ID, opts ...rest.RequestOpt) (*discord.SoundboardSound, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuildSoundboardSound: nil pointer receiver")
@@ -15016,7 +15202,6 @@ func (clientRest) _GetGuildSoundboardSound_BubbleCalls(t *testing.T) {
 		_dat.GetGuildSoundboardSoundCalls = []_clientRest_GetGuildSoundboardSound_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildSoundboardSounds(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.SoundboardSound, error) {
 	if _recv == nil {
@@ -15133,7 +15318,6 @@ func (clientRest) _GetGuildSoundboardSounds_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildTemplate(templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuildTemplate: nil pointer receiver")
@@ -15248,7 +15432,6 @@ func (clientRest) _GetGuildTemplate_BubbleCalls(t *testing.T) {
 		_dat.GetGuildTemplateCalls = []_clientRest_GetGuildTemplate_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildTemplates(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.GuildTemplate, error) {
 	if _recv == nil {
@@ -15365,7 +15548,6 @@ func (clientRest) _GetGuildTemplates_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildVanityURL(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.PartialInvite, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuildVanityURL: nil pointer receiver")
@@ -15480,7 +15662,6 @@ func (clientRest) _GetGuildVanityURL_BubbleCalls(t *testing.T) {
 		_dat.GetGuildVanityURLCalls = []_clientRest_GetGuildVanityURL_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetGuildVoiceRegions(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.VoiceRegion, error) {
 	if _recv == nil {
@@ -15597,7 +15778,6 @@ func (clientRest) _GetGuildVoiceRegions_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetGuildWelcomeScreen(guildID snowflake.ID, opts ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error) {
 	if _recv == nil {
 		panic("clientRest.GetGuildWelcomeScreen: nil pointer receiver")
@@ -15712,7 +15892,6 @@ func (clientRest) _GetGuildWelcomeScreen_BubbleCalls(t *testing.T) {
 		_dat.GetGuildWelcomeScreenCalls = []_clientRest_GetGuildWelcomeScreen_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetIntegrations(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Integration, error) {
 	if _recv == nil {
@@ -15829,7 +16008,6 @@ func (clientRest) _GetIntegrations_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetInteractionResponse(applicationID snowflake.ID, interactionToken string, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
 		panic("clientRest.GetInteractionResponse: nil pointer receiver")
@@ -15944,7 +16122,6 @@ func (clientRest) _GetInteractionResponse_BubbleCalls(t *testing.T) {
 		_dat.GetInteractionResponseCalls = []_clientRest_GetInteractionResponse_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetInvite(code string, opts ...rest.RequestOpt) (*discord.Invite, error) {
 	if _recv == nil {
@@ -16061,7 +16238,6 @@ func (clientRest) _GetInvite_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetJoinedPrivateArchivedThreads(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (*discord.GetThreads, error) {
 	if _recv == nil {
 		panic("clientRest.GetJoinedPrivateArchivedThreads: nil pointer receiver")
@@ -16133,19 +16309,27 @@ func (clientRest) _GetJoinedPrivateArchivedThreads_DoAll(t *testing.T, fn func(s
 }
 
 func (_recv *clientRest) _GetJoinedPrivateArchivedThreads_Stub() {
-	_recv._GetJoinedPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) { return })
+	_recv._GetJoinedPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) {
+		return
+	})
 }
 
 func (clientRest) _GetJoinedPrivateArchivedThreads_StubAll(t *testing.T) {
-	new(clientRest)._GetJoinedPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) { return })
+	new(clientRest)._GetJoinedPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetJoinedPrivateArchivedThreads_Return(threads *discord.GetThreads, err error) {
-	_recv._GetJoinedPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) { return threads, err })
+	_recv._GetJoinedPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) {
+		return threads, err
+	})
 }
 
 func (clientRest) _GetJoinedPrivateArchivedThreads_ReturnAll(t *testing.T, threads *discord.GetThreads, err error) {
-	new(clientRest)._GetJoinedPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) { return threads, err })
+	new(clientRest)._GetJoinedPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) {
+		return threads, err
+	})
 }
 
 func (_recv *clientRest) _GetJoinedPrivateArchivedThreads_Calls() []_clientRest_GetJoinedPrivateArchivedThreads_Call {
@@ -16176,7 +16360,6 @@ func (clientRest) _GetJoinedPrivateArchivedThreads_BubbleCalls(t *testing.T) {
 		_dat.GetJoinedPrivateArchivedThreadsCalls = []_clientRest_GetJoinedPrivateArchivedThreads_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetMember(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.Member, error) {
 	if _recv == nil {
@@ -16293,7 +16476,6 @@ func (clientRest) _GetMember_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetMembers(guildID snowflake.ID, limit int, after snowflake.ID, opts ...rest.RequestOpt) ([]discord.Member, error) {
 	if _recv == nil {
 		panic("clientRest.GetMembers: nil pointer receiver")
@@ -16408,7 +16590,6 @@ func (clientRest) _GetMembers_BubbleCalls(t *testing.T) {
 		_dat.GetMembersCalls = []_clientRest_GetMembers_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetMessage(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -16525,7 +16706,6 @@ func (clientRest) _GetMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetMessages(channelID snowflake.ID, around snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.Message, error) {
 	if _recv == nil {
 		panic("clientRest.GetMessages: nil pointer receiver")
@@ -16597,19 +16777,27 @@ func (clientRest) _GetMessages_DoAll(t *testing.T, fn func(snowflake.ID, snowfla
 }
 
 func (_recv *clientRest) _GetMessages_Stub() {
-	_recv._GetMessages_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Message, r1 error) { return })
+	_recv._GetMessages_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetMessages_StubAll(t *testing.T) {
-	new(clientRest)._GetMessages_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Message, r1 error) { return })
+	new(clientRest)._GetMessages_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetMessages_Return(r0 []discord.Message, r1 error) {
-	_recv._GetMessages_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Message, error) { return r0, r1 })
+	_recv._GetMessages_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetMessages_ReturnAll(t *testing.T, r0 []discord.Message, r1 error) {
-	new(clientRest)._GetMessages_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Message, error) { return r0, r1 })
+	new(clientRest)._GetMessages_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) ([]discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetMessages_Calls() []_clientRest_GetMessages_Call {
@@ -16641,7 +16829,6 @@ func (clientRest) _GetMessages_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetMessagesPage(channelID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Message] {
 	if _recv == nil {
 		panic("clientRest.GetMessagesPage: nil pointer receiver")
@@ -16652,7 +16839,7 @@ func (_recv *clientRest) GetMessagesPage(channelID snowflake.ID, startID snowfla
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetMessagesPageCalls = append(_all.GetMessagesPageCalls, _clientRest_GetMessagesPage_Call{channelID, startID, limit, opts})
-	var _fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message])
+	var _fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]
 	if len(_dat.GetMessagesPageMocks) > 0 {
 		_fn = _dat.GetMessagesPageMocks[0]
 		if len(_dat.GetMessagesPageMocks) > 1 {
@@ -16671,7 +16858,7 @@ func (_recv *clientRest) GetMessagesPage(channelID snowflake.ID, startID snowfla
 	return _fn(channelID, startID, limit, opts...)
 }
 
-func (_recv *clientRest) _GetMessagesPage_Do(fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message])) {
+func (_recv *clientRest) _GetMessagesPage_Do(fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]) {
 	if _recv == nil {
 		panic("clientRest.GetMessagesPage: nil pointer receiver")
 	}
@@ -16679,9 +16866,9 @@ func (_recv *clientRest) _GetMessagesPage_Do(fn func(snowflake.ID, snowflake.ID,
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message]){}
+		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]{}
 	} else if len(_dat.GetMessagesPageMocks) < 2 {
-		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message]){fn, fn}
+		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]{fn, fn}
 	} else {
 		_dat.GetMessagesPageMocks = _dat.GetMessagesPageMocks[:len(_dat.GetMessagesPageMocks)-1]
 		_dat.GetMessagesPageMocks = append(_dat.GetMessagesPageMocks, fn)
@@ -16689,14 +16876,14 @@ func (_recv *clientRest) _GetMessagesPage_Do(fn func(snowflake.ID, snowflake.ID,
 	}
 }
 
-func (clientRest) _GetMessagesPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message])) {
+func (clientRest) _GetMessagesPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message]){}
+		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]{}
 	} else if len(_dat.GetMessagesPageMocks) < 2 {
-		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message]){fn, fn}
+		_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]{fn, fn}
 	} else {
 		_dat.GetMessagesPageMocks = _dat.GetMessagesPageMocks[:len(_dat.GetMessagesPageMocks)-1]
 		_dat.GetMessagesPageMocks = append(_dat.GetMessagesPageMocks, fn)
@@ -16706,7 +16893,7 @@ func (clientRest) _GetMessagesPage_DoAll(t *testing.T, fn func(snowflake.ID, sno
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message]){}
+			_dat.GetMessagesPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message]{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -16721,11 +16908,11 @@ func (clientRest) _GetMessagesPage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _GetMessagesPage_Return(r0 rest.Page[discord.Message]) {
-	_recv._GetMessagesPage_Do(func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message]) { return r0 })
+	_recv._GetMessagesPage_Do(func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message] { return r0 })
 }
 
 func (clientRest) _GetMessagesPage_ReturnAll(t *testing.T, r0 rest.Page[discord.Message]) {
-	new(clientRest)._GetMessagesPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Message]) { return r0 })
+	new(clientRest)._GetMessagesPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Message] { return r0 })
 }
 
 func (_recv *clientRest) _GetMessagesPage_Calls() []_clientRest_GetMessagesPage_Call {
@@ -16756,7 +16943,6 @@ func (clientRest) _GetMessagesPage_BubbleCalls(t *testing.T) {
 		_dat.GetMessagesPageCalls = []_clientRest_GetMessagesPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetNitroStickerPack(packID snowflake.ID, opts ...rest.RequestOpt) (*discord.StickerPack, error) {
 	if _recv == nil {
@@ -16873,7 +17059,6 @@ func (clientRest) _GetNitroStickerPack_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetNitroStickerPacks(opts ...rest.RequestOpt) ([]discord.StickerPack, error) {
 	if _recv == nil {
 		panic("clientRest.GetNitroStickerPacks: nil pointer receiver")
@@ -16988,7 +17173,6 @@ func (clientRest) _GetNitroStickerPacks_BubbleCalls(t *testing.T) {
 		_dat.GetNitroStickerPacksCalls = []_clientRest_GetNitroStickerPacks_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetPinnedMessages(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Message, error) {
 	if _recv == nil {
@@ -17105,7 +17289,6 @@ func (clientRest) _GetPinnedMessages_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetPollAnswerVotes(channelID snowflake.ID, messageID snowflake.ID, answerID int, after snowflake.ID, limit int, opts ...rest.RequestOpt) ([]discord.User, error) {
 	if _recv == nil {
 		panic("clientRest.GetPollAnswerVotes: nil pointer receiver")
@@ -17177,19 +17360,27 @@ func (clientRest) _GetPollAnswerVotes_DoAll(t *testing.T, fn func(snowflake.ID, 
 }
 
 func (_recv *clientRest) _GetPollAnswerVotes_Stub() {
-	_recv._GetPollAnswerVotes_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) { return })
+	_recv._GetPollAnswerVotes_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetPollAnswerVotes_StubAll(t *testing.T) {
-	new(clientRest)._GetPollAnswerVotes_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) { return })
+	new(clientRest)._GetPollAnswerVotes_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetPollAnswerVotes_Return(r0 []discord.User, r1 error) {
-	_recv._GetPollAnswerVotes_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) ([]discord.User, error) { return r0, r1 })
+	_recv._GetPollAnswerVotes_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) ([]discord.User, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetPollAnswerVotes_ReturnAll(t *testing.T, r0 []discord.User, r1 error) {
-	new(clientRest)._GetPollAnswerVotes_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) ([]discord.User, error) { return r0, r1 })
+	new(clientRest)._GetPollAnswerVotes_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) ([]discord.User, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetPollAnswerVotes_Calls() []_clientRest_GetPollAnswerVotes_Call {
@@ -17221,7 +17412,6 @@ func (clientRest) _GetPollAnswerVotes_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetPollAnswerVotesPage(channelID snowflake.ID, messageID snowflake.ID, answerID int, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.PollAnswerVotesPage {
 	if _recv == nil {
 		panic("clientRest.GetPollAnswerVotesPage: nil pointer receiver")
@@ -17232,7 +17422,7 @@ func (_recv *clientRest) GetPollAnswerVotesPage(channelID snowflake.ID, messageI
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetPollAnswerVotesPageCalls = append(_all.GetPollAnswerVotesPageCalls, _clientRest_GetPollAnswerVotesPage_Call{channelID, messageID, answerID, startID, limit, opts})
-	var _fn func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage)
+	var _fn func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage
 	if len(_dat.GetPollAnswerVotesPageMocks) > 0 {
 		_fn = _dat.GetPollAnswerVotesPageMocks[0]
 		if len(_dat.GetPollAnswerVotesPageMocks) > 1 {
@@ -17251,7 +17441,7 @@ func (_recv *clientRest) GetPollAnswerVotesPage(channelID snowflake.ID, messageI
 	return _fn(channelID, messageID, answerID, startID, limit, opts...)
 }
 
-func (_recv *clientRest) _GetPollAnswerVotesPage_Do(fn func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage)) {
+func (_recv *clientRest) _GetPollAnswerVotesPage_Do(fn func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage) {
 	if _recv == nil {
 		panic("clientRest.GetPollAnswerVotesPage: nil pointer receiver")
 	}
@@ -17259,9 +17449,9 @@ func (_recv *clientRest) _GetPollAnswerVotesPage_Do(fn func(snowflake.ID, snowfl
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage){}
+		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage{}
 	} else if len(_dat.GetPollAnswerVotesPageMocks) < 2 {
-		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage){fn, fn}
+		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage{fn, fn}
 	} else {
 		_dat.GetPollAnswerVotesPageMocks = _dat.GetPollAnswerVotesPageMocks[:len(_dat.GetPollAnswerVotesPageMocks)-1]
 		_dat.GetPollAnswerVotesPageMocks = append(_dat.GetPollAnswerVotesPageMocks, fn)
@@ -17269,14 +17459,14 @@ func (_recv *clientRest) _GetPollAnswerVotesPage_Do(fn func(snowflake.ID, snowfl
 	}
 }
 
-func (clientRest) _GetPollAnswerVotesPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage)) {
+func (clientRest) _GetPollAnswerVotesPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage){}
+		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage{}
 	} else if len(_dat.GetPollAnswerVotesPageMocks) < 2 {
-		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage){fn, fn}
+		_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage{fn, fn}
 	} else {
 		_dat.GetPollAnswerVotesPageMocks = _dat.GetPollAnswerVotesPageMocks[:len(_dat.GetPollAnswerVotesPageMocks)-1]
 		_dat.GetPollAnswerVotesPageMocks = append(_dat.GetPollAnswerVotesPageMocks, fn)
@@ -17286,26 +17476,34 @@ func (clientRest) _GetPollAnswerVotesPage_DoAll(t *testing.T, fn func(snowflake.
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage){}
+			_dat.GetPollAnswerVotesPageMocks = []func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage{}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *clientRest) _GetPollAnswerVotesPage_Stub() {
-	_recv._GetPollAnswerVotesPage_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.PollAnswerVotesPage) { return })
+	_recv._GetPollAnswerVotesPage_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.PollAnswerVotesPage) {
+		return
+	})
 }
 
 func (clientRest) _GetPollAnswerVotesPage_StubAll(t *testing.T) {
-	new(clientRest)._GetPollAnswerVotesPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.PollAnswerVotesPage) { return })
+	new(clientRest)._GetPollAnswerVotesPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.PollAnswerVotesPage) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetPollAnswerVotesPage_Return(r0 rest.PollAnswerVotesPage) {
-	_recv._GetPollAnswerVotesPage_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage) { return r0 })
+	_recv._GetPollAnswerVotesPage_Do(func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage {
+		return r0
+	})
 }
 
 func (clientRest) _GetPollAnswerVotesPage_ReturnAll(t *testing.T, r0 rest.PollAnswerVotesPage) {
-	new(clientRest)._GetPollAnswerVotesPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) (rest.PollAnswerVotesPage) { return r0 })
+	new(clientRest)._GetPollAnswerVotesPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, snowflake.ID, int, ...rest.RequestOpt) rest.PollAnswerVotesPage {
+		return r0
+	})
 }
 
 func (_recv *clientRest) _GetPollAnswerVotesPage_Calls() []_clientRest_GetPollAnswerVotesPage_Call {
@@ -17336,7 +17534,6 @@ func (clientRest) _GetPollAnswerVotesPage_BubbleCalls(t *testing.T) {
 		_dat.GetPollAnswerVotesPageCalls = []_clientRest_GetPollAnswerVotesPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetPrivateArchivedThreads(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (*discord.GetThreads, error) {
 	if _recv == nil {
@@ -17409,19 +17606,27 @@ func (clientRest) _GetPrivateArchivedThreads_DoAll(t *testing.T, fn func(snowfla
 }
 
 func (_recv *clientRest) _GetPrivateArchivedThreads_Stub() {
-	_recv._GetPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) { return })
+	_recv._GetPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) {
+		return
+	})
 }
 
 func (clientRest) _GetPrivateArchivedThreads_StubAll(t *testing.T) {
-	new(clientRest)._GetPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) { return })
+	new(clientRest)._GetPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetPrivateArchivedThreads_Return(threads *discord.GetThreads, err error) {
-	_recv._GetPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) { return threads, err })
+	_recv._GetPrivateArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) {
+		return threads, err
+	})
 }
 
 func (clientRest) _GetPrivateArchivedThreads_ReturnAll(t *testing.T, threads *discord.GetThreads, err error) {
-	new(clientRest)._GetPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) { return threads, err })
+	new(clientRest)._GetPrivateArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) {
+		return threads, err
+	})
 }
 
 func (_recv *clientRest) _GetPrivateArchivedThreads_Calls() []_clientRest_GetPrivateArchivedThreads_Call {
@@ -17452,7 +17657,6 @@ func (clientRest) _GetPrivateArchivedThreads_BubbleCalls(t *testing.T) {
 		_dat.GetPrivateArchivedThreadsCalls = []_clientRest_GetPrivateArchivedThreads_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetPublicArchivedThreads(channelID snowflake.ID, before time.Time, limit int, opts ...rest.RequestOpt) (*discord.GetThreads, error) {
 	if _recv == nil {
@@ -17525,19 +17729,27 @@ func (clientRest) _GetPublicArchivedThreads_DoAll(t *testing.T, fn func(snowflak
 }
 
 func (_recv *clientRest) _GetPublicArchivedThreads_Stub() {
-	_recv._GetPublicArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) { return })
+	_recv._GetPublicArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) {
+		return
+	})
 }
 
 func (clientRest) _GetPublicArchivedThreads_StubAll(t *testing.T) {
-	new(clientRest)._GetPublicArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) { return })
+	new(clientRest)._GetPublicArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (threads *discord.GetThreads, err error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetPublicArchivedThreads_Return(threads *discord.GetThreads, err error) {
-	_recv._GetPublicArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) { return threads, err })
+	_recv._GetPublicArchivedThreads_Do(func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) {
+		return threads, err
+	})
 }
 
 func (clientRest) _GetPublicArchivedThreads_ReturnAll(t *testing.T, threads *discord.GetThreads, err error) {
-	new(clientRest)._GetPublicArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) { return threads, err })
+	new(clientRest)._GetPublicArchivedThreads_DoAll(t, func(snowflake.ID, time.Time, int, ...rest.RequestOpt) (*discord.GetThreads, error) {
+		return threads, err
+	})
 }
 
 func (_recv *clientRest) _GetPublicArchivedThreads_Calls() []_clientRest_GetPublicArchivedThreads_Call {
@@ -17568,7 +17780,6 @@ func (clientRest) _GetPublicArchivedThreads_BubbleCalls(t *testing.T) {
 		_dat.GetPublicArchivedThreadsCalls = []_clientRest_GetPublicArchivedThreads_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetReactions(channelID snowflake.ID, messageID snowflake.ID, emoji string, reactionType discord.MessageReactionType, after int, limit int, opts ...rest.RequestOpt) ([]discord.User, error) {
 	if _recv == nil {
@@ -17641,19 +17852,27 @@ func (clientRest) _GetReactions_DoAll(t *testing.T, fn func(snowflake.ID, snowfl
 }
 
 func (_recv *clientRest) _GetReactions_Stub() {
-	_recv._GetReactions_Do(func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) { return })
+	_recv._GetReactions_Do(func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetReactions_StubAll(t *testing.T) {
-	new(clientRest)._GetReactions_DoAll(t, func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) { return })
+	new(clientRest)._GetReactions_DoAll(t, func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) (r0 []discord.User, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetReactions_Return(r0 []discord.User, r1 error) {
-	_recv._GetReactions_Do(func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) ([]discord.User, error) { return r0, r1 })
+	_recv._GetReactions_Do(func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) ([]discord.User, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetReactions_ReturnAll(t *testing.T, r0 []discord.User, r1 error) {
-	new(clientRest)._GetReactions_DoAll(t, func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) ([]discord.User, error) { return r0, r1 })
+	new(clientRest)._GetReactions_DoAll(t, func(snowflake.ID, snowflake.ID, string, discord.MessageReactionType, int, int, ...rest.RequestOpt) ([]discord.User, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetReactions_Calls() []_clientRest_GetReactions_Call {
@@ -17684,7 +17903,6 @@ func (clientRest) _GetReactions_BubbleCalls(t *testing.T) {
 		_dat.GetReactionsCalls = []_clientRest_GetReactions_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetRole(guildID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) (*discord.Role, error) {
 	if _recv == nil {
@@ -17801,7 +18019,6 @@ func (clientRest) _GetRole_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetRoles(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Role, error) {
 	if _recv == nil {
 		panic("clientRest.GetRoles: nil pointer receiver")
@@ -17916,7 +18133,6 @@ func (clientRest) _GetRoles_BubbleCalls(t *testing.T) {
 		_dat.GetRolesCalls = []_clientRest_GetRoles_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetSKUSubscription(skuID snowflake.ID, subscriptionID snowflake.ID, opts ...rest.RequestOpt) (*discord.Subscription, error) {
 	if _recv == nil {
@@ -18033,7 +18249,6 @@ func (clientRest) _GetSKUSubscription_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetSKUSubscriptions(skuID snowflake.ID, before snowflake.ID, after snowflake.ID, limit int, userID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Subscription, error) {
 	if _recv == nil {
 		panic("clientRest.GetSKUSubscriptions: nil pointer receiver")
@@ -18105,19 +18320,27 @@ func (clientRest) _GetSKUSubscriptions_DoAll(t *testing.T, fn func(snowflake.ID,
 }
 
 func (_recv *clientRest) _GetSKUSubscriptions_Stub() {
-	_recv._GetSKUSubscriptions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) (r0 []discord.Subscription, r1 error) { return })
+	_recv._GetSKUSubscriptions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) (r0 []discord.Subscription, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _GetSKUSubscriptions_StubAll(t *testing.T) {
-	new(clientRest)._GetSKUSubscriptions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) (r0 []discord.Subscription, r1 error) { return })
+	new(clientRest)._GetSKUSubscriptions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) (r0 []discord.Subscription, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetSKUSubscriptions_Return(r0 []discord.Subscription, r1 error) {
-	_recv._GetSKUSubscriptions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) ([]discord.Subscription, error) { return r0, r1 })
+	_recv._GetSKUSubscriptions_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) ([]discord.Subscription, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _GetSKUSubscriptions_ReturnAll(t *testing.T, r0 []discord.Subscription, r1 error) {
-	new(clientRest)._GetSKUSubscriptions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) ([]discord.Subscription, error) { return r0, r1 })
+	new(clientRest)._GetSKUSubscriptions_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, snowflake.ID, ...rest.RequestOpt) ([]discord.Subscription, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _GetSKUSubscriptions_Calls() []_clientRest_GetSKUSubscriptions_Call {
@@ -18149,7 +18372,6 @@ func (clientRest) _GetSKUSubscriptions_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetSKUSubscriptionsPage(skuID snowflake.ID, userID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.Page[discord.Subscription] {
 	if _recv == nil {
 		panic("clientRest.GetSKUSubscriptionsPage: nil pointer receiver")
@@ -18160,7 +18382,7 @@ func (_recv *clientRest) GetSKUSubscriptionsPage(skuID snowflake.ID, userID snow
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetSKUSubscriptionsPageCalls = append(_all.GetSKUSubscriptionsPageCalls, _clientRest_GetSKUSubscriptionsPage_Call{skuID, userID, startID, limit, opts})
-	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription])
+	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]
 	if len(_dat.GetSKUSubscriptionsPageMocks) > 0 {
 		_fn = _dat.GetSKUSubscriptionsPageMocks[0]
 		if len(_dat.GetSKUSubscriptionsPageMocks) > 1 {
@@ -18179,7 +18401,7 @@ func (_recv *clientRest) GetSKUSubscriptionsPage(skuID snowflake.ID, userID snow
 	return _fn(skuID, userID, startID, limit, opts...)
 }
 
-func (_recv *clientRest) _GetSKUSubscriptionsPage_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription])) {
+func (_recv *clientRest) _GetSKUSubscriptionsPage_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]) {
 	if _recv == nil {
 		panic("clientRest.GetSKUSubscriptionsPage: nil pointer receiver")
 	}
@@ -18187,9 +18409,9 @@ func (_recv *clientRest) _GetSKUSubscriptionsPage_Do(fn func(snowflake.ID, snowf
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription]){}
+		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]{}
 	} else if len(_dat.GetSKUSubscriptionsPageMocks) < 2 {
-		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription]){fn, fn}
+		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]{fn, fn}
 	} else {
 		_dat.GetSKUSubscriptionsPageMocks = _dat.GetSKUSubscriptionsPageMocks[:len(_dat.GetSKUSubscriptionsPageMocks)-1]
 		_dat.GetSKUSubscriptionsPageMocks = append(_dat.GetSKUSubscriptionsPageMocks, fn)
@@ -18197,14 +18419,14 @@ func (_recv *clientRest) _GetSKUSubscriptionsPage_Do(fn func(snowflake.ID, snowf
 	}
 }
 
-func (clientRest) _GetSKUSubscriptionsPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription])) {
+func (clientRest) _GetSKUSubscriptionsPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription]){}
+		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]{}
 	} else if len(_dat.GetSKUSubscriptionsPageMocks) < 2 {
-		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription]){fn, fn}
+		_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]{fn, fn}
 	} else {
 		_dat.GetSKUSubscriptionsPageMocks = _dat.GetSKUSubscriptionsPageMocks[:len(_dat.GetSKUSubscriptionsPageMocks)-1]
 		_dat.GetSKUSubscriptionsPageMocks = append(_dat.GetSKUSubscriptionsPageMocks, fn)
@@ -18214,26 +18436,34 @@ func (clientRest) _GetSKUSubscriptionsPage_DoAll(t *testing.T, fn func(snowflake
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription]){}
+			_dat.GetSKUSubscriptionsPageMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription]{}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *clientRest) _GetSKUSubscriptionsPage_Stub() {
-	_recv._GetSKUSubscriptionsPage_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.Subscription]) { return })
+	_recv._GetSKUSubscriptionsPage_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.Subscription]) {
+		return
+	})
 }
 
 func (clientRest) _GetSKUSubscriptionsPage_StubAll(t *testing.T) {
-	new(clientRest)._GetSKUSubscriptionsPage_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.Subscription]) { return })
+	new(clientRest)._GetSKUSubscriptionsPage_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (r0 rest.Page[discord.Subscription]) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetSKUSubscriptionsPage_Return(r0 rest.Page[discord.Subscription]) {
-	_recv._GetSKUSubscriptionsPage_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription]) { return r0 })
+	_recv._GetSKUSubscriptionsPage_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription] {
+		return r0
+	})
 }
 
 func (clientRest) _GetSKUSubscriptionsPage_ReturnAll(t *testing.T, r0 rest.Page[discord.Subscription]) {
-	new(clientRest)._GetSKUSubscriptionsPage_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.Page[discord.Subscription]) { return r0 })
+	new(clientRest)._GetSKUSubscriptionsPage_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.Page[discord.Subscription] {
+		return r0
+	})
 }
 
 func (_recv *clientRest) _GetSKUSubscriptionsPage_Calls() []_clientRest_GetSKUSubscriptionsPage_Call {
@@ -18264,7 +18494,6 @@ func (clientRest) _GetSKUSubscriptionsPage_BubbleCalls(t *testing.T) {
 		_dat.GetSKUSubscriptionsPageCalls = []_clientRest_GetSKUSubscriptionsPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetSKUs(applicationID snowflake.ID, opts ...rest.RequestOpt) ([]discord.SKU, error) {
 	if _recv == nil {
@@ -18381,7 +18610,6 @@ func (clientRest) _GetSKUs_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetSoundboardDefaultSounds(opts ...rest.RequestOpt) ([]discord.SoundboardSound, error) {
 	if _recv == nil {
 		panic("clientRest.GetSoundboardDefaultSounds: nil pointer receiver")
@@ -18496,7 +18724,6 @@ func (clientRest) _GetSoundboardDefaultSounds_BubbleCalls(t *testing.T) {
 		_dat.GetSoundboardDefaultSoundsCalls = []_clientRest_GetSoundboardDefaultSounds_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetStageInstance(channelID snowflake.ID, opts ...rest.RequestOpt) (*discord.StageInstance, error) {
 	if _recv == nil {
@@ -18613,7 +18840,6 @@ func (clientRest) _GetStageInstance_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetSticker(stickerID snowflake.ID, opts ...rest.RequestOpt) (*discord.Sticker, error) {
 	if _recv == nil {
 		panic("clientRest.GetSticker: nil pointer receiver")
@@ -18728,7 +18954,6 @@ func (clientRest) _GetSticker_BubbleCalls(t *testing.T) {
 		_dat.GetStickerCalls = []_clientRest_GetSticker_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetStickers(guildID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Sticker, error) {
 	if _recv == nil {
@@ -18845,7 +19070,6 @@ func (clientRest) _GetStickers_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetThreadMember(threadID snowflake.ID, userID snowflake.ID, withMember bool, opts ...rest.RequestOpt) (*discord.ThreadMember, error) {
 	if _recv == nil {
 		panic("clientRest.GetThreadMember: nil pointer receiver")
@@ -18917,19 +19141,27 @@ func (clientRest) _GetThreadMember_DoAll(t *testing.T, fn func(snowflake.ID, sno
 }
 
 func (_recv *clientRest) _GetThreadMember_Stub() {
-	_recv._GetThreadMember_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (threadMember *discord.ThreadMember, err error) { return })
+	_recv._GetThreadMember_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (threadMember *discord.ThreadMember, err error) {
+		return
+	})
 }
 
 func (clientRest) _GetThreadMember_StubAll(t *testing.T) {
-	new(clientRest)._GetThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (threadMember *discord.ThreadMember, err error) { return })
+	new(clientRest)._GetThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (threadMember *discord.ThreadMember, err error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _GetThreadMember_Return(threadMember *discord.ThreadMember, err error) {
-	_recv._GetThreadMember_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.ThreadMember, error) { return threadMember, err })
+	_recv._GetThreadMember_Do(func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.ThreadMember, error) {
+		return threadMember, err
+	})
 }
 
 func (clientRest) _GetThreadMember_ReturnAll(t *testing.T, threadMember *discord.ThreadMember, err error) {
-	new(clientRest)._GetThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.ThreadMember, error) { return threadMember, err })
+	new(clientRest)._GetThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, bool, ...rest.RequestOpt) (*discord.ThreadMember, error) {
+		return threadMember, err
+	})
 }
 
 func (_recv *clientRest) _GetThreadMember_Calls() []_clientRest_GetThreadMember_Call {
@@ -18960,7 +19192,6 @@ func (clientRest) _GetThreadMember_BubbleCalls(t *testing.T) {
 		_dat.GetThreadMemberCalls = []_clientRest_GetThreadMember_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetThreadMembers(threadID snowflake.ID, opts ...rest.RequestOpt) ([]discord.ThreadMember, error) {
 	if _recv == nil {
@@ -19077,7 +19308,6 @@ func (clientRest) _GetThreadMembers_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetThreadMembersPage(threadID snowflake.ID, startID snowflake.ID, limit int, opts ...rest.RequestOpt) rest.ThreadMemberPage {
 	if _recv == nil {
 		panic("clientRest.GetThreadMembersPage: nil pointer receiver")
@@ -19088,7 +19318,7 @@ func (_recv *clientRest) GetThreadMembersPage(threadID snowflake.ID, startID sno
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.GetThreadMembersPageCalls = append(_all.GetThreadMembersPageCalls, _clientRest_GetThreadMembersPage_Call{threadID, startID, limit, opts})
-	var _fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage)
+	var _fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage
 	if len(_dat.GetThreadMembersPageMocks) > 0 {
 		_fn = _dat.GetThreadMembersPageMocks[0]
 		if len(_dat.GetThreadMembersPageMocks) > 1 {
@@ -19107,7 +19337,7 @@ func (_recv *clientRest) GetThreadMembersPage(threadID snowflake.ID, startID sno
 	return _fn(threadID, startID, limit, opts...)
 }
 
-func (_recv *clientRest) _GetThreadMembersPage_Do(fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage)) {
+func (_recv *clientRest) _GetThreadMembersPage_Do(fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage) {
 	if _recv == nil {
 		panic("clientRest.GetThreadMembersPage: nil pointer receiver")
 	}
@@ -19115,9 +19345,9 @@ func (_recv *clientRest) _GetThreadMembersPage_Do(fn func(snowflake.ID, snowflak
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage){}
+		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage{}
 	} else if len(_dat.GetThreadMembersPageMocks) < 2 {
-		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage){fn, fn}
+		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage{fn, fn}
 	} else {
 		_dat.GetThreadMembersPageMocks = _dat.GetThreadMembersPageMocks[:len(_dat.GetThreadMembersPageMocks)-1]
 		_dat.GetThreadMembersPageMocks = append(_dat.GetThreadMembersPageMocks, fn)
@@ -19125,14 +19355,14 @@ func (_recv *clientRest) _GetThreadMembersPage_Do(fn func(snowflake.ID, snowflak
 	}
 }
 
-func (clientRest) _GetThreadMembersPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage)) {
+func (clientRest) _GetThreadMembersPage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage){}
+		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage{}
 	} else if len(_dat.GetThreadMembersPageMocks) < 2 {
-		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage){fn, fn}
+		_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage{fn, fn}
 	} else {
 		_dat.GetThreadMembersPageMocks = _dat.GetThreadMembersPageMocks[:len(_dat.GetThreadMembersPageMocks)-1]
 		_dat.GetThreadMembersPageMocks = append(_dat.GetThreadMembersPageMocks, fn)
@@ -19142,7 +19372,7 @@ func (clientRest) _GetThreadMembersPage_DoAll(t *testing.T, fn func(snowflake.ID
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage){}
+			_dat.GetThreadMembersPageMocks = []func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -19157,11 +19387,11 @@ func (clientRest) _GetThreadMembersPage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _GetThreadMembersPage_Return(r0 rest.ThreadMemberPage) {
-	_recv._GetThreadMembersPage_Do(func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage) { return r0 })
+	_recv._GetThreadMembersPage_Do(func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage { return r0 })
 }
 
 func (clientRest) _GetThreadMembersPage_ReturnAll(t *testing.T, r0 rest.ThreadMemberPage) {
-	new(clientRest)._GetThreadMembersPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) (rest.ThreadMemberPage) { return r0 })
+	new(clientRest)._GetThreadMembersPage_DoAll(t, func(snowflake.ID, snowflake.ID, int, ...rest.RequestOpt) rest.ThreadMemberPage { return r0 })
 }
 
 func (_recv *clientRest) _GetThreadMembersPage_Calls() []_clientRest_GetThreadMembersPage_Call {
@@ -19192,7 +19422,6 @@ func (clientRest) _GetThreadMembersPage_BubbleCalls(t *testing.T) {
 		_dat.GetThreadMembersPageCalls = []_clientRest_GetThreadMembersPage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetUser(userID snowflake.ID, opts ...rest.RequestOpt) (*discord.User, error) {
 	if _recv == nil {
@@ -19309,7 +19538,6 @@ func (clientRest) _GetUser_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetUserVoiceState(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) (*discord.VoiceState, error) {
 	if _recv == nil {
 		panic("clientRest.GetUserVoiceState: nil pointer receiver")
@@ -19424,7 +19652,6 @@ func (clientRest) _GetUserVoiceState_BubbleCalls(t *testing.T) {
 		_dat.GetUserVoiceStateCalls = []_clientRest_GetUserVoiceState_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetVoiceRegions(opts ...rest.RequestOpt) ([]discord.VoiceRegion, error) {
 	if _recv == nil {
@@ -19541,7 +19768,6 @@ func (clientRest) _GetVoiceRegions_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetWebhook(webhookID snowflake.ID, opts ...rest.RequestOpt) (discord.Webhook, error) {
 	if _recv == nil {
 		panic("clientRest.GetWebhook: nil pointer receiver")
@@ -19656,7 +19882,6 @@ func (clientRest) _GetWebhook_BubbleCalls(t *testing.T) {
 		_dat.GetWebhookCalls = []_clientRest_GetWebhook_Call{}
 	})
 }
-
 
 func (_recv *clientRest) GetWebhookWithToken(webhookID snowflake.ID, webhookToken string, opts ...rest.RequestOpt) (discord.Webhook, error) {
 	if _recv == nil {
@@ -19773,7 +19998,6 @@ func (clientRest) _GetWebhookWithToken_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) GetWebhooks(channelID snowflake.ID, opts ...rest.RequestOpt) ([]discord.Webhook, error) {
 	if _recv == nil {
 		panic("clientRest.GetWebhooks: nil pointer receiver")
@@ -19889,7 +20113,6 @@ func (clientRest) _GetWebhooks_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) HTTPClient() *http.Client {
 	if _recv == nil {
 		panic("clientRest.HTTPClient: nil pointer receiver")
@@ -19900,7 +20123,7 @@ func (_recv *clientRest) HTTPClient() *http.Client {
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.HTTPClientCalls = append(_all.HTTPClientCalls, _clientRest_HTTPClient_Call{})
-	var _fn func() (*http.Client)
+	var _fn func() *http.Client
 	if len(_dat.HTTPClientMocks) > 0 {
 		_fn = _dat.HTTPClientMocks[0]
 		if len(_dat.HTTPClientMocks) > 1 {
@@ -19919,7 +20142,7 @@ func (_recv *clientRest) HTTPClient() *http.Client {
 	return _fn()
 }
 
-func (_recv *clientRest) _HTTPClient_Do(fn func() (*http.Client)) {
+func (_recv *clientRest) _HTTPClient_Do(fn func() *http.Client) {
 	if _recv == nil {
 		panic("clientRest.HTTPClient: nil pointer receiver")
 	}
@@ -19927,9 +20150,9 @@ func (_recv *clientRest) _HTTPClient_Do(fn func() (*http.Client)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HTTPClientMocks = []func() (*http.Client){}
+		_dat.HTTPClientMocks = []func() *http.Client{}
 	} else if len(_dat.HTTPClientMocks) < 2 {
-		_dat.HTTPClientMocks = []func() (*http.Client){fn, fn}
+		_dat.HTTPClientMocks = []func() *http.Client{fn, fn}
 	} else {
 		_dat.HTTPClientMocks = _dat.HTTPClientMocks[:len(_dat.HTTPClientMocks)-1]
 		_dat.HTTPClientMocks = append(_dat.HTTPClientMocks, fn)
@@ -19937,14 +20160,14 @@ func (_recv *clientRest) _HTTPClient_Do(fn func() (*http.Client)) {
 	}
 }
 
-func (clientRest) _HTTPClient_DoAll(t *testing.T, fn func() (*http.Client)) {
+func (clientRest) _HTTPClient_DoAll(t *testing.T, fn func() *http.Client) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.HTTPClientMocks = []func() (*http.Client){}
+		_dat.HTTPClientMocks = []func() *http.Client{}
 	} else if len(_dat.HTTPClientMocks) < 2 {
-		_dat.HTTPClientMocks = []func() (*http.Client){fn, fn}
+		_dat.HTTPClientMocks = []func() *http.Client{fn, fn}
 	} else {
 		_dat.HTTPClientMocks = _dat.HTTPClientMocks[:len(_dat.HTTPClientMocks)-1]
 		_dat.HTTPClientMocks = append(_dat.HTTPClientMocks, fn)
@@ -19954,7 +20177,7 @@ func (clientRest) _HTTPClient_DoAll(t *testing.T, fn func() (*http.Client)) {
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.HTTPClientMocks = []func() (*http.Client){}
+			_dat.HTTPClientMocks = []func() *http.Client{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -19969,11 +20192,11 @@ func (clientRest) _HTTPClient_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _HTTPClient_Return(r0 *http.Client) {
-	_recv._HTTPClient_Do(func() (*http.Client) { return r0 })
+	_recv._HTTPClient_Do(func() *http.Client { return r0 })
 }
 
 func (clientRest) _HTTPClient_ReturnAll(t *testing.T, r0 *http.Client) {
-	new(clientRest)._HTTPClient_DoAll(t, func() (*http.Client) { return r0 })
+	new(clientRest)._HTTPClient_DoAll(t, func() *http.Client { return r0 })
 }
 
 func (_recv *clientRest) _HTTPClient_Calls() []_clientRest_HTTPClient_Call {
@@ -20005,7 +20228,6 @@ func (clientRest) _HTTPClient_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) JoinThread(threadID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.JoinThread: nil pointer receiver")
@@ -20016,7 +20238,7 @@ func (_recv *clientRest) JoinThread(threadID snowflake.ID, opts ...rest.RequestO
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.JoinThreadCalls = append(_all.JoinThreadCalls, _clientRest_JoinThread_Call{threadID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.JoinThreadMocks) > 0 {
 		_fn = _dat.JoinThreadMocks[0]
 		if len(_dat.JoinThreadMocks) > 1 {
@@ -20035,7 +20257,7 @@ func (_recv *clientRest) JoinThread(threadID snowflake.ID, opts ...rest.RequestO
 	return _fn(threadID, opts...)
 }
 
-func (_recv *clientRest) _JoinThread_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _JoinThread_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.JoinThread: nil pointer receiver")
 	}
@@ -20043,9 +20265,9 @@ func (_recv *clientRest) _JoinThread_Do(fn func(snowflake.ID, ...rest.RequestOpt
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.JoinThreadMocks) < 2 {
-		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.JoinThreadMocks = _dat.JoinThreadMocks[:len(_dat.JoinThreadMocks)-1]
 		_dat.JoinThreadMocks = append(_dat.JoinThreadMocks, fn)
@@ -20053,14 +20275,14 @@ func (_recv *clientRest) _JoinThread_Do(fn func(snowflake.ID, ...rest.RequestOpt
 	}
 }
 
-func (clientRest) _JoinThread_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _JoinThread_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.JoinThreadMocks) < 2 {
-		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.JoinThreadMocks = _dat.JoinThreadMocks[:len(_dat.JoinThreadMocks)-1]
 		_dat.JoinThreadMocks = append(_dat.JoinThreadMocks, fn)
@@ -20070,7 +20292,7 @@ func (clientRest) _JoinThread_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.JoinThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -20085,11 +20307,11 @@ func (clientRest) _JoinThread_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _JoinThread_Return(r0 error) {
-	_recv._JoinThread_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._JoinThread_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _JoinThread_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._JoinThread_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._JoinThread_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _JoinThread_Calls() []_clientRest_JoinThread_Call {
@@ -20121,7 +20343,6 @@ func (clientRest) _JoinThread_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) LeaveGuild(guildID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.LeaveGuild: nil pointer receiver")
@@ -20132,7 +20353,7 @@ func (_recv *clientRest) LeaveGuild(guildID snowflake.ID, opts ...rest.RequestOp
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.LeaveGuildCalls = append(_all.LeaveGuildCalls, _clientRest_LeaveGuild_Call{guildID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.LeaveGuildMocks) > 0 {
 		_fn = _dat.LeaveGuildMocks[0]
 		if len(_dat.LeaveGuildMocks) > 1 {
@@ -20151,7 +20372,7 @@ func (_recv *clientRest) LeaveGuild(guildID snowflake.ID, opts ...rest.RequestOp
 	return _fn(guildID, opts...)
 }
 
-func (_recv *clientRest) _LeaveGuild_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _LeaveGuild_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.LeaveGuild: nil pointer receiver")
 	}
@@ -20159,9 +20380,9 @@ func (_recv *clientRest) _LeaveGuild_Do(fn func(snowflake.ID, ...rest.RequestOpt
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.LeaveGuildMocks) < 2 {
-		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.LeaveGuildMocks = _dat.LeaveGuildMocks[:len(_dat.LeaveGuildMocks)-1]
 		_dat.LeaveGuildMocks = append(_dat.LeaveGuildMocks, fn)
@@ -20169,14 +20390,14 @@ func (_recv *clientRest) _LeaveGuild_Do(fn func(snowflake.ID, ...rest.RequestOpt
 	}
 }
 
-func (clientRest) _LeaveGuild_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _LeaveGuild_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.LeaveGuildMocks) < 2 {
-		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.LeaveGuildMocks = _dat.LeaveGuildMocks[:len(_dat.LeaveGuildMocks)-1]
 		_dat.LeaveGuildMocks = append(_dat.LeaveGuildMocks, fn)
@@ -20186,7 +20407,7 @@ func (clientRest) _LeaveGuild_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.LeaveGuildMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -20201,11 +20422,11 @@ func (clientRest) _LeaveGuild_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _LeaveGuild_Return(r0 error) {
-	_recv._LeaveGuild_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._LeaveGuild_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _LeaveGuild_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._LeaveGuild_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._LeaveGuild_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _LeaveGuild_Calls() []_clientRest_LeaveGuild_Call {
@@ -20237,7 +20458,6 @@ func (clientRest) _LeaveGuild_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) LeaveThread(threadID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.LeaveThread: nil pointer receiver")
@@ -20248,7 +20468,7 @@ func (_recv *clientRest) LeaveThread(threadID snowflake.ID, opts ...rest.Request
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.LeaveThreadCalls = append(_all.LeaveThreadCalls, _clientRest_LeaveThread_Call{threadID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.LeaveThreadMocks) > 0 {
 		_fn = _dat.LeaveThreadMocks[0]
 		if len(_dat.LeaveThreadMocks) > 1 {
@@ -20267,7 +20487,7 @@ func (_recv *clientRest) LeaveThread(threadID snowflake.ID, opts ...rest.Request
 	return _fn(threadID, opts...)
 }
 
-func (_recv *clientRest) _LeaveThread_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _LeaveThread_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.LeaveThread: nil pointer receiver")
 	}
@@ -20275,9 +20495,9 @@ func (_recv *clientRest) _LeaveThread_Do(fn func(snowflake.ID, ...rest.RequestOp
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.LeaveThreadMocks) < 2 {
-		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.LeaveThreadMocks = _dat.LeaveThreadMocks[:len(_dat.LeaveThreadMocks)-1]
 		_dat.LeaveThreadMocks = append(_dat.LeaveThreadMocks, fn)
@@ -20285,14 +20505,14 @@ func (_recv *clientRest) _LeaveThread_Do(fn func(snowflake.ID, ...rest.RequestOp
 	}
 }
 
-func (clientRest) _LeaveThread_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _LeaveThread_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.LeaveThreadMocks) < 2 {
-		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.LeaveThreadMocks = _dat.LeaveThreadMocks[:len(_dat.LeaveThreadMocks)-1]
 		_dat.LeaveThreadMocks = append(_dat.LeaveThreadMocks, fn)
@@ -20302,7 +20522,7 @@ func (clientRest) _LeaveThread_DoAll(t *testing.T, fn func(snowflake.ID, ...rest
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.LeaveThreadMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -20317,11 +20537,11 @@ func (clientRest) _LeaveThread_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _LeaveThread_Return(r0 error) {
-	_recv._LeaveThread_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._LeaveThread_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _LeaveThread_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._LeaveThread_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._LeaveThread_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _LeaveThread_Calls() []_clientRest_LeaveThread_Call {
@@ -20353,7 +20573,6 @@ func (clientRest) _LeaveThread_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) PinMessage(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.PinMessage: nil pointer receiver")
@@ -20364,7 +20583,7 @@ func (_recv *clientRest) PinMessage(channelID snowflake.ID, messageID snowflake.
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.PinMessageCalls = append(_all.PinMessageCalls, _clientRest_PinMessage_Call{channelID, messageID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.PinMessageMocks) > 0 {
 		_fn = _dat.PinMessageMocks[0]
 		if len(_dat.PinMessageMocks) > 1 {
@@ -20383,7 +20602,7 @@ func (_recv *clientRest) PinMessage(channelID snowflake.ID, messageID snowflake.
 	return _fn(channelID, messageID, opts...)
 }
 
-func (_recv *clientRest) _PinMessage_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _PinMessage_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.PinMessage: nil pointer receiver")
 	}
@@ -20391,9 +20610,9 @@ func (_recv *clientRest) _PinMessage_Do(fn func(snowflake.ID, snowflake.ID, ...r
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.PinMessageMocks) < 2 {
-		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.PinMessageMocks = _dat.PinMessageMocks[:len(_dat.PinMessageMocks)-1]
 		_dat.PinMessageMocks = append(_dat.PinMessageMocks, fn)
@@ -20401,14 +20620,14 @@ func (_recv *clientRest) _PinMessage_Do(fn func(snowflake.ID, snowflake.ID, ...r
 	}
 }
 
-func (clientRest) _PinMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _PinMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.PinMessageMocks) < 2 {
-		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.PinMessageMocks = _dat.PinMessageMocks[:len(_dat.PinMessageMocks)-1]
 		_dat.PinMessageMocks = append(_dat.PinMessageMocks, fn)
@@ -20418,7 +20637,7 @@ func (clientRest) _PinMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowflak
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.PinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -20433,11 +20652,11 @@ func (clientRest) _PinMessage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _PinMessage_Return(r0 error) {
-	_recv._PinMessage_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._PinMessage_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _PinMessage_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._PinMessage_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._PinMessage_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _PinMessage_Calls() []_clientRest_PinMessage_Call {
@@ -20469,7 +20688,6 @@ func (clientRest) _PinMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RateLimiter() rest.RateLimiter {
 	if _recv == nil {
 		panic("clientRest.RateLimiter: nil pointer receiver")
@@ -20480,7 +20698,7 @@ func (_recv *clientRest) RateLimiter() rest.RateLimiter {
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RateLimiterCalls = append(_all.RateLimiterCalls, _clientRest_RateLimiter_Call{})
-	var _fn func() (rest.RateLimiter)
+	var _fn func() rest.RateLimiter
 	if len(_dat.RateLimiterMocks) > 0 {
 		_fn = _dat.RateLimiterMocks[0]
 		if len(_dat.RateLimiterMocks) > 1 {
@@ -20499,7 +20717,7 @@ func (_recv *clientRest) RateLimiter() rest.RateLimiter {
 	return _fn()
 }
 
-func (_recv *clientRest) _RateLimiter_Do(fn func() (rest.RateLimiter)) {
+func (_recv *clientRest) _RateLimiter_Do(fn func() rest.RateLimiter) {
 	if _recv == nil {
 		panic("clientRest.RateLimiter: nil pointer receiver")
 	}
@@ -20507,9 +20725,9 @@ func (_recv *clientRest) _RateLimiter_Do(fn func() (rest.RateLimiter)) {
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RateLimiterMocks = []func() (rest.RateLimiter){}
+		_dat.RateLimiterMocks = []func() rest.RateLimiter{}
 	} else if len(_dat.RateLimiterMocks) < 2 {
-		_dat.RateLimiterMocks = []func() (rest.RateLimiter){fn, fn}
+		_dat.RateLimiterMocks = []func() rest.RateLimiter{fn, fn}
 	} else {
 		_dat.RateLimiterMocks = _dat.RateLimiterMocks[:len(_dat.RateLimiterMocks)-1]
 		_dat.RateLimiterMocks = append(_dat.RateLimiterMocks, fn)
@@ -20517,14 +20735,14 @@ func (_recv *clientRest) _RateLimiter_Do(fn func() (rest.RateLimiter)) {
 	}
 }
 
-func (clientRest) _RateLimiter_DoAll(t *testing.T, fn func() (rest.RateLimiter)) {
+func (clientRest) _RateLimiter_DoAll(t *testing.T, fn func() rest.RateLimiter) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RateLimiterMocks = []func() (rest.RateLimiter){}
+		_dat.RateLimiterMocks = []func() rest.RateLimiter{}
 	} else if len(_dat.RateLimiterMocks) < 2 {
-		_dat.RateLimiterMocks = []func() (rest.RateLimiter){fn, fn}
+		_dat.RateLimiterMocks = []func() rest.RateLimiter{fn, fn}
 	} else {
 		_dat.RateLimiterMocks = _dat.RateLimiterMocks[:len(_dat.RateLimiterMocks)-1]
 		_dat.RateLimiterMocks = append(_dat.RateLimiterMocks, fn)
@@ -20534,7 +20752,7 @@ func (clientRest) _RateLimiter_DoAll(t *testing.T, fn func() (rest.RateLimiter))
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RateLimiterMocks = []func() (rest.RateLimiter){}
+			_dat.RateLimiterMocks = []func() rest.RateLimiter{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -20549,11 +20767,11 @@ func (clientRest) _RateLimiter_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RateLimiter_Return(r0 rest.RateLimiter) {
-	_recv._RateLimiter_Do(func() (rest.RateLimiter) { return r0 })
+	_recv._RateLimiter_Do(func() rest.RateLimiter { return r0 })
 }
 
 func (clientRest) _RateLimiter_ReturnAll(t *testing.T, r0 rest.RateLimiter) {
-	new(clientRest)._RateLimiter_DoAll(t, func() (rest.RateLimiter) { return r0 })
+	new(clientRest)._RateLimiter_DoAll(t, func() rest.RateLimiter { return r0 })
 }
 
 func (_recv *clientRest) _RateLimiter_Calls() []_clientRest_RateLimiter_Call {
@@ -20584,7 +20802,6 @@ func (clientRest) _RateLimiter_BubbleCalls(t *testing.T) {
 		_dat.RateLimiterCalls = []_clientRest_RateLimiter_Call{}
 	})
 }
-
 
 func (_recv *clientRest) RefreshAccessToken(clientID snowflake.ID, clientSecret string, refreshToken string, opts ...rest.RequestOpt) (*discord.AccessTokenResponse, error) {
 	if _recv == nil {
@@ -20657,19 +20874,27 @@ func (clientRest) _RefreshAccessToken_DoAll(t *testing.T, fn func(snowflake.ID, 
 }
 
 func (_recv *clientRest) _RefreshAccessToken_Stub() {
-	_recv._RefreshAccessToken_Do(func(snowflake.ID, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) { return })
+	_recv._RefreshAccessToken_Do(func(snowflake.ID, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _RefreshAccessToken_StubAll(t *testing.T) {
-	new(clientRest)._RefreshAccessToken_DoAll(t, func(snowflake.ID, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) { return })
+	new(clientRest)._RefreshAccessToken_DoAll(t, func(snowflake.ID, string, string, ...rest.RequestOpt) (r0 *discord.AccessTokenResponse, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _RefreshAccessToken_Return(r0 *discord.AccessTokenResponse, r1 error) {
-	_recv._RefreshAccessToken_Do(func(snowflake.ID, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) { return r0, r1 })
+	_recv._RefreshAccessToken_Do(func(snowflake.ID, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _RefreshAccessToken_ReturnAll(t *testing.T, r0 *discord.AccessTokenResponse, r1 error) {
-	new(clientRest)._RefreshAccessToken_DoAll(t, func(snowflake.ID, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) { return r0, r1 })
+	new(clientRest)._RefreshAccessToken_DoAll(t, func(snowflake.ID, string, string, ...rest.RequestOpt) (*discord.AccessTokenResponse, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _RefreshAccessToken_Calls() []_clientRest_RefreshAccessToken_Call {
@@ -20701,7 +20926,6 @@ func (clientRest) _RefreshAccessToken_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RemoveAllReactions(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.RemoveAllReactions: nil pointer receiver")
@@ -20712,7 +20936,7 @@ func (_recv *clientRest) RemoveAllReactions(channelID snowflake.ID, messageID sn
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveAllReactionsCalls = append(_all.RemoveAllReactionsCalls, _clientRest_RemoveAllReactions_Call{channelID, messageID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.RemoveAllReactionsMocks) > 0 {
 		_fn = _dat.RemoveAllReactionsMocks[0]
 		if len(_dat.RemoveAllReactionsMocks) > 1 {
@@ -20731,7 +20955,7 @@ func (_recv *clientRest) RemoveAllReactions(channelID snowflake.ID, messageID sn
 	return _fn(channelID, messageID, opts...)
 }
 
-func (_recv *clientRest) _RemoveAllReactions_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _RemoveAllReactions_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.RemoveAllReactions: nil pointer receiver")
 	}
@@ -20739,9 +20963,9 @@ func (_recv *clientRest) _RemoveAllReactions_Do(fn func(snowflake.ID, snowflake.
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveAllReactionsMocks) < 2 {
-		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveAllReactionsMocks = _dat.RemoveAllReactionsMocks[:len(_dat.RemoveAllReactionsMocks)-1]
 		_dat.RemoveAllReactionsMocks = append(_dat.RemoveAllReactionsMocks, fn)
@@ -20749,14 +20973,14 @@ func (_recv *clientRest) _RemoveAllReactions_Do(fn func(snowflake.ID, snowflake.
 	}
 }
 
-func (clientRest) _RemoveAllReactions_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _RemoveAllReactions_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveAllReactionsMocks) < 2 {
-		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveAllReactionsMocks = _dat.RemoveAllReactionsMocks[:len(_dat.RemoveAllReactionsMocks)-1]
 		_dat.RemoveAllReactionsMocks = append(_dat.RemoveAllReactionsMocks, fn)
@@ -20766,7 +20990,7 @@ func (clientRest) _RemoveAllReactions_DoAll(t *testing.T, fn func(snowflake.ID, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.RemoveAllReactionsMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -20781,11 +21005,11 @@ func (clientRest) _RemoveAllReactions_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RemoveAllReactions_Return(r0 error) {
-	_recv._RemoveAllReactions_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._RemoveAllReactions_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _RemoveAllReactions_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._RemoveAllReactions_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._RemoveAllReactions_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _RemoveAllReactions_Calls() []_clientRest_RemoveAllReactions_Call {
@@ -20817,7 +21041,6 @@ func (clientRest) _RemoveAllReactions_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RemoveAllReactionsForEmoji(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.RemoveAllReactionsForEmoji: nil pointer receiver")
@@ -20828,7 +21051,7 @@ func (_recv *clientRest) RemoveAllReactionsForEmoji(channelID snowflake.ID, mess
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveAllReactionsForEmojiCalls = append(_all.RemoveAllReactionsForEmojiCalls, _clientRest_RemoveAllReactionsForEmoji_Call{channelID, messageID, emoji, opts})
-	var _fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error
 	if len(_dat.RemoveAllReactionsForEmojiMocks) > 0 {
 		_fn = _dat.RemoveAllReactionsForEmojiMocks[0]
 		if len(_dat.RemoveAllReactionsForEmojiMocks) > 1 {
@@ -20847,7 +21070,7 @@ func (_recv *clientRest) RemoveAllReactionsForEmoji(channelID snowflake.ID, mess
 	return _fn(channelID, messageID, emoji, opts...)
 }
 
-func (_recv *clientRest) _RemoveAllReactionsForEmoji_Do(fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _RemoveAllReactionsForEmoji_Do(fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.RemoveAllReactionsForEmoji: nil pointer receiver")
 	}
@@ -20855,9 +21078,9 @@ func (_recv *clientRest) _RemoveAllReactionsForEmoji_Do(fn func(snowflake.ID, sn
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveAllReactionsForEmojiMocks) < 2 {
-		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveAllReactionsForEmojiMocks = _dat.RemoveAllReactionsForEmojiMocks[:len(_dat.RemoveAllReactionsForEmojiMocks)-1]
 		_dat.RemoveAllReactionsForEmojiMocks = append(_dat.RemoveAllReactionsForEmojiMocks, fn)
@@ -20865,14 +21088,14 @@ func (_recv *clientRest) _RemoveAllReactionsForEmoji_Do(fn func(snowflake.ID, sn
 	}
 }
 
-func (clientRest) _RemoveAllReactionsForEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (clientRest) _RemoveAllReactionsForEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveAllReactionsForEmojiMocks) < 2 {
-		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveAllReactionsForEmojiMocks = _dat.RemoveAllReactionsForEmojiMocks[:len(_dat.RemoveAllReactionsForEmojiMocks)-1]
 		_dat.RemoveAllReactionsForEmojiMocks = append(_dat.RemoveAllReactionsForEmojiMocks, fn)
@@ -20882,7 +21105,7 @@ func (clientRest) _RemoveAllReactionsForEmoji_DoAll(t *testing.T, fn func(snowfl
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+			_dat.RemoveAllReactionsForEmojiMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -20897,11 +21120,11 @@ func (clientRest) _RemoveAllReactionsForEmoji_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RemoveAllReactionsForEmoji_Return(r0 error) {
-	_recv._RemoveAllReactionsForEmoji_Do(func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	_recv._RemoveAllReactionsForEmoji_Do(func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _RemoveAllReactionsForEmoji_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._RemoveAllReactionsForEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._RemoveAllReactionsForEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _RemoveAllReactionsForEmoji_Calls() []_clientRest_RemoveAllReactionsForEmoji_Call {
@@ -20933,7 +21156,6 @@ func (clientRest) _RemoveAllReactionsForEmoji_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RemoveMember(guildID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.RemoveMember: nil pointer receiver")
@@ -20944,7 +21166,7 @@ func (_recv *clientRest) RemoveMember(guildID snowflake.ID, userID snowflake.ID,
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveMemberCalls = append(_all.RemoveMemberCalls, _clientRest_RemoveMember_Call{guildID, userID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.RemoveMemberMocks) > 0 {
 		_fn = _dat.RemoveMemberMocks[0]
 		if len(_dat.RemoveMemberMocks) > 1 {
@@ -20963,7 +21185,7 @@ func (_recv *clientRest) RemoveMember(guildID snowflake.ID, userID snowflake.ID,
 	return _fn(guildID, userID, opts...)
 }
 
-func (_recv *clientRest) _RemoveMember_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _RemoveMember_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.RemoveMember: nil pointer receiver")
 	}
@@ -20971,9 +21193,9 @@ func (_recv *clientRest) _RemoveMember_Do(fn func(snowflake.ID, snowflake.ID, ..
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveMemberMocks) < 2 {
-		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveMemberMocks = _dat.RemoveMemberMocks[:len(_dat.RemoveMemberMocks)-1]
 		_dat.RemoveMemberMocks = append(_dat.RemoveMemberMocks, fn)
@@ -20981,14 +21203,14 @@ func (_recv *clientRest) _RemoveMember_Do(fn func(snowflake.ID, snowflake.ID, ..
 	}
 }
 
-func (clientRest) _RemoveMember_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _RemoveMember_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveMemberMocks) < 2 {
-		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveMemberMocks = _dat.RemoveMemberMocks[:len(_dat.RemoveMemberMocks)-1]
 		_dat.RemoveMemberMocks = append(_dat.RemoveMemberMocks, fn)
@@ -20998,7 +21220,7 @@ func (clientRest) _RemoveMember_DoAll(t *testing.T, fn func(snowflake.ID, snowfl
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.RemoveMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -21013,11 +21235,11 @@ func (clientRest) _RemoveMember_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RemoveMember_Return(r0 error) {
-	_recv._RemoveMember_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._RemoveMember_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _RemoveMember_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._RemoveMember_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._RemoveMember_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _RemoveMember_Calls() []_clientRest_RemoveMember_Call {
@@ -21049,7 +21271,6 @@ func (clientRest) _RemoveMember_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RemoveMemberRole(guildID snowflake.ID, userID snowflake.ID, roleID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.RemoveMemberRole: nil pointer receiver")
@@ -21060,7 +21281,7 @@ func (_recv *clientRest) RemoveMemberRole(guildID snowflake.ID, userID snowflake
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveMemberRoleCalls = append(_all.RemoveMemberRoleCalls, _clientRest_RemoveMemberRole_Call{guildID, userID, roleID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.RemoveMemberRoleMocks) > 0 {
 		_fn = _dat.RemoveMemberRoleMocks[0]
 		if len(_dat.RemoveMemberRoleMocks) > 1 {
@@ -21079,7 +21300,7 @@ func (_recv *clientRest) RemoveMemberRole(guildID snowflake.ID, userID snowflake
 	return _fn(guildID, userID, roleID, opts...)
 }
 
-func (_recv *clientRest) _RemoveMemberRole_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _RemoveMemberRole_Do(fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.RemoveMemberRole: nil pointer receiver")
 	}
@@ -21087,9 +21308,9 @@ func (_recv *clientRest) _RemoveMemberRole_Do(fn func(snowflake.ID, snowflake.ID
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveMemberRoleMocks) < 2 {
-		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveMemberRoleMocks = _dat.RemoveMemberRoleMocks[:len(_dat.RemoveMemberRoleMocks)-1]
 		_dat.RemoveMemberRoleMocks = append(_dat.RemoveMemberRoleMocks, fn)
@@ -21097,14 +21318,14 @@ func (_recv *clientRest) _RemoveMemberRole_Do(fn func(snowflake.ID, snowflake.ID
 	}
 }
 
-func (clientRest) _RemoveMemberRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _RemoveMemberRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveMemberRoleMocks) < 2 {
-		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveMemberRoleMocks = _dat.RemoveMemberRoleMocks[:len(_dat.RemoveMemberRoleMocks)-1]
 		_dat.RemoveMemberRoleMocks = append(_dat.RemoveMemberRoleMocks, fn)
@@ -21114,7 +21335,7 @@ func (clientRest) _RemoveMemberRole_DoAll(t *testing.T, fn func(snowflake.ID, sn
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.RemoveMemberRoleMocks = []func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -21129,11 +21350,11 @@ func (clientRest) _RemoveMemberRole_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RemoveMemberRole_Return(r0 error) {
-	_recv._RemoveMemberRole_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._RemoveMemberRole_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _RemoveMemberRole_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._RemoveMemberRole_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._RemoveMemberRole_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _RemoveMemberRole_Calls() []_clientRest_RemoveMemberRole_Call {
@@ -21165,7 +21386,6 @@ func (clientRest) _RemoveMemberRole_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RemoveOwnReaction(channelID snowflake.ID, messageID snowflake.ID, emoji string, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.RemoveOwnReaction: nil pointer receiver")
@@ -21176,7 +21396,7 @@ func (_recv *clientRest) RemoveOwnReaction(channelID snowflake.ID, messageID sno
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveOwnReactionCalls = append(_all.RemoveOwnReactionCalls, _clientRest_RemoveOwnReaction_Call{channelID, messageID, emoji, opts})
-	var _fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error
 	if len(_dat.RemoveOwnReactionMocks) > 0 {
 		_fn = _dat.RemoveOwnReactionMocks[0]
 		if len(_dat.RemoveOwnReactionMocks) > 1 {
@@ -21195,7 +21415,7 @@ func (_recv *clientRest) RemoveOwnReaction(channelID snowflake.ID, messageID sno
 	return _fn(channelID, messageID, emoji, opts...)
 }
 
-func (_recv *clientRest) _RemoveOwnReaction_Do(fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _RemoveOwnReaction_Do(fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.RemoveOwnReaction: nil pointer receiver")
 	}
@@ -21203,9 +21423,9 @@ func (_recv *clientRest) _RemoveOwnReaction_Do(fn func(snowflake.ID, snowflake.I
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveOwnReactionMocks) < 2 {
-		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveOwnReactionMocks = _dat.RemoveOwnReactionMocks[:len(_dat.RemoveOwnReactionMocks)-1]
 		_dat.RemoveOwnReactionMocks = append(_dat.RemoveOwnReactionMocks, fn)
@@ -21213,14 +21433,14 @@ func (_recv *clientRest) _RemoveOwnReaction_Do(fn func(snowflake.ID, snowflake.I
 	}
 }
 
-func (clientRest) _RemoveOwnReaction_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error)) {
+func (clientRest) _RemoveOwnReaction_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveOwnReactionMocks) < 2 {
-		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveOwnReactionMocks = _dat.RemoveOwnReactionMocks[:len(_dat.RemoveOwnReactionMocks)-1]
 		_dat.RemoveOwnReactionMocks = append(_dat.RemoveOwnReactionMocks, fn)
@@ -21230,7 +21450,7 @@ func (clientRest) _RemoveOwnReaction_DoAll(t *testing.T, fn func(snowflake.ID, s
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error){}
+			_dat.RemoveOwnReactionMocks = []func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -21245,11 +21465,11 @@ func (clientRest) _RemoveOwnReaction_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RemoveOwnReaction_Return(r0 error) {
-	_recv._RemoveOwnReaction_Do(func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	_recv._RemoveOwnReaction_Do(func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _RemoveOwnReaction_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._RemoveOwnReaction_DoAll(t, func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._RemoveOwnReaction_DoAll(t, func(snowflake.ID, snowflake.ID, string, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _RemoveOwnReaction_Calls() []_clientRest_RemoveOwnReaction_Call {
@@ -21281,7 +21501,6 @@ func (clientRest) _RemoveOwnReaction_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RemoveThreadMember(threadID snowflake.ID, userID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.RemoveThreadMember: nil pointer receiver")
@@ -21292,7 +21511,7 @@ func (_recv *clientRest) RemoveThreadMember(threadID snowflake.ID, userID snowfl
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveThreadMemberCalls = append(_all.RemoveThreadMemberCalls, _clientRest_RemoveThreadMember_Call{threadID, userID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.RemoveThreadMemberMocks) > 0 {
 		_fn = _dat.RemoveThreadMemberMocks[0]
 		if len(_dat.RemoveThreadMemberMocks) > 1 {
@@ -21311,7 +21530,7 @@ func (_recv *clientRest) RemoveThreadMember(threadID snowflake.ID, userID snowfl
 	return _fn(threadID, userID, opts...)
 }
 
-func (_recv *clientRest) _RemoveThreadMember_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _RemoveThreadMember_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.RemoveThreadMember: nil pointer receiver")
 	}
@@ -21319,9 +21538,9 @@ func (_recv *clientRest) _RemoveThreadMember_Do(fn func(snowflake.ID, snowflake.
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveThreadMemberMocks) < 2 {
-		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveThreadMemberMocks = _dat.RemoveThreadMemberMocks[:len(_dat.RemoveThreadMemberMocks)-1]
 		_dat.RemoveThreadMemberMocks = append(_dat.RemoveThreadMemberMocks, fn)
@@ -21329,14 +21548,14 @@ func (_recv *clientRest) _RemoveThreadMember_Do(fn func(snowflake.ID, snowflake.
 	}
 }
 
-func (clientRest) _RemoveThreadMember_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _RemoveThreadMember_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveThreadMemberMocks) < 2 {
-		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveThreadMemberMocks = _dat.RemoveThreadMemberMocks[:len(_dat.RemoveThreadMemberMocks)-1]
 		_dat.RemoveThreadMemberMocks = append(_dat.RemoveThreadMemberMocks, fn)
@@ -21346,7 +21565,7 @@ func (clientRest) _RemoveThreadMember_DoAll(t *testing.T, fn func(snowflake.ID, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.RemoveThreadMemberMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -21361,11 +21580,11 @@ func (clientRest) _RemoveThreadMember_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RemoveThreadMember_Return(r0 error) {
-	_recv._RemoveThreadMember_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._RemoveThreadMember_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _RemoveThreadMember_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._RemoveThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._RemoveThreadMember_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _RemoveThreadMember_Calls() []_clientRest_RemoveThreadMember_Call {
@@ -21397,7 +21616,6 @@ func (clientRest) _RemoveThreadMember_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) RemoveUserReaction(channelID snowflake.ID, messageID snowflake.ID, emoji string, userID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.RemoveUserReaction: nil pointer receiver")
@@ -21408,7 +21626,7 @@ func (_recv *clientRest) RemoveUserReaction(channelID snowflake.ID, messageID sn
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.RemoveUserReactionCalls = append(_all.RemoveUserReactionCalls, _clientRest_RemoveUserReaction_Call{channelID, messageID, emoji, userID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.RemoveUserReactionMocks) > 0 {
 		_fn = _dat.RemoveUserReactionMocks[0]
 		if len(_dat.RemoveUserReactionMocks) > 1 {
@@ -21427,7 +21645,7 @@ func (_recv *clientRest) RemoveUserReaction(channelID snowflake.ID, messageID sn
 	return _fn(channelID, messageID, emoji, userID, opts...)
 }
 
-func (_recv *clientRest) _RemoveUserReaction_Do(fn func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _RemoveUserReaction_Do(fn func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.RemoveUserReaction: nil pointer receiver")
 	}
@@ -21435,9 +21653,9 @@ func (_recv *clientRest) _RemoveUserReaction_Do(fn func(snowflake.ID, snowflake.
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveUserReactionMocks) < 2 {
-		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveUserReactionMocks = _dat.RemoveUserReactionMocks[:len(_dat.RemoveUserReactionMocks)-1]
 		_dat.RemoveUserReactionMocks = append(_dat.RemoveUserReactionMocks, fn)
@@ -21445,14 +21663,14 @@ func (_recv *clientRest) _RemoveUserReaction_Do(fn func(snowflake.ID, snowflake.
 	}
 }
 
-func (clientRest) _RemoveUserReaction_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _RemoveUserReaction_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.RemoveUserReactionMocks) < 2 {
-		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.RemoveUserReactionMocks = _dat.RemoveUserReactionMocks[:len(_dat.RemoveUserReactionMocks)-1]
 		_dat.RemoveUserReactionMocks = append(_dat.RemoveUserReactionMocks, fn)
@@ -21462,7 +21680,7 @@ func (clientRest) _RemoveUserReaction_DoAll(t *testing.T, fn func(snowflake.ID, 
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.RemoveUserReactionMocks = []func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -21477,11 +21695,11 @@ func (clientRest) _RemoveUserReaction_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _RemoveUserReaction_Return(r0 error) {
-	_recv._RemoveUserReaction_Do(func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._RemoveUserReaction_Do(func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _RemoveUserReaction_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._RemoveUserReaction_DoAll(t, func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._RemoveUserReaction_DoAll(t, func(snowflake.ID, snowflake.ID, string, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _RemoveUserReaction_Calls() []_clientRest_RemoveUserReaction_Call {
@@ -21512,7 +21730,6 @@ func (clientRest) _RemoveUserReaction_BubbleCalls(t *testing.T) {
 		_dat.RemoveUserReactionCalls = []_clientRest_RemoveUserReaction_Call{}
 	})
 }
-
 
 func (_recv *clientRest) SearchMembers(guildID snowflake.ID, query string, limit int, opts ...rest.RequestOpt) ([]discord.Member, error) {
 	if _recv == nil {
@@ -21629,7 +21846,6 @@ func (clientRest) _SearchMembers_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) SendSoundboardSound(channelID snowflake.ID, sendSound discord.SendSoundboardSound, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.SendSoundboardSound: nil pointer receiver")
@@ -21640,7 +21856,7 @@ func (_recv *clientRest) SendSoundboardSound(channelID snowflake.ID, sendSound d
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.SendSoundboardSoundCalls = append(_all.SendSoundboardSoundCalls, _clientRest_SendSoundboardSound_Call{channelID, sendSound, opts})
-	var _fn func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error
 	if len(_dat.SendSoundboardSoundMocks) > 0 {
 		_fn = _dat.SendSoundboardSoundMocks[0]
 		if len(_dat.SendSoundboardSoundMocks) > 1 {
@@ -21659,7 +21875,7 @@ func (_recv *clientRest) SendSoundboardSound(channelID snowflake.ID, sendSound d
 	return _fn(channelID, sendSound, opts...)
 }
 
-func (_recv *clientRest) _SendSoundboardSound_Do(fn func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _SendSoundboardSound_Do(fn func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.SendSoundboardSound: nil pointer receiver")
 	}
@@ -21667,9 +21883,9 @@ func (_recv *clientRest) _SendSoundboardSound_Do(fn func(snowflake.ID, discord.S
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error){}
+		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error{}
 	} else if len(_dat.SendSoundboardSoundMocks) < 2 {
-		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error){fn, fn}
+		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.SendSoundboardSoundMocks = _dat.SendSoundboardSoundMocks[:len(_dat.SendSoundboardSoundMocks)-1]
 		_dat.SendSoundboardSoundMocks = append(_dat.SendSoundboardSoundMocks, fn)
@@ -21677,14 +21893,14 @@ func (_recv *clientRest) _SendSoundboardSound_Do(fn func(snowflake.ID, discord.S
 	}
 }
 
-func (clientRest) _SendSoundboardSound_DoAll(t *testing.T, fn func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error)) {
+func (clientRest) _SendSoundboardSound_DoAll(t *testing.T, fn func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error){}
+		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error{}
 	} else if len(_dat.SendSoundboardSoundMocks) < 2 {
-		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error){fn, fn}
+		_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.SendSoundboardSoundMocks = _dat.SendSoundboardSoundMocks[:len(_dat.SendSoundboardSoundMocks)-1]
 		_dat.SendSoundboardSoundMocks = append(_dat.SendSoundboardSoundMocks, fn)
@@ -21694,7 +21910,7 @@ func (clientRest) _SendSoundboardSound_DoAll(t *testing.T, fn func(snowflake.ID,
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error){}
+			_dat.SendSoundboardSoundMocks = []func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -21709,11 +21925,11 @@ func (clientRest) _SendSoundboardSound_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _SendSoundboardSound_Return(r0 error) {
-	_recv._SendSoundboardSound_Do(func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error) { return r0 })
+	_recv._SendSoundboardSound_Do(func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _SendSoundboardSound_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._SendSoundboardSound_DoAll(t, func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._SendSoundboardSound_DoAll(t, func(snowflake.ID, discord.SendSoundboardSound, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _SendSoundboardSound_Calls() []_clientRest_SendSoundboardSound_Call {
@@ -21745,7 +21961,6 @@ func (clientRest) _SendSoundboardSound_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) SendTyping(channelID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.SendTyping: nil pointer receiver")
@@ -21756,7 +21971,7 @@ func (_recv *clientRest) SendTyping(channelID snowflake.ID, opts ...rest.Request
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.SendTypingCalls = append(_all.SendTypingCalls, _clientRest_SendTyping_Call{channelID, opts})
-	var _fn func(snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.SendTypingMocks) > 0 {
 		_fn = _dat.SendTypingMocks[0]
 		if len(_dat.SendTypingMocks) > 1 {
@@ -21775,7 +21990,7 @@ func (_recv *clientRest) SendTyping(channelID snowflake.ID, opts ...rest.Request
 	return _fn(channelID, opts...)
 }
 
-func (_recv *clientRest) _SendTyping_Do(fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _SendTyping_Do(fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.SendTyping: nil pointer receiver")
 	}
@@ -21783,9 +21998,9 @@ func (_recv *clientRest) _SendTyping_Do(fn func(snowflake.ID, ...rest.RequestOpt
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.SendTypingMocks) < 2 {
-		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.SendTypingMocks = _dat.SendTypingMocks[:len(_dat.SendTypingMocks)-1]
 		_dat.SendTypingMocks = append(_dat.SendTypingMocks, fn)
@@ -21793,14 +22008,14 @@ func (_recv *clientRest) _SendTyping_Do(fn func(snowflake.ID, ...rest.RequestOpt
 	}
 }
 
-func (clientRest) _SendTyping_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _SendTyping_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.SendTypingMocks) < 2 {
-		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.SendTypingMocks = _dat.SendTypingMocks[:len(_dat.SendTypingMocks)-1]
 		_dat.SendTypingMocks = append(_dat.SendTypingMocks, fn)
@@ -21810,7 +22025,7 @@ func (clientRest) _SendTyping_DoAll(t *testing.T, fn func(snowflake.ID, ...rest.
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.SendTypingMocks = []func(snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -21825,11 +22040,11 @@ func (clientRest) _SendTyping_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _SendTyping_Return(r0 error) {
-	_recv._SendTyping_Do(func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._SendTyping_Do(func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _SendTyping_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._SendTyping_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._SendTyping_DoAll(t, func(snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _SendTyping_Calls() []_clientRest_SendTyping_Call {
@@ -21860,7 +22075,6 @@ func (clientRest) _SendTyping_BubbleCalls(t *testing.T) {
 		_dat.SendTypingCalls = []_clientRest_SendTyping_Call{}
 	})
 }
-
 
 func (_recv *clientRest) SetGlobalCommands(applicationID snowflake.ID, commandCreates []discord.ApplicationCommandCreate, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
 	if _recv == nil {
@@ -21933,19 +22147,27 @@ func (clientRest) _SetGlobalCommands_DoAll(t *testing.T, fn func(snowflake.ID, [
 }
 
 func (_recv *clientRest) _SetGlobalCommands_Stub() {
-	_recv._SetGlobalCommands_Do(func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) { return })
+	_recv._SetGlobalCommands_Do(func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _SetGlobalCommands_StubAll(t *testing.T) {
-	new(clientRest)._SetGlobalCommands_DoAll(t, func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._SetGlobalCommands_DoAll(t, func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _SetGlobalCommands_Return(r0 []discord.ApplicationCommand, r1 error) {
-	_recv._SetGlobalCommands_Do(func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._SetGlobalCommands_Do(func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _SetGlobalCommands_ReturnAll(t *testing.T, r0 []discord.ApplicationCommand, r1 error) {
-	new(clientRest)._SetGlobalCommands_DoAll(t, func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._SetGlobalCommands_DoAll(t, func(snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _SetGlobalCommands_Calls() []_clientRest_SetGlobalCommands_Call {
@@ -21976,7 +22198,6 @@ func (clientRest) _SetGlobalCommands_BubbleCalls(t *testing.T) {
 		_dat.SetGlobalCommandsCalls = []_clientRest_SetGlobalCommands_Call{}
 	})
 }
-
 
 func (_recv *clientRest) SetGuildCommandPermissions(bearerToken string, applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, commandPermissions []discord.ApplicationCommandPermission, opts ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) {
 	if _recv == nil {
@@ -22049,19 +22270,27 @@ func (clientRest) _SetGuildCommandPermissions_DoAll(t *testing.T, fn func(string
 }
 
 func (_recv *clientRest) _SetGuildCommandPermissions_Stub() {
-	_recv._SetGuildCommandPermissions_Do(func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) { return })
+	_recv._SetGuildCommandPermissions_Do(func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _SetGuildCommandPermissions_StubAll(t *testing.T) {
-	new(clientRest)._SetGuildCommandPermissions_DoAll(t, func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) { return })
+	new(clientRest)._SetGuildCommandPermissions_DoAll(t, func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (r0 *discord.ApplicationCommandPermissions, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _SetGuildCommandPermissions_Return(r0 *discord.ApplicationCommandPermissions, r1 error) {
-	_recv._SetGuildCommandPermissions_Do(func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) { return r0, r1 })
+	_recv._SetGuildCommandPermissions_Do(func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _SetGuildCommandPermissions_ReturnAll(t *testing.T, r0 *discord.ApplicationCommandPermissions, r1 error) {
-	new(clientRest)._SetGuildCommandPermissions_DoAll(t, func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) { return r0, r1 })
+	new(clientRest)._SetGuildCommandPermissions_DoAll(t, func(string, snowflake.ID, snowflake.ID, snowflake.ID, []discord.ApplicationCommandPermission, ...rest.RequestOpt) (*discord.ApplicationCommandPermissions, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _SetGuildCommandPermissions_Calls() []_clientRest_SetGuildCommandPermissions_Call {
@@ -22092,7 +22321,6 @@ func (clientRest) _SetGuildCommandPermissions_BubbleCalls(t *testing.T) {
 		_dat.SetGuildCommandPermissionsCalls = []_clientRest_SetGuildCommandPermissions_Call{}
 	})
 }
-
 
 func (_recv *clientRest) SetGuildCommands(applicationID snowflake.ID, guildID snowflake.ID, commands []discord.ApplicationCommandCreate, opts ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
 	if _recv == nil {
@@ -22165,19 +22393,27 @@ func (clientRest) _SetGuildCommands_DoAll(t *testing.T, fn func(snowflake.ID, sn
 }
 
 func (_recv *clientRest) _SetGuildCommands_Stub() {
-	_recv._SetGuildCommands_Do(func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) { return })
+	_recv._SetGuildCommands_Do(func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _SetGuildCommands_StubAll(t *testing.T) {
-	new(clientRest)._SetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._SetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) (r0 []discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _SetGuildCommands_Return(r0 []discord.ApplicationCommand, r1 error) {
-	_recv._SetGuildCommands_Do(func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._SetGuildCommands_Do(func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _SetGuildCommands_ReturnAll(t *testing.T, r0 []discord.ApplicationCommand, r1 error) {
-	new(clientRest)._SetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._SetGuildCommands_DoAll(t, func(snowflake.ID, snowflake.ID, []discord.ApplicationCommandCreate, ...rest.RequestOpt) ([]discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _SetGuildCommands_Calls() []_clientRest_SetGuildCommands_Call {
@@ -22208,7 +22444,6 @@ func (clientRest) _SetGuildCommands_BubbleCalls(t *testing.T) {
 		_dat.SetGuildCommandsCalls = []_clientRest_SetGuildCommands_Call{}
 	})
 }
-
 
 func (_recv *clientRest) SyncGuildTemplate(guildID snowflake.ID, templateCode string, opts ...rest.RequestOpt) (*discord.GuildTemplate, error) {
 	if _recv == nil {
@@ -22325,7 +22560,6 @@ func (clientRest) _SyncGuildTemplate_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UnpinMessage(channelID snowflake.ID, messageID snowflake.ID, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.UnpinMessage: nil pointer receiver")
@@ -22336,7 +22570,7 @@ func (_recv *clientRest) UnpinMessage(channelID snowflake.ID, messageID snowflak
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.UnpinMessageCalls = append(_all.UnpinMessageCalls, _clientRest_UnpinMessage_Call{channelID, messageID, opts})
-	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error
 	if len(_dat.UnpinMessageMocks) > 0 {
 		_fn = _dat.UnpinMessageMocks[0]
 		if len(_dat.UnpinMessageMocks) > 1 {
@@ -22355,7 +22589,7 @@ func (_recv *clientRest) UnpinMessage(channelID snowflake.ID, messageID snowflak
 	return _fn(channelID, messageID, opts...)
 }
 
-func (_recv *clientRest) _UnpinMessage_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _UnpinMessage_Do(fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.UnpinMessage: nil pointer receiver")
 	}
@@ -22363,9 +22597,9 @@ func (_recv *clientRest) _UnpinMessage_Do(fn func(snowflake.ID, snowflake.ID, ..
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.UnpinMessageMocks) < 2 {
-		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UnpinMessageMocks = _dat.UnpinMessageMocks[:len(_dat.UnpinMessageMocks)-1]
 		_dat.UnpinMessageMocks = append(_dat.UnpinMessageMocks, fn)
@@ -22373,14 +22607,14 @@ func (_recv *clientRest) _UnpinMessage_Do(fn func(snowflake.ID, snowflake.ID, ..
 	}
 }
 
-func (clientRest) _UnpinMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error)) {
+func (clientRest) _UnpinMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 	} else if len(_dat.UnpinMessageMocks) < 2 {
-		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UnpinMessageMocks = _dat.UnpinMessageMocks[:len(_dat.UnpinMessageMocks)-1]
 		_dat.UnpinMessageMocks = append(_dat.UnpinMessageMocks, fn)
@@ -22390,7 +22624,7 @@ func (clientRest) _UnpinMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowfl
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error){}
+			_dat.UnpinMessageMocks = []func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -22405,11 +22639,11 @@ func (clientRest) _UnpinMessage_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _UnpinMessage_Return(r0 error) {
-	_recv._UnpinMessage_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	_recv._UnpinMessage_Do(func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _UnpinMessage_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._UnpinMessage_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._UnpinMessage_DoAll(t, func(snowflake.ID, snowflake.ID, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _UnpinMessage_Calls() []_clientRest_UnpinMessage_Call {
@@ -22440,7 +22674,6 @@ func (clientRest) _UnpinMessage_BubbleCalls(t *testing.T) {
 		_dat.UnpinMessageCalls = []_clientRest_UnpinMessage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateApplicationEmoji(applicationID snowflake.ID, emojiID snowflake.ID, emojiUpdate discord.EmojiUpdate, opts ...rest.RequestOpt) (*discord.Emoji, error) {
 	if _recv == nil {
@@ -22513,19 +22746,27 @@ func (clientRest) _UpdateApplicationEmoji_DoAll(t *testing.T, fn func(snowflake.
 }
 
 func (_recv *clientRest) _UpdateApplicationEmoji_Stub() {
-	_recv._UpdateApplicationEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) { return })
+	_recv._UpdateApplicationEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateApplicationEmoji_StubAll(t *testing.T) {
-	new(clientRest)._UpdateApplicationEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) { return })
+	new(clientRest)._UpdateApplicationEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateApplicationEmoji_Return(r0 *discord.Emoji, r1 error) {
-	_recv._UpdateApplicationEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) { return r0, r1 })
+	_recv._UpdateApplicationEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateApplicationEmoji_ReturnAll(t *testing.T, r0 *discord.Emoji, r1 error) {
-	new(clientRest)._UpdateApplicationEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) { return r0, r1 })
+	new(clientRest)._UpdateApplicationEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateApplicationEmoji_Calls() []_clientRest_UpdateApplicationEmoji_Call {
@@ -22556,7 +22797,6 @@ func (clientRest) _UpdateApplicationEmoji_BubbleCalls(t *testing.T) {
 		_dat.UpdateApplicationEmojiCalls = []_clientRest_UpdateApplicationEmoji_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateApplicationRoleConnectionMetadata(applicationID snowflake.ID, newRecords []discord.ApplicationRoleConnectionMetadata, opts ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) {
 	if _recv == nil {
@@ -22629,19 +22869,27 @@ func (clientRest) _UpdateApplicationRoleConnectionMetadata_DoAll(t *testing.T, f
 }
 
 func (_recv *clientRest) _UpdateApplicationRoleConnectionMetadata_Stub() {
-	_recv._UpdateApplicationRoleConnectionMetadata_Do(func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) { return })
+	_recv._UpdateApplicationRoleConnectionMetadata_Do(func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateApplicationRoleConnectionMetadata_StubAll(t *testing.T) {
-	new(clientRest)._UpdateApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) { return })
+	new(clientRest)._UpdateApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) (r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateApplicationRoleConnectionMetadata_Return(r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
-	_recv._UpdateApplicationRoleConnectionMetadata_Do(func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) { return r0, r1 })
+	_recv._UpdateApplicationRoleConnectionMetadata_Do(func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateApplicationRoleConnectionMetadata_ReturnAll(t *testing.T, r0 []discord.ApplicationRoleConnectionMetadata, r1 error) {
-	new(clientRest)._UpdateApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) { return r0, r1 })
+	new(clientRest)._UpdateApplicationRoleConnectionMetadata_DoAll(t, func(snowflake.ID, []discord.ApplicationRoleConnectionMetadata, ...rest.RequestOpt) ([]discord.ApplicationRoleConnectionMetadata, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateApplicationRoleConnectionMetadata_Calls() []_clientRest_UpdateApplicationRoleConnectionMetadata_Call {
@@ -22672,7 +22920,6 @@ func (clientRest) _UpdateApplicationRoleConnectionMetadata_BubbleCalls(t *testin
 		_dat.UpdateApplicationRoleConnectionMetadataCalls = []_clientRest_UpdateApplicationRoleConnectionMetadata_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateAutoModerationRule(guildID snowflake.ID, ruleID snowflake.ID, ruleUpdate discord.AutoModerationRuleUpdate, opts ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
 	if _recv == nil {
@@ -22745,19 +22992,27 @@ func (clientRest) _UpdateAutoModerationRule_DoAll(t *testing.T, fn func(snowflak
 }
 
 func (_recv *clientRest) _UpdateAutoModerationRule_Stub() {
-	_recv._UpdateAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) { return })
+	_recv._UpdateAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateAutoModerationRule_StubAll(t *testing.T) {
-	new(clientRest)._UpdateAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) { return })
+	new(clientRest)._UpdateAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (r0 *discord.AutoModerationRule, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateAutoModerationRule_Return(r0 *discord.AutoModerationRule, r1 error) {
-	_recv._UpdateAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) { return r0, r1 })
+	_recv._UpdateAutoModerationRule_Do(func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateAutoModerationRule_ReturnAll(t *testing.T, r0 *discord.AutoModerationRule, r1 error) {
-	new(clientRest)._UpdateAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) { return r0, r1 })
+	new(clientRest)._UpdateAutoModerationRule_DoAll(t, func(snowflake.ID, snowflake.ID, discord.AutoModerationRuleUpdate, ...rest.RequestOpt) (*discord.AutoModerationRule, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateAutoModerationRule_Calls() []_clientRest_UpdateAutoModerationRule_Call {
@@ -22788,7 +23043,6 @@ func (clientRest) _UpdateAutoModerationRule_BubbleCalls(t *testing.T) {
 		_dat.UpdateAutoModerationRuleCalls = []_clientRest_UpdateAutoModerationRule_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateChannel(channelID snowflake.ID, channelUpdate discord.ChannelUpdate, opts ...rest.RequestOpt) (discord.Channel, error) {
 	if _recv == nil {
@@ -22905,7 +23159,6 @@ func (clientRest) _UpdateChannel_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UpdateChannelPositions(guildID snowflake.ID, guildChannelPositionUpdates []discord.GuildChannelPositionUpdate, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.UpdateChannelPositions: nil pointer receiver")
@@ -22916,7 +23169,7 @@ func (_recv *clientRest) UpdateChannelPositions(guildID snowflake.ID, guildChann
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.UpdateChannelPositionsCalls = append(_all.UpdateChannelPositionsCalls, _clientRest_UpdateChannelPositions_Call{guildID, guildChannelPositionUpdates, opts})
-	var _fn func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error
 	if len(_dat.UpdateChannelPositionsMocks) > 0 {
 		_fn = _dat.UpdateChannelPositionsMocks[0]
 		if len(_dat.UpdateChannelPositionsMocks) > 1 {
@@ -22935,7 +23188,7 @@ func (_recv *clientRest) UpdateChannelPositions(guildID snowflake.ID, guildChann
 	return _fn(guildID, guildChannelPositionUpdates, opts...)
 }
 
-func (_recv *clientRest) _UpdateChannelPositions_Do(fn func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _UpdateChannelPositions_Do(fn func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.UpdateChannelPositions: nil pointer receiver")
 	}
@@ -22943,9 +23196,9 @@ func (_recv *clientRest) _UpdateChannelPositions_Do(fn func(snowflake.ID, []disc
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdateChannelPositionsMocks) < 2 {
-		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdateChannelPositionsMocks = _dat.UpdateChannelPositionsMocks[:len(_dat.UpdateChannelPositionsMocks)-1]
 		_dat.UpdateChannelPositionsMocks = append(_dat.UpdateChannelPositionsMocks, fn)
@@ -22953,14 +23206,14 @@ func (_recv *clientRest) _UpdateChannelPositions_Do(fn func(snowflake.ID, []disc
 	}
 }
 
-func (clientRest) _UpdateChannelPositions_DoAll(t *testing.T, fn func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error)) {
+func (clientRest) _UpdateChannelPositions_DoAll(t *testing.T, fn func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdateChannelPositionsMocks) < 2 {
-		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdateChannelPositionsMocks = _dat.UpdateChannelPositionsMocks[:len(_dat.UpdateChannelPositionsMocks)-1]
 		_dat.UpdateChannelPositionsMocks = append(_dat.UpdateChannelPositionsMocks, fn)
@@ -22970,7 +23223,7 @@ func (clientRest) _UpdateChannelPositions_DoAll(t *testing.T, fn func(snowflake.
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error){}
+			_dat.UpdateChannelPositionsMocks = []func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -22985,11 +23238,11 @@ func (clientRest) _UpdateChannelPositions_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _UpdateChannelPositions_Return(r0 error) {
-	_recv._UpdateChannelPositions_Do(func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error) { return r0 })
+	_recv._UpdateChannelPositions_Do(func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _UpdateChannelPositions_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._UpdateChannelPositions_DoAll(t, func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._UpdateChannelPositions_DoAll(t, func(snowflake.ID, []discord.GuildChannelPositionUpdate, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _UpdateChannelPositions_Calls() []_clientRest_UpdateChannelPositions_Call {
@@ -23020,7 +23273,6 @@ func (clientRest) _UpdateChannelPositions_BubbleCalls(t *testing.T) {
 		_dat.UpdateChannelPositionsCalls = []_clientRest_UpdateChannelPositions_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateCurrentApplication(applicationUpdate discord.ApplicationUpdate, opts ...rest.RequestOpt) (*discord.Application, error) {
 	if _recv == nil {
@@ -23137,7 +23389,6 @@ func (clientRest) _UpdateCurrentApplication_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UpdateCurrentMember(guildID snowflake.ID, nick string, opts ...rest.RequestOpt) (*string, error) {
 	if _recv == nil {
 		panic("clientRest.UpdateCurrentMember: nil pointer receiver")
@@ -23252,7 +23503,6 @@ func (clientRest) _UpdateCurrentMember_BubbleCalls(t *testing.T) {
 		_dat.UpdateCurrentMemberCalls = []_clientRest_UpdateCurrentMember_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateCurrentUser(userUpdate discord.UserUpdate, opts ...rest.RequestOpt) (*discord.OAuth2User, error) {
 	if _recv == nil {
@@ -23369,7 +23619,6 @@ func (clientRest) _UpdateCurrentUser_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UpdateCurrentUserApplicationRoleConnection(bearerToken string, applicationID snowflake.ID, connectionUpdate discord.ApplicationRoleConnectionUpdate, opts ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) {
 	if _recv == nil {
 		panic("clientRest.UpdateCurrentUserApplicationRoleConnection: nil pointer receiver")
@@ -23441,19 +23690,27 @@ func (clientRest) _UpdateCurrentUserApplicationRoleConnection_DoAll(t *testing.T
 }
 
 func (_recv *clientRest) _UpdateCurrentUserApplicationRoleConnection_Stub() {
-	_recv._UpdateCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) { return })
+	_recv._UpdateCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateCurrentUserApplicationRoleConnection_StubAll(t *testing.T) {
-	new(clientRest)._UpdateCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) { return })
+	new(clientRest)._UpdateCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (r0 *discord.ApplicationRoleConnection, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateCurrentUserApplicationRoleConnection_Return(r0 *discord.ApplicationRoleConnection, r1 error) {
-	_recv._UpdateCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) { return r0, r1 })
+	_recv._UpdateCurrentUserApplicationRoleConnection_Do(func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateCurrentUserApplicationRoleConnection_ReturnAll(t *testing.T, r0 *discord.ApplicationRoleConnection, r1 error) {
-	new(clientRest)._UpdateCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) { return r0, r1 })
+	new(clientRest)._UpdateCurrentUserApplicationRoleConnection_DoAll(t, func(string, snowflake.ID, discord.ApplicationRoleConnectionUpdate, ...rest.RequestOpt) (*discord.ApplicationRoleConnection, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateCurrentUserApplicationRoleConnection_Calls() []_clientRest_UpdateCurrentUserApplicationRoleConnection_Call {
@@ -23485,7 +23742,6 @@ func (clientRest) _UpdateCurrentUserApplicationRoleConnection_BubbleCalls(t *tes
 	})
 }
 
-
 func (_recv *clientRest) UpdateCurrentUserVoiceState(guildID snowflake.ID, currentUserVoiceStateUpdate discord.CurrentUserVoiceStateUpdate, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.UpdateCurrentUserVoiceState: nil pointer receiver")
@@ -23496,7 +23752,7 @@ func (_recv *clientRest) UpdateCurrentUserVoiceState(guildID snowflake.ID, curre
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.UpdateCurrentUserVoiceStateCalls = append(_all.UpdateCurrentUserVoiceStateCalls, _clientRest_UpdateCurrentUserVoiceState_Call{guildID, currentUserVoiceStateUpdate, opts})
-	var _fn func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error
 	if len(_dat.UpdateCurrentUserVoiceStateMocks) > 0 {
 		_fn = _dat.UpdateCurrentUserVoiceStateMocks[0]
 		if len(_dat.UpdateCurrentUserVoiceStateMocks) > 1 {
@@ -23515,7 +23771,7 @@ func (_recv *clientRest) UpdateCurrentUserVoiceState(guildID snowflake.ID, curre
 	return _fn(guildID, currentUserVoiceStateUpdate, opts...)
 }
 
-func (_recv *clientRest) _UpdateCurrentUserVoiceState_Do(fn func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _UpdateCurrentUserVoiceState_Do(fn func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.UpdateCurrentUserVoiceState: nil pointer receiver")
 	}
@@ -23523,9 +23779,9 @@ func (_recv *clientRest) _UpdateCurrentUserVoiceState_Do(fn func(snowflake.ID, d
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdateCurrentUserVoiceStateMocks) < 2 {
-		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdateCurrentUserVoiceStateMocks = _dat.UpdateCurrentUserVoiceStateMocks[:len(_dat.UpdateCurrentUserVoiceStateMocks)-1]
 		_dat.UpdateCurrentUserVoiceStateMocks = append(_dat.UpdateCurrentUserVoiceStateMocks, fn)
@@ -23533,14 +23789,14 @@ func (_recv *clientRest) _UpdateCurrentUserVoiceState_Do(fn func(snowflake.ID, d
 	}
 }
 
-func (clientRest) _UpdateCurrentUserVoiceState_DoAll(t *testing.T, fn func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error)) {
+func (clientRest) _UpdateCurrentUserVoiceState_DoAll(t *testing.T, fn func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdateCurrentUserVoiceStateMocks) < 2 {
-		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdateCurrentUserVoiceStateMocks = _dat.UpdateCurrentUserVoiceStateMocks[:len(_dat.UpdateCurrentUserVoiceStateMocks)-1]
 		_dat.UpdateCurrentUserVoiceStateMocks = append(_dat.UpdateCurrentUserVoiceStateMocks, fn)
@@ -23550,7 +23806,7 @@ func (clientRest) _UpdateCurrentUserVoiceState_DoAll(t *testing.T, fn func(snowf
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error){}
+			_dat.UpdateCurrentUserVoiceStateMocks = []func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -23565,11 +23821,11 @@ func (clientRest) _UpdateCurrentUserVoiceState_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _UpdateCurrentUserVoiceState_Return(r0 error) {
-	_recv._UpdateCurrentUserVoiceState_Do(func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error) { return r0 })
+	_recv._UpdateCurrentUserVoiceState_Do(func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _UpdateCurrentUserVoiceState_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._UpdateCurrentUserVoiceState_DoAll(t, func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._UpdateCurrentUserVoiceState_DoAll(t, func(snowflake.ID, discord.CurrentUserVoiceStateUpdate, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _UpdateCurrentUserVoiceState_Calls() []_clientRest_UpdateCurrentUserVoiceState_Call {
@@ -23600,7 +23856,6 @@ func (clientRest) _UpdateCurrentUserVoiceState_BubbleCalls(t *testing.T) {
 		_dat.UpdateCurrentUserVoiceStateCalls = []_clientRest_UpdateCurrentUserVoiceState_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateEmoji(guildID snowflake.ID, emojiID snowflake.ID, emojiUpdate discord.EmojiUpdate, opts ...rest.RequestOpt) (*discord.Emoji, error) {
 	if _recv == nil {
@@ -23673,19 +23928,27 @@ func (clientRest) _UpdateEmoji_DoAll(t *testing.T, fn func(snowflake.ID, snowfla
 }
 
 func (_recv *clientRest) _UpdateEmoji_Stub() {
-	_recv._UpdateEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) { return })
+	_recv._UpdateEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateEmoji_StubAll(t *testing.T) {
-	new(clientRest)._UpdateEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) { return })
+	new(clientRest)._UpdateEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (r0 *discord.Emoji, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateEmoji_Return(r0 *discord.Emoji, r1 error) {
-	_recv._UpdateEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) { return r0, r1 })
+	_recv._UpdateEmoji_Do(func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateEmoji_ReturnAll(t *testing.T, r0 *discord.Emoji, r1 error) {
-	new(clientRest)._UpdateEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) { return r0, r1 })
+	new(clientRest)._UpdateEmoji_DoAll(t, func(snowflake.ID, snowflake.ID, discord.EmojiUpdate, ...rest.RequestOpt) (*discord.Emoji, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateEmoji_Calls() []_clientRest_UpdateEmoji_Call {
@@ -23716,7 +23979,6 @@ func (clientRest) _UpdateEmoji_BubbleCalls(t *testing.T) {
 		_dat.UpdateEmojiCalls = []_clientRest_UpdateEmoji_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateFollowupMessage(applicationID snowflake.ID, interactionToken string, messageID snowflake.ID, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -23789,19 +24051,27 @@ func (clientRest) _UpdateFollowupMessage_DoAll(t *testing.T, fn func(snowflake.I
 }
 
 func (_recv *clientRest) _UpdateFollowupMessage_Stub() {
-	_recv._UpdateFollowupMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._UpdateFollowupMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateFollowupMessage_StubAll(t *testing.T) {
-	new(clientRest)._UpdateFollowupMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._UpdateFollowupMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateFollowupMessage_Return(r0 *discord.Message, r1 error) {
-	_recv._UpdateFollowupMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._UpdateFollowupMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateFollowupMessage_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._UpdateFollowupMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._UpdateFollowupMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateFollowupMessage_Calls() []_clientRest_UpdateFollowupMessage_Call {
@@ -23832,7 +24102,6 @@ func (clientRest) _UpdateFollowupMessage_BubbleCalls(t *testing.T) {
 		_dat.UpdateFollowupMessageCalls = []_clientRest_UpdateFollowupMessage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGlobalCommand(applicationID snowflake.ID, commandID snowflake.ID, commandUpdate discord.ApplicationCommandUpdate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error) {
 	if _recv == nil {
@@ -23905,19 +24174,27 @@ func (clientRest) _UpdateGlobalCommand_DoAll(t *testing.T, fn func(snowflake.ID,
 }
 
 func (_recv *clientRest) _UpdateGlobalCommand_Stub() {
-	_recv._UpdateGlobalCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	_recv._UpdateGlobalCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGlobalCommand_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._UpdateGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGlobalCommand_Return(r0 discord.ApplicationCommand, r1 error) {
-	_recv._UpdateGlobalCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._UpdateGlobalCommand_Do(func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGlobalCommand_ReturnAll(t *testing.T, r0 discord.ApplicationCommand, r1 error) {
-	new(clientRest)._UpdateGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._UpdateGlobalCommand_DoAll(t, func(snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGlobalCommand_Calls() []_clientRest_UpdateGlobalCommand_Call {
@@ -23948,7 +24225,6 @@ func (clientRest) _UpdateGlobalCommand_BubbleCalls(t *testing.T) {
 		_dat.UpdateGlobalCommandCalls = []_clientRest_UpdateGlobalCommand_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGuild(guildID snowflake.ID, guildUpdate discord.GuildUpdate, opts ...rest.RequestOpt) (*discord.RestGuild, error) {
 	if _recv == nil {
@@ -24065,7 +24341,6 @@ func (clientRest) _UpdateGuild_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UpdateGuildCommand(applicationID snowflake.ID, guildID snowflake.ID, commandID snowflake.ID, command discord.ApplicationCommandUpdate, opts ...rest.RequestOpt) (discord.ApplicationCommand, error) {
 	if _recv == nil {
 		panic("clientRest.UpdateGuildCommand: nil pointer receiver")
@@ -24137,19 +24412,27 @@ func (clientRest) _UpdateGuildCommand_DoAll(t *testing.T, fn func(snowflake.ID, 
 }
 
 func (_recv *clientRest) _UpdateGuildCommand_Stub() {
-	_recv._UpdateGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	_recv._UpdateGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGuildCommand_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) { return })
+	new(clientRest)._UpdateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (r0 discord.ApplicationCommand, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildCommand_Return(r0 discord.ApplicationCommand, r1 error) {
-	_recv._UpdateGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	_recv._UpdateGuildCommand_Do(func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGuildCommand_ReturnAll(t *testing.T, r0 discord.ApplicationCommand, r1 error) {
-	new(clientRest)._UpdateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) { return r0, r1 })
+	new(clientRest)._UpdateGuildCommand_DoAll(t, func(snowflake.ID, snowflake.ID, snowflake.ID, discord.ApplicationCommandUpdate, ...rest.RequestOpt) (discord.ApplicationCommand, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildCommand_Calls() []_clientRest_UpdateGuildCommand_Call {
@@ -24180,7 +24463,6 @@ func (clientRest) _UpdateGuildCommand_BubbleCalls(t *testing.T) {
 		_dat.UpdateGuildCommandCalls = []_clientRest_UpdateGuildCommand_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGuildIncidentActions(guildID snowflake.ID, actionsUpdate discord.GuildIncidentActionsUpdate, opts ...rest.RequestOpt) (*discord.GuildIncidentsData, error) {
 	if _recv == nil {
@@ -24253,19 +24535,27 @@ func (clientRest) _UpdateGuildIncidentActions_DoAll(t *testing.T, fn func(snowfl
 }
 
 func (_recv *clientRest) _UpdateGuildIncidentActions_Stub() {
-	_recv._UpdateGuildIncidentActions_Do(func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (r0 *discord.GuildIncidentsData, r1 error) { return })
+	_recv._UpdateGuildIncidentActions_Do(func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (r0 *discord.GuildIncidentsData, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGuildIncidentActions_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGuildIncidentActions_DoAll(t, func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (r0 *discord.GuildIncidentsData, r1 error) { return })
+	new(clientRest)._UpdateGuildIncidentActions_DoAll(t, func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (r0 *discord.GuildIncidentsData, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildIncidentActions_Return(r0 *discord.GuildIncidentsData, r1 error) {
-	_recv._UpdateGuildIncidentActions_Do(func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (*discord.GuildIncidentsData, error) { return r0, r1 })
+	_recv._UpdateGuildIncidentActions_Do(func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (*discord.GuildIncidentsData, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGuildIncidentActions_ReturnAll(t *testing.T, r0 *discord.GuildIncidentsData, r1 error) {
-	new(clientRest)._UpdateGuildIncidentActions_DoAll(t, func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (*discord.GuildIncidentsData, error) { return r0, r1 })
+	new(clientRest)._UpdateGuildIncidentActions_DoAll(t, func(snowflake.ID, discord.GuildIncidentActionsUpdate, ...rest.RequestOpt) (*discord.GuildIncidentsData, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildIncidentActions_Calls() []_clientRest_UpdateGuildIncidentActions_Call {
@@ -24296,7 +24586,6 @@ func (clientRest) _UpdateGuildIncidentActions_BubbleCalls(t *testing.T) {
 		_dat.UpdateGuildIncidentActionsCalls = []_clientRest_UpdateGuildIncidentActions_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGuildOnboarding(guildID snowflake.ID, onboardingUpdate discord.GuildOnboardingUpdate, opts ...rest.RequestOpt) (*discord.GuildOnboarding, error) {
 	if _recv == nil {
@@ -24369,19 +24658,27 @@ func (clientRest) _UpdateGuildOnboarding_DoAll(t *testing.T, fn func(snowflake.I
 }
 
 func (_recv *clientRest) _UpdateGuildOnboarding_Stub() {
-	_recv._UpdateGuildOnboarding_Do(func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (r0 *discord.GuildOnboarding, r1 error) { return })
+	_recv._UpdateGuildOnboarding_Do(func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (r0 *discord.GuildOnboarding, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGuildOnboarding_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGuildOnboarding_DoAll(t, func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (r0 *discord.GuildOnboarding, r1 error) { return })
+	new(clientRest)._UpdateGuildOnboarding_DoAll(t, func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (r0 *discord.GuildOnboarding, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildOnboarding_Return(r0 *discord.GuildOnboarding, r1 error) {
-	_recv._UpdateGuildOnboarding_Do(func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (*discord.GuildOnboarding, error) { return r0, r1 })
+	_recv._UpdateGuildOnboarding_Do(func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (*discord.GuildOnboarding, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGuildOnboarding_ReturnAll(t *testing.T, r0 *discord.GuildOnboarding, r1 error) {
-	new(clientRest)._UpdateGuildOnboarding_DoAll(t, func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (*discord.GuildOnboarding, error) { return r0, r1 })
+	new(clientRest)._UpdateGuildOnboarding_DoAll(t, func(snowflake.ID, discord.GuildOnboardingUpdate, ...rest.RequestOpt) (*discord.GuildOnboarding, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildOnboarding_Calls() []_clientRest_UpdateGuildOnboarding_Call {
@@ -24412,7 +24709,6 @@ func (clientRest) _UpdateGuildOnboarding_BubbleCalls(t *testing.T) {
 		_dat.UpdateGuildOnboardingCalls = []_clientRest_UpdateGuildOnboarding_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGuildScheduledEvent(guildID snowflake.ID, guildScheduledEventID snowflake.ID, guildScheduledEventUpdate discord.GuildScheduledEventUpdate, opts ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
 	if _recv == nil {
@@ -24485,19 +24781,27 @@ func (clientRest) _UpdateGuildScheduledEvent_DoAll(t *testing.T, fn func(snowfla
 }
 
 func (_recv *clientRest) _UpdateGuildScheduledEvent_Stub() {
-	_recv._UpdateGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) { return })
+	_recv._UpdateGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGuildScheduledEvent_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) { return })
+	new(clientRest)._UpdateGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (r0 *discord.GuildScheduledEvent, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildScheduledEvent_Return(r0 *discord.GuildScheduledEvent, r1 error) {
-	_recv._UpdateGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) { return r0, r1 })
+	_recv._UpdateGuildScheduledEvent_Do(func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGuildScheduledEvent_ReturnAll(t *testing.T, r0 *discord.GuildScheduledEvent, r1 error) {
-	new(clientRest)._UpdateGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) { return r0, r1 })
+	new(clientRest)._UpdateGuildScheduledEvent_DoAll(t, func(snowflake.ID, snowflake.ID, discord.GuildScheduledEventUpdate, ...rest.RequestOpt) (*discord.GuildScheduledEvent, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildScheduledEvent_Calls() []_clientRest_UpdateGuildScheduledEvent_Call {
@@ -24528,7 +24832,6 @@ func (clientRest) _UpdateGuildScheduledEvent_BubbleCalls(t *testing.T) {
 		_dat.UpdateGuildScheduledEventCalls = []_clientRest_UpdateGuildScheduledEvent_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGuildSoundboardSound(guildID snowflake.ID, soundID snowflake.ID, soundUpdate discord.SoundboardSoundUpdate, opts ...rest.RequestOpt) (*discord.SoundboardSound, error) {
 	if _recv == nil {
@@ -24601,19 +24904,27 @@ func (clientRest) _UpdateGuildSoundboardSound_DoAll(t *testing.T, fn func(snowfl
 }
 
 func (_recv *clientRest) _UpdateGuildSoundboardSound_Stub() {
-	_recv._UpdateGuildSoundboardSound_Do(func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) { return })
+	_recv._UpdateGuildSoundboardSound_Do(func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGuildSoundboardSound_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGuildSoundboardSound_DoAll(t, func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) { return })
+	new(clientRest)._UpdateGuildSoundboardSound_DoAll(t, func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (r0 *discord.SoundboardSound, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildSoundboardSound_Return(r0 *discord.SoundboardSound, r1 error) {
-	_recv._UpdateGuildSoundboardSound_Do(func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (*discord.SoundboardSound, error) { return r0, r1 })
+	_recv._UpdateGuildSoundboardSound_Do(func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (*discord.SoundboardSound, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGuildSoundboardSound_ReturnAll(t *testing.T, r0 *discord.SoundboardSound, r1 error) {
-	new(clientRest)._UpdateGuildSoundboardSound_DoAll(t, func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (*discord.SoundboardSound, error) { return r0, r1 })
+	new(clientRest)._UpdateGuildSoundboardSound_DoAll(t, func(snowflake.ID, snowflake.ID, discord.SoundboardSoundUpdate, ...rest.RequestOpt) (*discord.SoundboardSound, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildSoundboardSound_Calls() []_clientRest_UpdateGuildSoundboardSound_Call {
@@ -24644,7 +24955,6 @@ func (clientRest) _UpdateGuildSoundboardSound_BubbleCalls(t *testing.T) {
 		_dat.UpdateGuildSoundboardSoundCalls = []_clientRest_UpdateGuildSoundboardSound_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGuildTemplate(guildID snowflake.ID, templateCode string, guildTemplateUpdate discord.GuildTemplateUpdate, opts ...rest.RequestOpt) (*discord.GuildTemplate, error) {
 	if _recv == nil {
@@ -24717,19 +25027,27 @@ func (clientRest) _UpdateGuildTemplate_DoAll(t *testing.T, fn func(snowflake.ID,
 }
 
 func (_recv *clientRest) _UpdateGuildTemplate_Stub() {
-	_recv._UpdateGuildTemplate_Do(func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) { return })
+	_recv._UpdateGuildTemplate_Do(func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGuildTemplate_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGuildTemplate_DoAll(t, func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) { return })
+	new(clientRest)._UpdateGuildTemplate_DoAll(t, func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (r0 *discord.GuildTemplate, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildTemplate_Return(r0 *discord.GuildTemplate, r1 error) {
-	_recv._UpdateGuildTemplate_Do(func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (*discord.GuildTemplate, error) { return r0, r1 })
+	_recv._UpdateGuildTemplate_Do(func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (*discord.GuildTemplate, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGuildTemplate_ReturnAll(t *testing.T, r0 *discord.GuildTemplate, r1 error) {
-	new(clientRest)._UpdateGuildTemplate_DoAll(t, func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (*discord.GuildTemplate, error) { return r0, r1 })
+	new(clientRest)._UpdateGuildTemplate_DoAll(t, func(snowflake.ID, string, discord.GuildTemplateUpdate, ...rest.RequestOpt) (*discord.GuildTemplate, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildTemplate_Calls() []_clientRest_UpdateGuildTemplate_Call {
@@ -24760,7 +25078,6 @@ func (clientRest) _UpdateGuildTemplate_BubbleCalls(t *testing.T) {
 		_dat.UpdateGuildTemplateCalls = []_clientRest_UpdateGuildTemplate_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateGuildWelcomeScreen(guildID snowflake.ID, screenUpdate discord.GuildWelcomeScreenUpdate, opts ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error) {
 	if _recv == nil {
@@ -24833,19 +25150,27 @@ func (clientRest) _UpdateGuildWelcomeScreen_DoAll(t *testing.T, fn func(snowflak
 }
 
 func (_recv *clientRest) _UpdateGuildWelcomeScreen_Stub() {
-	_recv._UpdateGuildWelcomeScreen_Do(func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (r0 *discord.GuildWelcomeScreen, r1 error) { return })
+	_recv._UpdateGuildWelcomeScreen_Do(func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (r0 *discord.GuildWelcomeScreen, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateGuildWelcomeScreen_StubAll(t *testing.T) {
-	new(clientRest)._UpdateGuildWelcomeScreen_DoAll(t, func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (r0 *discord.GuildWelcomeScreen, r1 error) { return })
+	new(clientRest)._UpdateGuildWelcomeScreen_DoAll(t, func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (r0 *discord.GuildWelcomeScreen, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildWelcomeScreen_Return(r0 *discord.GuildWelcomeScreen, r1 error) {
-	_recv._UpdateGuildWelcomeScreen_Do(func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error) { return r0, r1 })
+	_recv._UpdateGuildWelcomeScreen_Do(func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateGuildWelcomeScreen_ReturnAll(t *testing.T, r0 *discord.GuildWelcomeScreen, r1 error) {
-	new(clientRest)._UpdateGuildWelcomeScreen_DoAll(t, func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error) { return r0, r1 })
+	new(clientRest)._UpdateGuildWelcomeScreen_DoAll(t, func(snowflake.ID, discord.GuildWelcomeScreenUpdate, ...rest.RequestOpt) (*discord.GuildWelcomeScreen, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateGuildWelcomeScreen_Calls() []_clientRest_UpdateGuildWelcomeScreen_Call {
@@ -24876,7 +25201,6 @@ func (clientRest) _UpdateGuildWelcomeScreen_BubbleCalls(t *testing.T) {
 		_dat.UpdateGuildWelcomeScreenCalls = []_clientRest_UpdateGuildWelcomeScreen_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateInteractionResponse(applicationID snowflake.ID, interactionToken string, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -24949,19 +25273,27 @@ func (clientRest) _UpdateInteractionResponse_DoAll(t *testing.T, fn func(snowfla
 }
 
 func (_recv *clientRest) _UpdateInteractionResponse_Stub() {
-	_recv._UpdateInteractionResponse_Do(func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._UpdateInteractionResponse_Do(func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateInteractionResponse_StubAll(t *testing.T) {
-	new(clientRest)._UpdateInteractionResponse_DoAll(t, func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._UpdateInteractionResponse_DoAll(t, func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateInteractionResponse_Return(r0 *discord.Message, r1 error) {
-	_recv._UpdateInteractionResponse_Do(func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._UpdateInteractionResponse_Do(func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateInteractionResponse_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._UpdateInteractionResponse_DoAll(t, func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._UpdateInteractionResponse_DoAll(t, func(snowflake.ID, string, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateInteractionResponse_Calls() []_clientRest_UpdateInteractionResponse_Call {
@@ -24992,7 +25324,6 @@ func (clientRest) _UpdateInteractionResponse_BubbleCalls(t *testing.T) {
 		_dat.UpdateInteractionResponseCalls = []_clientRest_UpdateInteractionResponse_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateMember(guildID snowflake.ID, userID snowflake.ID, memberUpdate discord.MemberUpdate, opts ...rest.RequestOpt) (*discord.Member, error) {
 	if _recv == nil {
@@ -25065,19 +25396,27 @@ func (clientRest) _UpdateMember_DoAll(t *testing.T, fn func(snowflake.ID, snowfl
 }
 
 func (_recv *clientRest) _UpdateMember_Stub() {
-	_recv._UpdateMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (r0 *discord.Member, r1 error) { return })
+	_recv._UpdateMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (r0 *discord.Member, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateMember_StubAll(t *testing.T) {
-	new(clientRest)._UpdateMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (r0 *discord.Member, r1 error) { return })
+	new(clientRest)._UpdateMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (r0 *discord.Member, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateMember_Return(r0 *discord.Member, r1 error) {
-	_recv._UpdateMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (*discord.Member, error) { return r0, r1 })
+	_recv._UpdateMember_Do(func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (*discord.Member, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateMember_ReturnAll(t *testing.T, r0 *discord.Member, r1 error) {
-	new(clientRest)._UpdateMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (*discord.Member, error) { return r0, r1 })
+	new(clientRest)._UpdateMember_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MemberUpdate, ...rest.RequestOpt) (*discord.Member, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateMember_Calls() []_clientRest_UpdateMember_Call {
@@ -25108,7 +25447,6 @@ func (clientRest) _UpdateMember_BubbleCalls(t *testing.T) {
 		_dat.UpdateMemberCalls = []_clientRest_UpdateMember_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateMessage(channelID snowflake.ID, messageID snowflake.ID, messageUpdate discord.MessageUpdate, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
@@ -25181,19 +25519,27 @@ func (clientRest) _UpdateMessage_DoAll(t *testing.T, fn func(snowflake.ID, snowf
 }
 
 func (_recv *clientRest) _UpdateMessage_Stub() {
-	_recv._UpdateMessage_Do(func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._UpdateMessage_Do(func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateMessage_StubAll(t *testing.T) {
-	new(clientRest)._UpdateMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._UpdateMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateMessage_Return(r0 *discord.Message, r1 error) {
-	_recv._UpdateMessage_Do(func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._UpdateMessage_Do(func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateMessage_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._UpdateMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._UpdateMessage_DoAll(t, func(snowflake.ID, snowflake.ID, discord.MessageUpdate, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateMessage_Calls() []_clientRest_UpdateMessage_Call {
@@ -25225,7 +25571,6 @@ func (clientRest) _UpdateMessage_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UpdatePermissionOverwrite(channelID snowflake.ID, overwriteID snowflake.ID, permissionOverwrite discord.PermissionOverwriteUpdate, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.UpdatePermissionOverwrite: nil pointer receiver")
@@ -25236,7 +25581,7 @@ func (_recv *clientRest) UpdatePermissionOverwrite(channelID snowflake.ID, overw
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.UpdatePermissionOverwriteCalls = append(_all.UpdatePermissionOverwriteCalls, _clientRest_UpdatePermissionOverwrite_Call{channelID, overwriteID, permissionOverwrite, opts})
-	var _fn func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error
 	if len(_dat.UpdatePermissionOverwriteMocks) > 0 {
 		_fn = _dat.UpdatePermissionOverwriteMocks[0]
 		if len(_dat.UpdatePermissionOverwriteMocks) > 1 {
@@ -25255,7 +25600,7 @@ func (_recv *clientRest) UpdatePermissionOverwrite(channelID snowflake.ID, overw
 	return _fn(channelID, overwriteID, permissionOverwrite, opts...)
 }
 
-func (_recv *clientRest) _UpdatePermissionOverwrite_Do(fn func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _UpdatePermissionOverwrite_Do(fn func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.UpdatePermissionOverwrite: nil pointer receiver")
 	}
@@ -25263,9 +25608,9 @@ func (_recv *clientRest) _UpdatePermissionOverwrite_Do(fn func(snowflake.ID, sno
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdatePermissionOverwriteMocks) < 2 {
-		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdatePermissionOverwriteMocks = _dat.UpdatePermissionOverwriteMocks[:len(_dat.UpdatePermissionOverwriteMocks)-1]
 		_dat.UpdatePermissionOverwriteMocks = append(_dat.UpdatePermissionOverwriteMocks, fn)
@@ -25273,14 +25618,14 @@ func (_recv *clientRest) _UpdatePermissionOverwrite_Do(fn func(snowflake.ID, sno
 	}
 }
 
-func (clientRest) _UpdatePermissionOverwrite_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error)) {
+func (clientRest) _UpdatePermissionOverwrite_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdatePermissionOverwriteMocks) < 2 {
-		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdatePermissionOverwriteMocks = _dat.UpdatePermissionOverwriteMocks[:len(_dat.UpdatePermissionOverwriteMocks)-1]
 		_dat.UpdatePermissionOverwriteMocks = append(_dat.UpdatePermissionOverwriteMocks, fn)
@@ -25290,26 +25635,34 @@ func (clientRest) _UpdatePermissionOverwrite_DoAll(t *testing.T, fn func(snowfla
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error){}
+			_dat.UpdatePermissionOverwriteMocks = []func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
 }
 
 func (_recv *clientRest) _UpdatePermissionOverwrite_Stub() {
-	_recv._UpdatePermissionOverwrite_Do(func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (r0 error) { return })
+	_recv._UpdatePermissionOverwrite_Do(func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (r0 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdatePermissionOverwrite_StubAll(t *testing.T) {
-	new(clientRest)._UpdatePermissionOverwrite_DoAll(t, func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (r0 error) { return })
+	new(clientRest)._UpdatePermissionOverwrite_DoAll(t, func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (r0 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdatePermissionOverwrite_Return(r0 error) {
-	_recv._UpdatePermissionOverwrite_Do(func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error) { return r0 })
+	_recv._UpdatePermissionOverwrite_Do(func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error {
+		return r0
+	})
 }
 
 func (clientRest) _UpdatePermissionOverwrite_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._UpdatePermissionOverwrite_DoAll(t, func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._UpdatePermissionOverwrite_DoAll(t, func(snowflake.ID, snowflake.ID, discord.PermissionOverwriteUpdate, ...rest.RequestOpt) error {
+		return r0
+	})
 }
 
 func (_recv *clientRest) _UpdatePermissionOverwrite_Calls() []_clientRest_UpdatePermissionOverwrite_Call {
@@ -25340,7 +25693,6 @@ func (clientRest) _UpdatePermissionOverwrite_BubbleCalls(t *testing.T) {
 		_dat.UpdatePermissionOverwriteCalls = []_clientRest_UpdatePermissionOverwrite_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateRole(guildID snowflake.ID, roleID snowflake.ID, roleUpdate discord.RoleUpdate, opts ...rest.RequestOpt) (*discord.Role, error) {
 	if _recv == nil {
@@ -25413,19 +25765,27 @@ func (clientRest) _UpdateRole_DoAll(t *testing.T, fn func(snowflake.ID, snowflak
 }
 
 func (_recv *clientRest) _UpdateRole_Stub() {
-	_recv._UpdateRole_Do(func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (r0 *discord.Role, r1 error) { return })
+	_recv._UpdateRole_Do(func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (r0 *discord.Role, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateRole_StubAll(t *testing.T) {
-	new(clientRest)._UpdateRole_DoAll(t, func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (r0 *discord.Role, r1 error) { return })
+	new(clientRest)._UpdateRole_DoAll(t, func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (r0 *discord.Role, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateRole_Return(r0 *discord.Role, r1 error) {
-	_recv._UpdateRole_Do(func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (*discord.Role, error) { return r0, r1 })
+	_recv._UpdateRole_Do(func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (*discord.Role, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateRole_ReturnAll(t *testing.T, r0 *discord.Role, r1 error) {
-	new(clientRest)._UpdateRole_DoAll(t, func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (*discord.Role, error) { return r0, r1 })
+	new(clientRest)._UpdateRole_DoAll(t, func(snowflake.ID, snowflake.ID, discord.RoleUpdate, ...rest.RequestOpt) (*discord.Role, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateRole_Calls() []_clientRest_UpdateRole_Call {
@@ -25456,7 +25816,6 @@ func (clientRest) _UpdateRole_BubbleCalls(t *testing.T) {
 		_dat.UpdateRoleCalls = []_clientRest_UpdateRole_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateRolePositions(guildID snowflake.ID, rolePositionUpdates []discord.RolePositionUpdate, opts ...rest.RequestOpt) ([]discord.Role, error) {
 	if _recv == nil {
@@ -25529,19 +25888,27 @@ func (clientRest) _UpdateRolePositions_DoAll(t *testing.T, fn func(snowflake.ID,
 }
 
 func (_recv *clientRest) _UpdateRolePositions_Stub() {
-	_recv._UpdateRolePositions_Do(func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) (r0 []discord.Role, r1 error) { return })
+	_recv._UpdateRolePositions_Do(func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) (r0 []discord.Role, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateRolePositions_StubAll(t *testing.T) {
-	new(clientRest)._UpdateRolePositions_DoAll(t, func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) (r0 []discord.Role, r1 error) { return })
+	new(clientRest)._UpdateRolePositions_DoAll(t, func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) (r0 []discord.Role, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateRolePositions_Return(r0 []discord.Role, r1 error) {
-	_recv._UpdateRolePositions_Do(func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) ([]discord.Role, error) { return r0, r1 })
+	_recv._UpdateRolePositions_Do(func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) ([]discord.Role, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateRolePositions_ReturnAll(t *testing.T, r0 []discord.Role, r1 error) {
-	new(clientRest)._UpdateRolePositions_DoAll(t, func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) ([]discord.Role, error) { return r0, r1 })
+	new(clientRest)._UpdateRolePositions_DoAll(t, func(snowflake.ID, []discord.RolePositionUpdate, ...rest.RequestOpt) ([]discord.Role, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateRolePositions_Calls() []_clientRest_UpdateRolePositions_Call {
@@ -25572,7 +25939,6 @@ func (clientRest) _UpdateRolePositions_BubbleCalls(t *testing.T) {
 		_dat.UpdateRolePositionsCalls = []_clientRest_UpdateRolePositions_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateStageInstance(channelID snowflake.ID, stageInstanceUpdate discord.StageInstanceUpdate, opts ...rest.RequestOpt) (*discord.StageInstance, error) {
 	if _recv == nil {
@@ -25645,19 +26011,27 @@ func (clientRest) _UpdateStageInstance_DoAll(t *testing.T, fn func(snowflake.ID,
 }
 
 func (_recv *clientRest) _UpdateStageInstance_Stub() {
-	_recv._UpdateStageInstance_Do(func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (r0 *discord.StageInstance, r1 error) { return })
+	_recv._UpdateStageInstance_Do(func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (r0 *discord.StageInstance, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateStageInstance_StubAll(t *testing.T) {
-	new(clientRest)._UpdateStageInstance_DoAll(t, func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (r0 *discord.StageInstance, r1 error) { return })
+	new(clientRest)._UpdateStageInstance_DoAll(t, func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (r0 *discord.StageInstance, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateStageInstance_Return(r0 *discord.StageInstance, r1 error) {
-	_recv._UpdateStageInstance_Do(func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (*discord.StageInstance, error) { return r0, r1 })
+	_recv._UpdateStageInstance_Do(func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (*discord.StageInstance, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateStageInstance_ReturnAll(t *testing.T, r0 *discord.StageInstance, r1 error) {
-	new(clientRest)._UpdateStageInstance_DoAll(t, func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (*discord.StageInstance, error) { return r0, r1 })
+	new(clientRest)._UpdateStageInstance_DoAll(t, func(snowflake.ID, discord.StageInstanceUpdate, ...rest.RequestOpt) (*discord.StageInstance, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateStageInstance_Calls() []_clientRest_UpdateStageInstance_Call {
@@ -25688,7 +26062,6 @@ func (clientRest) _UpdateStageInstance_BubbleCalls(t *testing.T) {
 		_dat.UpdateStageInstanceCalls = []_clientRest_UpdateStageInstance_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateSticker(guildID snowflake.ID, stickerID snowflake.ID, stickerUpdate discord.StickerUpdate, opts ...rest.RequestOpt) (*discord.Sticker, error) {
 	if _recv == nil {
@@ -25761,19 +26134,27 @@ func (clientRest) _UpdateSticker_DoAll(t *testing.T, fn func(snowflake.ID, snowf
 }
 
 func (_recv *clientRest) _UpdateSticker_Stub() {
-	_recv._UpdateSticker_Do(func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (r0 *discord.Sticker, r1 error) { return })
+	_recv._UpdateSticker_Do(func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (r0 *discord.Sticker, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateSticker_StubAll(t *testing.T) {
-	new(clientRest)._UpdateSticker_DoAll(t, func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (r0 *discord.Sticker, r1 error) { return })
+	new(clientRest)._UpdateSticker_DoAll(t, func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (r0 *discord.Sticker, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateSticker_Return(r0 *discord.Sticker, r1 error) {
-	_recv._UpdateSticker_Do(func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (*discord.Sticker, error) { return r0, r1 })
+	_recv._UpdateSticker_Do(func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (*discord.Sticker, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateSticker_ReturnAll(t *testing.T, r0 *discord.Sticker, r1 error) {
-	new(clientRest)._UpdateSticker_DoAll(t, func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (*discord.Sticker, error) { return r0, r1 })
+	new(clientRest)._UpdateSticker_DoAll(t, func(snowflake.ID, snowflake.ID, discord.StickerUpdate, ...rest.RequestOpt) (*discord.Sticker, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateSticker_Calls() []_clientRest_UpdateSticker_Call {
@@ -25805,7 +26186,6 @@ func (clientRest) _UpdateSticker_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UpdateUserVoiceState(guildID snowflake.ID, userID snowflake.ID, userVoiceStateUpdate discord.UserVoiceStateUpdate, opts ...rest.RequestOpt) error {
 	if _recv == nil {
 		panic("clientRest.UpdateUserVoiceState: nil pointer receiver")
@@ -25816,7 +26196,7 @@ func (_recv *clientRest) UpdateUserVoiceState(guildID snowflake.ID, userID snowf
 	_all := _clientRestPtrData(nil)
 	_all.mutex.Lock()
 	_all.UpdateUserVoiceStateCalls = append(_all.UpdateUserVoiceStateCalls, _clientRest_UpdateUserVoiceState_Call{guildID, userID, userVoiceStateUpdate, opts})
-	var _fn func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error)
+	var _fn func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error
 	if len(_dat.UpdateUserVoiceStateMocks) > 0 {
 		_fn = _dat.UpdateUserVoiceStateMocks[0]
 		if len(_dat.UpdateUserVoiceStateMocks) > 1 {
@@ -25835,7 +26215,7 @@ func (_recv *clientRest) UpdateUserVoiceState(guildID snowflake.ID, userID snowf
 	return _fn(guildID, userID, userVoiceStateUpdate, opts...)
 }
 
-func (_recv *clientRest) _UpdateUserVoiceState_Do(fn func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error)) {
+func (_recv *clientRest) _UpdateUserVoiceState_Do(fn func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error) {
 	if _recv == nil {
 		panic("clientRest.UpdateUserVoiceState: nil pointer receiver")
 	}
@@ -25843,9 +26223,9 @@ func (_recv *clientRest) _UpdateUserVoiceState_Do(fn func(snowflake.ID, snowflak
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdateUserVoiceStateMocks) < 2 {
-		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdateUserVoiceStateMocks = _dat.UpdateUserVoiceStateMocks[:len(_dat.UpdateUserVoiceStateMocks)-1]
 		_dat.UpdateUserVoiceStateMocks = append(_dat.UpdateUserVoiceStateMocks, fn)
@@ -25853,14 +26233,14 @@ func (_recv *clientRest) _UpdateUserVoiceState_Do(fn func(snowflake.ID, snowflak
 	}
 }
 
-func (clientRest) _UpdateUserVoiceState_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error)) {
+func (clientRest) _UpdateUserVoiceState_DoAll(t *testing.T, fn func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error) {
 	_dat := _clientRestPtrData(nil)
 	defer _dat.mutex.Unlock()
 	_dat.mutex.Lock()
 	if fn == nil {
-		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error){}
+		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error{}
 	} else if len(_dat.UpdateUserVoiceStateMocks) < 2 {
-		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error){fn, fn}
+		_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error{fn, fn}
 	} else {
 		_dat.UpdateUserVoiceStateMocks = _dat.UpdateUserVoiceStateMocks[:len(_dat.UpdateUserVoiceStateMocks)-1]
 		_dat.UpdateUserVoiceStateMocks = append(_dat.UpdateUserVoiceStateMocks, fn)
@@ -25870,7 +26250,7 @@ func (clientRest) _UpdateUserVoiceState_DoAll(t *testing.T, fn func(snowflake.ID
 		t.Cleanup(func() {
 			defer _dat.mutex.Unlock()
 			_dat.mutex.Lock()
-			_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error){}
+			_dat.UpdateUserVoiceStateMocks = []func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error{}
 			_dat.once = sync.Once{}
 		})
 	})
@@ -25885,11 +26265,11 @@ func (clientRest) _UpdateUserVoiceState_StubAll(t *testing.T) {
 }
 
 func (_recv *clientRest) _UpdateUserVoiceState_Return(r0 error) {
-	_recv._UpdateUserVoiceState_Do(func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error) { return r0 })
+	_recv._UpdateUserVoiceState_Do(func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error { return r0 })
 }
 
 func (clientRest) _UpdateUserVoiceState_ReturnAll(t *testing.T, r0 error) {
-	new(clientRest)._UpdateUserVoiceState_DoAll(t, func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) (error) { return r0 })
+	new(clientRest)._UpdateUserVoiceState_DoAll(t, func(snowflake.ID, snowflake.ID, discord.UserVoiceStateUpdate, ...rest.RequestOpt) error { return r0 })
 }
 
 func (_recv *clientRest) _UpdateUserVoiceState_Calls() []_clientRest_UpdateUserVoiceState_Call {
@@ -25920,7 +26300,6 @@ func (clientRest) _UpdateUserVoiceState_BubbleCalls(t *testing.T) {
 		_dat.UpdateUserVoiceStateCalls = []_clientRest_UpdateUserVoiceState_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateWebhook(webhookID snowflake.ID, webhookUpdate discord.WebhookUpdate, opts ...rest.RequestOpt) (discord.Webhook, error) {
 	if _recv == nil {
@@ -26037,7 +26416,6 @@ func (clientRest) _UpdateWebhook_BubbleCalls(t *testing.T) {
 	})
 }
 
-
 func (_recv *clientRest) UpdateWebhookMessage(webhookID snowflake.ID, webhookToken string, messageID snowflake.ID, messageUpdate discord.WebhookMessageUpdate, params rest.UpdateWebhookMessageParams, opts ...rest.RequestOpt) (*discord.Message, error) {
 	if _recv == nil {
 		panic("clientRest.UpdateWebhookMessage: nil pointer receiver")
@@ -26109,19 +26487,27 @@ func (clientRest) _UpdateWebhookMessage_DoAll(t *testing.T, fn func(snowflake.ID
 }
 
 func (_recv *clientRest) _UpdateWebhookMessage_Stub() {
-	_recv._UpdateWebhookMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	_recv._UpdateWebhookMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateWebhookMessage_StubAll(t *testing.T) {
-	new(clientRest)._UpdateWebhookMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) { return })
+	new(clientRest)._UpdateWebhookMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (r0 *discord.Message, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateWebhookMessage_Return(r0 *discord.Message, r1 error) {
-	_recv._UpdateWebhookMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	_recv._UpdateWebhookMessage_Do(func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateWebhookMessage_ReturnAll(t *testing.T, r0 *discord.Message, r1 error) {
-	new(clientRest)._UpdateWebhookMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) { return r0, r1 })
+	new(clientRest)._UpdateWebhookMessage_DoAll(t, func(snowflake.ID, string, snowflake.ID, discord.WebhookMessageUpdate, rest.UpdateWebhookMessageParams, ...rest.RequestOpt) (*discord.Message, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateWebhookMessage_Calls() []_clientRest_UpdateWebhookMessage_Call {
@@ -26152,7 +26538,6 @@ func (clientRest) _UpdateWebhookMessage_BubbleCalls(t *testing.T) {
 		_dat.UpdateWebhookMessageCalls = []_clientRest_UpdateWebhookMessage_Call{}
 	})
 }
-
 
 func (_recv *clientRest) UpdateWebhookWithToken(webhookID snowflake.ID, webhookToken string, webhookUpdate discord.WebhookUpdateWithToken, opts ...rest.RequestOpt) (discord.Webhook, error) {
 	if _recv == nil {
@@ -26225,19 +26610,27 @@ func (clientRest) _UpdateWebhookWithToken_DoAll(t *testing.T, fn func(snowflake.
 }
 
 func (_recv *clientRest) _UpdateWebhookWithToken_Stub() {
-	_recv._UpdateWebhookWithToken_Do(func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (r0 discord.Webhook, r1 error) { return })
+	_recv._UpdateWebhookWithToken_Do(func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (r0 discord.Webhook, r1 error) {
+		return
+	})
 }
 
 func (clientRest) _UpdateWebhookWithToken_StubAll(t *testing.T) {
-	new(clientRest)._UpdateWebhookWithToken_DoAll(t, func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (r0 discord.Webhook, r1 error) { return })
+	new(clientRest)._UpdateWebhookWithToken_DoAll(t, func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (r0 discord.Webhook, r1 error) {
+		return
+	})
 }
 
 func (_recv *clientRest) _UpdateWebhookWithToken_Return(r0 discord.Webhook, r1 error) {
-	_recv._UpdateWebhookWithToken_Do(func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (discord.Webhook, error) { return r0, r1 })
+	_recv._UpdateWebhookWithToken_Do(func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (discord.Webhook, error) {
+		return r0, r1
+	})
 }
 
 func (clientRest) _UpdateWebhookWithToken_ReturnAll(t *testing.T, r0 discord.Webhook, r1 error) {
-	new(clientRest)._UpdateWebhookWithToken_DoAll(t, func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (discord.Webhook, error) { return r0, r1 })
+	new(clientRest)._UpdateWebhookWithToken_DoAll(t, func(snowflake.ID, string, discord.WebhookUpdateWithToken, ...rest.RequestOpt) (discord.Webhook, error) {
+		return r0, r1
+	})
 }
 
 func (_recv *clientRest) _UpdateWebhookWithToken_Calls() []_clientRest_UpdateWebhookWithToken_Call {
@@ -26268,4 +26661,3 @@ func (clientRest) _UpdateWebhookWithToken_BubbleCalls(t *testing.T) {
 		_dat.UpdateWebhookWithTokenCalls = []_clientRest_UpdateWebhookWithToken_Call{}
 	})
 }
-
