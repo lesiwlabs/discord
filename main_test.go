@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"reflect"
@@ -172,7 +173,8 @@ func TestSyncVoiceRoles(t *testing.T) {
 			)
 			swap(t, &testHookMembersWithRole,
 				func(
-					disgobot.Client, snowflake.ID, discord.Role,
+					context.Context, disgobot.Client,
+					snowflake.ID, discord.Role,
 				) (set[snowflake.ID], error) {
 					return tt.roleMembers, nil
 				},
@@ -183,7 +185,7 @@ func TestSyncVoiceRoles(t *testing.T) {
 				},
 			)
 
-			err := syncVoiceRoles(nil, 0)
+			err := syncVoiceRoles(t.Context(), nil, 0)
 
 			gotErr := fmt.Sprintf("%v", err)
 			wantErr := fmt.Sprintf("%v", tt.wantErr)

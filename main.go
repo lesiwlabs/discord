@@ -68,6 +68,7 @@ func run() error {
 		return fmt.Errorf("could not set up bot: %w", err)
 	}
 
+	ctx := context.Background()
 	updateRole := make(chan struct{})
 
 	bot = &client{bot}
@@ -78,7 +79,8 @@ func run() error {
 		disgobot.NewListenerFunc(func(e *events.GuildReady) {
 			go func() {
 				for range updateRole {
-					if err := syncVoiceRoles(bot, e.GuildID); err != nil {
+					err := syncVoiceRoles(ctx, bot, e.GuildID)
+					if err != nil {
 						slog.Error("failed to sync voice roles", "error", err)
 					}
 				}
@@ -96,7 +98,7 @@ func run() error {
 			updateRole <- struct{}{}
 		}
 	}()
-	if err := bot.OpenGateway(context.Background()); err != nil {
+	if err := bot.OpenGateway(ctx); err != nil {
 		return fmt.Errorf("could not connect to gateway: %w", err)
 	}
 	select {}
@@ -162,13 +164,16 @@ func toggleRole(
 	return nil
 }
 
-func syncVoiceRoles(bot disgobot.Client, gid snowflake.ID) error {
+func syncVoiceRoles(
+	ctx context.Context,
+	bot disgobot.Client, gid snowflake.ID,
+) error {
 	slog.Info("syncVoiceRoles event")
 	role, err := findRoleByName(bot, gid, "voice")
 	if err != nil {
 		return fmt.Errorf("could not get voice role: %w", err)
 	}
-	roleMembers, err := membersWithRole(bot, gid, role)
+	roleMembers, err := membersWithRole(ctx, bot, gid, role)
 	if err != nil {
 		return err
 	}
@@ -215,21 +220,29 @@ func memberList(
 }
 
 var testHookMembersWithRole func(
-	disgobot.Client, snowflake.ID, discord.Role,
+	context.Context, disgobot.Client, snowflake.ID,
+	discord.Role,
 ) (set[snowflake.ID], error)
 
 func membersWithRole(
-	bot disgobot.Client, gid snowflake.ID, role discord.Role,
+	ctx context.Context,
+	bot disgobot.Client, gid snowflake.ID,
+	role discord.Role,
 ) (set[snowflake.ID], error) {
 	if h := testHookMembersWithRole; t.Testing() && h != nil {
-		return h(bot, gid, role)
+		return h(ctx, bot, gid, role)
 	}
-	members, err := bot.MemberChunkingManager().RequestMembersWithFilter(
-		gid,
-		func(m discord.Member) bool {
-			return slices.Contains(m.RoleIDs, role.ID)
-		},
+	chunkCtx, cancel := context.WithTimeout(
+		ctx, 30*time.Second,
 	)
+	defer cancel()
+	members, err := bot.MemberChunkingManager().
+		RequestMembersWithFilterCtx(
+			chunkCtx, gid,
+			func(m discord.Member) bool {
+				return slices.Contains(m.RoleIDs, role.ID)
+			},
+		)
 	if err != nil {
 		return nil, fmt.Errorf("could not get members with role %q: %w",
 			role.Name, err)

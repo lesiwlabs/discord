@@ -5,6 +5,7 @@ import (
 
 	"labs.lesiw.io/ops/github"
 	"labs.lesiw.io/ops/goapp"
+	"labs.lesiw.io/ops/golang"
 	k8sapp "labs.lesiw.io/ops/k8s/goapp"
 	"lesiw.io/ops"
 )
@@ -25,6 +26,7 @@ func main() {
 	if len(os.Args) < 2 {
 		os.Args = append(os.Args, "check")
 	}
+	golang.GoModReplaceAllowed = true
 	github.Repo = "lesiwlabs/discord"
 	github.Secrets = secrets
 	goapp.Name = "discord"
